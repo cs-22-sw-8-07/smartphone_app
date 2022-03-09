@@ -37,8 +37,20 @@ dependencies:
   flutter_bloc: ^8.0.1
   equatable: ^2.0.3
   google_fonts: ^2.3.1
-
-
+  permission_handler: ^9.2.0
+  flutter_svg: ^1.0.3
+  shared_preferences: ^2.0.13
+  darq: ^1.1.1
+  auto_size_text: ^3.0.0
+  flutter_dotenv: ^5.0.2
+  fluttertoast: ^8.0.9
+  json_annotation: ^4.4.0
+  build_runner: ^2.1.7
+  json_serializable: ^6.1.4
+  spotify_sdk:
+    git:
+      url: git://github.com/brim-borium/spotify_sdk.git
+      ref: main
 
 
 dev_dependencies:
@@ -64,9 +76,10 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/
+    - assets/mock_data/
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

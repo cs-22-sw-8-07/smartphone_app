@@ -2,5 +2,41 @@
   "app_name": "Quack",
   "@app_name": {
     "description": "The name of the app"
+  },
+  "yes": "Yes",
+  "@yes": {
+    "description": "Button text"
+  },
+  "no": "No",
+  "@no": {
+    "description": "Button text"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Button text"
+  },
+  "please_go_to_settings_and_give_the_app_all_the_necessary_permissions": "Please go to settings and give Quack all the necessary permissions",
+  "@please_go_to_settings_and_give_the_app_all_the_necessary_permissions": {
+    "description": "Dialog text"
+  },
+  "go_to_settings": "Go to settings",
+  "@go_to_settings": {
+    "description": "Button text"
+  },
+  "continue_with_spotify": "Continue with Spotify",
+  "@continue_with_spotify": {
+    "description": "Button text"
+  },
+  "recommendations": "Recommendations",
+  "@recommendations": {
+    "description": "Button text"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Button text"
+  },
+  "log_off": "Log off",
+  "@log_off": {
+    "description": "Button text"
   }
 }
