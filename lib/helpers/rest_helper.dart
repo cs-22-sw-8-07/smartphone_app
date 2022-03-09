@@ -170,14 +170,19 @@ class RestHelper {
   //region Public methods
 
   Future<RestResponse> sendGetRequest(String function,
-      {List<RestParameter>? parameters}) async {
+      {List<RestParameter>? parameters, Map<String, String>? headers}) async {
     String urlComplete = url + function + _getParametersString(parameters);
+
+    var defaultHeaders = _getHeaders();
+    if (headers != null) {
+      defaultHeaders.addAll(headers);
+    }
 
     return await _makeRequest(() async {
       return _getIOClient()
           .get(
             Uri.parse(urlComplete),
-            headers: _getHeaders(),
+            headers: defaultHeaders,
           )
           .timeout(Duration(seconds: timeoutInSeconds))
           .then((onValue) {

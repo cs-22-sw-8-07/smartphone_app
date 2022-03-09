@@ -18,6 +18,9 @@ class CustomLabel extends StatelessWidget {
   final Color textColor;
   final Gradient background;
   final double? height;
+  final bool isWrapping;
+  final double? width;
+  final BorderRadius? borderRadius;
 
   //endregion
 
@@ -27,18 +30,20 @@ class CustomLabel extends StatelessWidget {
   //region Constructor
 
   // ignore: prefer_const_constructors_in_immutables
-  CustomLabel(
-      {Key? key,
-      required this.title,
-      this.fontSize = 20,
-      this.height,
-      this.background = custom_colors.transparentGradient,
-      this.margin = const EdgeInsets.all(10),
-      this.padding = const EdgeInsets.only(top: 2),
-      this.fontWeight = FontWeight.normal,
-      this.textAlign = TextAlign.center,
-      this.textColor = Colors.black,
-      this.alignmentGeometry = Alignment.centerLeft})
+  CustomLabel({Key? key,
+    required this.title,
+    this.fontSize = 20,
+    this.height,
+    this.width,
+    this.isWrapping = false,
+    this.background = custom_colors.transparentGradient,
+    this.borderRadius,
+    this.margin = const EdgeInsets.all(10),
+    this.padding = const EdgeInsets.only(top: 2),
+    this.fontWeight = FontWeight.normal,
+    this.textAlign = TextAlign.center,
+    this.textColor = Colors.black,
+    this.alignmentGeometry = Alignment.centerLeft})
       : super(key: key);
 
   //endregion
@@ -50,23 +55,42 @@ class CustomLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        decoration: BoxDecoration(gradient: background),
-        margin: margin,
-        padding: padding,
-        height: height,
-        child: Align(
-          alignment: alignmentGeometry,
+    if (isWrapping) {
+      return Container(
+          decoration: BoxDecoration(gradient: background),
+          margin: margin,
+          padding: padding,
+          height: height,
+          width: width,
           child: Text(
-            title ?? "",
-            textAlign: textAlign,
-            style: GoogleFonts.roboto(
-                textStyle: TextStyle(
-                    color: textColor,
-                    fontWeight: fontWeight,
-                    fontSize: fontSize)),
-          ),
-        ));
+              title ?? "",
+              style: GoogleFonts.roboto(
+                  textStyle: TextStyle(
+                      color: textColor,
+                      fontWeight: fontWeight,
+                      fontSize: fontSize)),
+            ),
+          );
+    } else {
+      return Container(
+          decoration: BoxDecoration(gradient: background),
+          margin: margin,
+          padding: padding,
+          height: height,
+          width: width,
+          child: Align(
+            alignment: alignmentGeometry,
+            child: Text(
+              title ?? "",
+              textAlign: textAlign,
+              style: GoogleFonts.roboto(
+                  textStyle: TextStyle(
+                      color: textColor,
+                      fontWeight: fontWeight,
+                      fontSize: fontSize)),
+            ),
+          ));
+    }
   }
 
 //endregion

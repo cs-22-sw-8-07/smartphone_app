@@ -97,8 +97,10 @@ class GeneralUtil {
 
   /// Show a toast to the user
   /// [message] is the string shown to the user
-  static showToast(String message) {
-    Fluttertoast.showToast(msg: message, toastLength: Toast.LENGTH_LONG);
+  static showToast(String? message) {
+    if (message != null) {
+      Fluttertoast.showToast(msg: message, toastLength: Toast.LENGTH_LONG);
+    }
   }
 
   /// Check for a internet connection

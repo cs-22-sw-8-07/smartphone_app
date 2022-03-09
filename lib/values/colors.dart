@@ -56,6 +56,11 @@ const Gradient greyGradient2 = LinearGradient(
     begin: Alignment(0.0, -1.0),
     end: Alignment(0.0, 1.0));
 
+const Gradient drawerGradient = LinearGradient(
+    colors: <Color>[blue, black],
+    begin: Alignment(0.0, -1.0),
+    end: Alignment(0.0, 1.0));
+
 const Gradient darkGreyGradient = LinearGradient(
     colors: <Color>[black, black],
     begin: Alignment(0.0, -1.0),

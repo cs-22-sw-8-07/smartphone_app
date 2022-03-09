@@ -7,6 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
 import 'package:smartphone_app/pages/login/login_page_events_states.dart';
 import 'package:smartphone_app/pages/main/main_page.dart';
+import 'package:smartphone_app/webservices/spotify/models/spotify_classes.dart';
 import 'package:smartphone_app/webservices/spotify/service/spotify_service.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 
@@ -44,10 +45,24 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
             Fluttertoast.showToast(msg: response.exception!);
             return;
           }
-          SpotifySdkResponseWithResult<PlayerState> response2 = await SpotifyService.getInstance().getPlayerState();
+          String token = response.resultType!;
+          SpotifyServiceResponse<GetCurrentUsersProfileResponse>
+              getCurrentUsersProfileResponse =
+              await SpotifyService.getInstance()
+                  .getCurrentUsersProfile(token: token);
+          if (!getCurrentUsersProfileResponse.isSuccess) {
+            Fluttertoast.showToast(msg: response.exception!);
+            return;
+          }
 
           AppValuesHelper.getInstance()
-              .saveString(AppValuesKey.accessToken, response.resultType);
+              .saveString(AppValuesKey.accessToken, token);
+          AppValuesHelper.getInstance().saveString(AppValuesKey.email,
+              getCurrentUsersProfileResponse.spotifyResponse!.email);
+          AppValuesHelper.getInstance().saveString(AppValuesKey.displayName,
+              getCurrentUsersProfileResponse.spotifyResponse!.displayName);
+          AppValuesHelper.getInstance().saveString(AppValuesKey.userImageUrl,
+              getCurrentUsersProfileResponse.spotifyResponse!.images![0].url);
           GeneralUtil.goToPage(context, const MainPage());
           break;
         case LoginButtonEvent.goToSettings:
@@ -56,9 +71,7 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
           break;
       }
     });
-    on<Resumed>((event, emit) {
-
-    });
+    on<Resumed>((event, emit) {});
   }
 
 //endregion
