@@ -1,14 +1,13 @@
 import 'dart:ui';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
 import 'package:smartphone_app/values/values.dart' as values;
 import 'package:smartphone_app/values/colors.dart' as custom_colors;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:smartphone_app/webservices/quack/models/quack_classes.dart';
 import 'package:smartphone_app/widgets/custom_label.dart';
-import 'package:spotify_sdk/models/connection_status.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 import 'package:spotify_sdk/models/track.dart';
 
@@ -112,111 +111,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       child: SafeArea(
                           child: Scaffold(
                               key: _scaffoldKey,
-                              drawer: Drawer(
-                                child: Container(
-                                    color: Colors.white,
-                                    child: ListView(
-                                      // Important: Remove any padding from the ListView.
-                                      padding: EdgeInsets.zero,
-                                      children: [
-                                        Container(
-                                          decoration: const BoxDecoration(
-                                              gradient:
-                                                  custom_colors.blackGradient),
-                                          child: Column(
-                                            children: [
-                                              Row(children: [
-                                                Container(
-                                                    margin:
-                                                        const EdgeInsets.only(
-                                                            left: 20,
-                                                            top: 20,
-                                                            right: 10,
-                                                            bottom: 20),
-                                                    width: 60,
-                                                    child: ClipRRect(
-                                                        borderRadius:
-                                                            const BorderRadius
-                                                                    .all(
-                                                                Radius.circular(
-                                                                    30)),
-                                                        child: userImage))
-                                              ]),
-                                              Container(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 20,
-                                                          right: 20,
-                                                          bottom: 20),
-                                                  child: CustomLabel(
-                                                      margin:
-                                                          const EdgeInsets.all(
-                                                              0),
-                                                      alignmentGeometry:
-                                                          Alignment.topLeft,
-                                                      fontSize: 16,
-                                                      textColor: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      title: AppValuesHelper
-                                                              .getInstance()
-                                                          .getString(AppValuesKey
-                                                              .displayName))),
-                                              const Image(
-                                                  fit: BoxFit.fitWidth,
-                                                  image: AssetImage(
-                                                      "assets/locations.png"))
-                                            ],
-                                          ),
-                                        ),
-                                        CustomDrawerTile(
-                                          icon: const Icon(
-                                            Icons.list_outlined,
-                                            color: Colors.black,
-                                            size: 30,
-                                          ),
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                            bloc.add(const ButtonPressed(
-                                                buttonEvent: MainButtonEvent
-                                                    .seeRecommendations));
-                                          },
-                                          text: AppLocalizations.of(context)!
-                                              .recommendations,
-                                        ),
-                                        CustomDrawerTile(
-                                          icon: const Icon(
-                                            Icons.settings_outlined,
-                                            color: Colors.black,
-                                            size: 30,
-                                          ),
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                            bloc.add(const ButtonPressed(
-                                                buttonEvent: MainButtonEvent
-                                                    .goToSettings));
-                                          },
-                                          text: AppLocalizations.of(context)!
-                                              .settings,
-                                        ),
-                                        CustomDrawerTile(
-                                          icon: const Icon(
-                                              Icons.logout_outlined,
-                                              color: Colors.black,
-                                              size: 30),
-                                          text: AppLocalizations.of(context)!
-                                              .log_off,
-                                          onPressed: () async {
-                                            Navigator.pop(context);
-
-                                            bloc.add(const ButtonPressed(
-                                                buttonEvent:
-                                                    MainButtonEvent.logOff));
-                                          },
-                                        ),
-                                      ],
-                                    )),
-                              ),
+                              drawer: _getDrawer(bloc),
                               body: _getContent(bloc)))));
             }));
   }
@@ -256,11 +151,93 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         });
   }
 
+  Widget _getDrawer(MainPageBloc bloc) {
+    return Drawer(
+      child: Container(
+          color: Colors.white,
+          child: ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: [
+              Container(
+                decoration:
+                    const BoxDecoration(gradient: custom_colors.blackGradient),
+                child: Column(
+                  children: [
+                    Row(children: [
+                      Container(
+                          margin: const EdgeInsets.only(
+                              left: 20, top: 20, right: 10, bottom: 20),
+                          width: 60,
+                          child: ClipRRect(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(30)),
+                              child: userImage))
+                    ]),
+                    Container(
+                        padding: const EdgeInsets.only(
+                            left: 20, right: 20, bottom: 20),
+                        child: CustomLabel(
+                            margin: const EdgeInsets.all(0),
+                            alignmentGeometry: Alignment.topLeft,
+                            fontSize: 16,
+                            textColor: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            title: AppValuesHelper.getInstance()
+                                .getString(AppValuesKey.displayName))),
+                    const Image(
+                        fit: BoxFit.fitWidth,
+                        image: AssetImage("assets/locations.png"))
+                  ],
+                ),
+              ),
+              CustomDrawerTile(
+                icon: const Icon(
+                  Icons.list_outlined,
+                  color: Colors.black,
+                  size: 30,
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  bloc.add(const ButtonPressed(
+                      buttonEvent: MainButtonEvent.seeRecommendations));
+                },
+                text: AppLocalizations.of(context)!.recommendations,
+              ),
+              CustomDrawerTile(
+                icon: const Icon(
+                  Icons.settings_outlined,
+                  color: Colors.black,
+                  size: 30,
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  bloc.add(const ButtonPressed(
+                      buttonEvent: MainButtonEvent.goToSettings));
+                },
+                text: AppLocalizations.of(context)!.settings,
+              ),
+              CustomDrawerTile(
+                icon: const Icon(Icons.logout_outlined,
+                    color: Colors.black, size: 30),
+                text: AppLocalizations.of(context)!.log_off,
+                onPressed: () async {
+                  Navigator.pop(context);
+
+                  bloc.add(
+                      const ButtonPressed(buttonEvent: MainButtonEvent.logOff));
+                },
+              ),
+            ],
+          )),
+    );
+  }
+
   Widget _getOverlayContent(
       MainPageBloc bloc, MainPageState state, PlayerState? playerState) {
     var overlayContent = state.isPlaylistShown!
         ? _getPlaylist(state, playerState)
-        : _getTrack(state, playerState);
+        : _getCurrentlyPlayingTrack(state, playerState);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -398,20 +375,15 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         ));
   }
 
-  Widget _getTrack(MainPageState state, PlayerState? playerState) {
+  Widget _getCurrentlyPlayingTrack(
+      MainPageState state, PlayerState? playerState) {
     Track? track = playerState!.track;
-
     if (track == null) {
       // TODO: Add design for when no track is being played
       return Container();
     }
 
-    String imageUriString = "";
-    try {
-      imageUriString =
-          "https://i.scdn.co/image/" + track.imageUri.raw.split(":")[2];
-      // ignore: empty_catches
-    } on Exception {}
+    QuackTrack quackTrack = QuackTrack.trackToQuackTrack(track)!;
 
     return Container(
       decoration: BoxDecoration(
@@ -429,7 +401,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             padding: const EdgeInsets.all(10),
             child: ClipRRect(
                 borderRadius: const BorderRadius.all(Radius.circular(5)),
-                child: Image.network(imageUriString)), //
+                child: Image.network(quackTrack.imageUrl!)), //
           ),
           Expanded(
               child: ClipRect(
@@ -472,7 +444,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                             height: values.mainPageOverlayHeight / 2,
                             fontSize: 14,
                             fontWeight: FontWeight.w900,
-                            title: track.name,
+                            title: quackTrack.name,
                             textColor: Colors.white,
                             alignmentGeometry: Alignment.bottomLeft,
                             padding: const EdgeInsets.only(
@@ -486,7 +458,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                             margin: const EdgeInsets.all(0),
                             padding: const EdgeInsets.only(
                                 left: 0, top: 5, bottom: 0, right: 0),
-                            title: track.artist.name,
+                            title: quackTrack.artist,
                             textColor: custom_colors.darkGrey,
                           )
                         ],
@@ -520,11 +492,100 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     );
   }
 
+  Widget _getTrack(
+      MainPageState state, PlayerState? playerState, QuackTrack? quackTrack) {
+    QuackTrack? currentlyPlayingTrack =
+        QuackTrack.trackToQuackTrack(playerState!.track);
+
+    return Container(
+      decoration: BoxDecoration(
+          color: custom_colors.black,
+          border: Border.all(width: 0, color: custom_colors.black)),
+      height: values.mainPageOverlayHeight,
+      child: Row(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+                color: Colors.transparent,
+                border: Border.all(width: 0, color: custom_colors.black)),
+            margin: const EdgeInsets.all(0),
+            width: values.mainPageOverlayHeight,
+            padding: const EdgeInsets.all(10),
+            child: ClipRRect(
+                borderRadius: const BorderRadius.all(Radius.circular(5)),
+                child: Image.network(quackTrack!.imageUrl!)), //
+          ),
+          Expanded(
+              child: ClipRect(
+                  child: Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              CustomLabel(
+                height: values.mainPageOverlayHeight / 2,
+                fontSize: 14,
+                fontWeight: FontWeight.w900,
+                title: quackTrack.name,
+                textColor: quackTrack == currentlyPlayingTrack
+                    ? custom_colors.lightBlue
+                    : Colors.white,
+                alignmentGeometry: Alignment.bottomLeft,
+                padding:
+                    const EdgeInsets.only(left: 0, top: 0, bottom: 5, right: 0),
+                margin: const EdgeInsets.all(0),
+              ),
+              CustomLabel(
+                alignmentGeometry: Alignment.topLeft,
+                height: values.mainPageOverlayHeight / 2,
+                fontSize: 14,
+                margin: const EdgeInsets.all(0),
+                padding:
+                    const EdgeInsets.only(left: 0, top: 5, bottom: 0, right: 0),
+                title: quackTrack.artist,
+                textColor: custom_colors.darkGrey,
+              )
+            ],
+          ))),
+          Container(
+            decoration: BoxDecoration(
+                color: Colors.transparent,
+                border: Border.all(width: 0, color: custom_colors.black)),
+            width: values.mainPageOverlayHeight,
+            padding: const EdgeInsets.all(10),
+            child: Center(
+                child: CustomButton(
+                    fontWeight: FontWeight.bold,
+                    height: 50,
+                    width: 50,
+                    borderRadius: const BorderRadius.all(Radius.circular(25)),
+                    icon: Icon(
+                      quackTrack != currentlyPlayingTrack
+                          ? Icons.play_arrow
+                          : (playerState.isPaused
+                              ? Icons.play_arrow
+                              : Icons.pause),
+                      color: Colors.white,
+                      size: values.mainPageOverlayHeight / 2,
+                    ),
+                    onPressed: () =>
+                        bloc.add(PlayPauseTrack(quackTrack: quackTrack)),
+                    textColor: custom_colors.black,
+                    pressedBackground:
+                        custom_colors.backButtonGradientPressedDefault,
+                    defaultBackground: custom_colors.transparentGradient)),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _getPlaylist(MainPageState state, PlayerState? playerState) {
+    List<QuackTrack>? tracks = state.playlist!.tracks;
+
     return ListView.builder(
-      itemCount: 10,
+      itemCount: tracks!.length,
       itemBuilder: (context, index) {
-        return _getTrack(state, playerState);
+        return _getTrack(state, playerState, tracks[index]);
       },
     );
   }

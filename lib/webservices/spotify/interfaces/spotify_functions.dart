@@ -9,6 +9,10 @@ class ISpotifyFunctions {
 
   //region Spotify SDK methods
 
+  Future<SpotifySdkResponse> playTrack(String trackId) async {
+    throw UnimplementedError();
+  }
+
   Future<SpotifySdkResponseWithResult<String>> getAuthenticationToken() async {
     throw UnimplementedError();
   }

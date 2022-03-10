@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:smartphone_app/webservices/quack/models/quack_classes.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 
 ///
@@ -17,10 +18,7 @@ enum MainButtonEvent {
   resumePausePlayer
 }
 
-enum MainTouchEvent {
-  goToNextTrack,
-  goToPreviousTrack
-}
+enum MainTouchEvent { goToNextTrack, goToPreviousTrack }
 
 //endregion
 
@@ -58,6 +56,27 @@ class SpotifyPlayerStateChanged extends MainPageEvent {
   final PlayerState? playerState;
 
   const SpotifyPlayerStateChanged({required this.playerState});
+
+  @override
+  List<Object?> get props => [playerState];
+}
+
+class PlaylistReceived extends MainPageEvent {
+  final QuackPlaylist? playList;
+
+  const PlaylistReceived({required this.playList});
+
+  @override
+  List<Object?> get props => [playList];
+}
+
+class PlayPauseTrack extends MainPageEvent {
+  final QuackTrack quackTrack;
+
+  const PlayPauseTrack({required this.quackTrack});
+
+  @override
+  List<Object?> get props => [quackTrack];
 }
 
 //endregion
@@ -72,15 +91,25 @@ class MainPageState extends Equatable {
   bool? isPlaylistShown;
   bool? isRecommendationStarted;
   PlayerState? playerState;
+  QuackPlaylist? playlist;
+  bool? hasJustSkipped;
 
   MainPageState(
-      {this.isPlaylistShown, this.isRecommendationStarted, this.playerState});
+      {this.isPlaylistShown,
+      this.playlist,
+      this.hasJustSkipped,
+      this.isRecommendationStarted,
+      this.playerState});
 
   MainPageState copyWith(
       {bool? isPlaylistShown,
+      QuackPlaylist? playlist,
+      bool? hasJustSkipped,
       bool? isRecommendationStarted,
       PlayerState? playerState}) {
     return MainPageState(
+        playlist: playlist ?? this.playlist,
+        hasJustSkipped: hasJustSkipped ?? this.hasJustSkipped,
         isPlaylistShown: isPlaylistShown ?? this.isPlaylistShown,
         playerState: playerState ?? this.playerState,
         isRecommendationStarted:
@@ -88,8 +117,13 @@ class MainPageState extends Equatable {
   }
 
   @override
-  List<Object?> get props =>
-      [isPlaylistShown, isRecommendationStarted, playerState];
+  List<Object?> get props => [
+        isPlaylistShown,
+        isRecommendationStarted,
+        playlist,
+        playerState,
+        hasJustSkipped
+      ];
 }
 
 //endregion

@@ -3,4 +3,4 @@ targets:
     builders:
       json_serializable|json_serializable:
         generate_for:
-          - lib/webservices/spotify/models/*.dart
+          - "**/webservices/**.dart"

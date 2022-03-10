@@ -1,0 +1,71 @@
+{
+  "Result": {
+    "Id": "Id for playlist",
+    "LocationType": "Forest",
+    "Tracks": [
+      {
+        "Id": "2GNEJcmdJuQK97mWea637Y",
+        "Name": "middle part",
+        "Artist": "Leo Lind",
+        "ImageUrl": "https://i.scdn.co/image/ab67616d00004851fb0737c7e8fa35270ffbac69"
+      },
+      {
+        "Id": "1chT7Yo3zSvjFPRQ20fWFH",
+        "Name": "both sides of the coin",
+        "Artist": "Electric Rivers",
+        "ImageUrl": "https://i.scdn.co/image/ab67616d00004851b608dab053b2509e8c08b25a"
+      },
+      {
+        "Id": "5iR4ziuzYZO1VondRmrvsc",
+        "Name": "taming the tiger",
+        "Artist": "Golden Horses",
+        "ImageUrl": "https://i.scdn.co/image/ab67616d00004851eb0498ab3953f86bf61a8705"
+      },
+      {
+        "Id": "4YhxXaf6Qrn5DrmgEfhwLH",
+        "Name": "Look At The Stars",
+        "Artist": "The Purple Stripe",
+        "ImageUrl": "https://i.scdn.co/image/ab67616d000048513f1e4946c556bdf1709113e8"
+      },
+      {
+        "Id": "09LGPIStoVjhEWYV5PG9M6",
+        "Name": "oh! the view",
+        "Artist": "Mayra R",
+        "ImageUrl": "https://i.scdn.co/image/ab67616d000048517954441d08b8f4431ad624bd"
+      },
+      {
+        "Id": "794SxkpLERVaBoag5946LG",
+        "Name": "High Up",
+        "Artist": "Mirror Inside",
+        "ImageUrl": "https://i.scdn.co/image/ab67616d00004851321411a8a36a788cbbc014de"
+      },
+      {
+        "Id": "6xcD8EbsvMep9ULtidHI2j",
+        "Name": "Winter Sun",
+        "Artist": "Sun Of They",
+        "ImageUrl": "https://i.scdn.co/image/ab67616d000048515abeeebfdcb45af5748911f9"
+      },
+      {
+        "Id": "7Dxb8siYBoC5rZRPTmhob4",
+        "Name": "Slip Away",
+        "Artist": "Elementaries",
+        "ImageUrl": "https://i.scdn.co/image/ab67616d00004851fa3d6674dce3fa1ff392ec9b"
+      },
+      {
+        "Id": "0SdF87pVzhydKwygD13H6B",
+        "Name": "Gentle Whisper",
+        "Artist": "Josef Briem",
+        "ImageUrl": "https://i.scdn.co/image/ab67616d00004851696ca122c978056882c0a299"
+      },
+
+      {
+        "Id": "4lcT08ARvK8cVjRLJbnKLh",
+        "Name": "heels to the heavens",
+        "Artist": "Dössell",
+        "ImageUrl": "https://i.scdn.co/image/ab67616d000048519402e9201b1622a852f66c34"
+      }
+    ]
+  },
+  "IsSuccessful": true,
+  "ErrorNo": 0
+}

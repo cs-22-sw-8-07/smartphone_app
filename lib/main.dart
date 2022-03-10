@@ -7,6 +7,8 @@ import 'package:smartphone_app/pages/login/login_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:smartphone_app/pages/main/main_page.dart';
 import 'package:smartphone_app/values/values.dart' as values;
+import 'package:smartphone_app/webservices/quack/service/mock_quack_service.dart';
+import 'package:smartphone_app/webservices/quack/service/quack_service.dart';
 import 'package:smartphone_app/webservices/spotify/service/spotify_service.dart';
 
 import 'helpers/app_values_helper.dart';
@@ -18,6 +20,7 @@ void main() async {
   //WASPService.init(WASPService(url: "https://192.168.0.108:5001"));
   //WASPService.init(MockWASPService());
   SpotifyService.init(SpotifyService());
+  QuackService.init(MockQuackService());
 
   // Pre-cache SVG
   await Future.wait([
