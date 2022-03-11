@@ -28,7 +28,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
   MainPageBloc({required this.context})
       : super(MainPageState(
-            hasJustSkipped: false,
+            hasJustPerformedAction: false,
             isPlaylistShown: false,
             isRecommendationStarted: false)) {
     // ButtonPressed
@@ -48,6 +48,9 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
           // TODO: Handle this case.
           break;
         case MainButtonEvent.logOff:
+          AppValuesHelper.getInstance()
+              .saveString(AppValuesKey.accessToken, "");
+
           GeneralUtil.goToPage(context, const LoginPage());
           break;
         case MainButtonEvent.resizePlaylist:
@@ -60,7 +63,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
           }
 
           await resumePausePlayer();
-
+          emit(state.copyWith(hasJustPerformedAction: true));
           break;
       }
     });
@@ -76,10 +79,10 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       QuackTrack? trackFromCurrentPlayerState =
           QuackTrack.trackToQuackTrack(event.playerState!.track);
 
-      if (state.hasJustSkipped! ||
+      if (state.hasJustPerformedAction! ||
           trackFromCurrentPlayerState == trackFromPreviousPlayerState) {
         emit(state.copyWith(
-            playerState: event.playerState, hasJustSkipped: false));
+            playerState: event.playerState, hasJustPerformedAction: false));
       } else {
         if (state.playlist == null || trackFromPreviousPlayerState == null) {
           emit(state.copyWith(playerState: event.playerState));
@@ -129,7 +132,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
               break;
             }
         }
-        emit(state.copyWith(hasJustSkipped: true));
+        emit(state.copyWith(hasJustPerformedAction: true));
       } else {
         switch (event.touchEvent) {
           case MainTouchEvent.goToNextTrack:
@@ -139,7 +142,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
               GeneralUtil.showToast(response.errorMessage);
               return;
             }
-            emit(state.copyWith(hasJustSkipped: true));
+            emit(state.copyWith(hasJustPerformedAction: true));
             break;
           case MainTouchEvent.goToPreviousTrack:
             SpotifySdkResponse response =
@@ -150,7 +153,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
             }
             break;
         }
-        emit(state.copyWith(hasJustSkipped: true));
+        emit(state.copyWith(hasJustPerformedAction: true));
       }
     });
     // PlaylistReceived
@@ -162,13 +165,28 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       QuackTrack? currentlyPlayingTrack =
           QuackTrack.trackToQuackTrack(state.playerState!.track!);
       if (event.quackTrack == currentlyPlayingTrack) {
-        resumePausePlayer();
+        await resumePausePlayer();
+        emit(state.copyWith(hasJustPerformedAction: true));
       } else {
         SpotifySdkResponse response =
             await SpotifyService.getInstance().playTrack(event.quackTrack.id!);
         if (!response.isSuccess) {
           GeneralUtil.showToast(response.errorMessage);
+          return;
         }
+        emit(state.copyWith(hasJustPerformedAction: true));
+      }
+    });
+
+    SpotifySdkResponseWithResult<Stream<ConnectionStatus>>
+        subscribeConnectionStatus =
+        SpotifyService.getInstance().subscribeConnectionStatus();
+
+    Stream<ConnectionStatus>? connectionStatusStream =
+        subscribeConnectionStatus.resultType;
+    connectionStatusStream!.listen((connectionStatus) async {
+      if (!connectionStatus.connected) {
+        await connectToSpotifyRemote();
       }
     });
   }
@@ -215,15 +233,17 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     return response.resultType;
   }
 
-  Stream<ConnectionStatus>? getConnectionStatus() {
-    var response = SpotifyService.getInstance().subscribeConnectionStatus();
-    return response.resultType;
-  }
-
-  Future<bool> getValues() async {
+  Future<bool> connectToSpotifyRemote() async {
     SpotifySdkResponseWithResult<bool> response =
         await SpotifyService.getInstance().connectToSpotifyRemote();
     if (!response.isSuccess) {
+      return false;
+    }
+    return response.resultType!;
+  }
+
+  Future<bool> getValues() async {
+    if (!(await connectToSpotifyRemote())) {
       return false;
     }
 
@@ -231,7 +251,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
         AppValuesHelper.getInstance().getString(AppValuesKey.accessToken);
     QuackServiceResponse<GetPlaylistResponse> getPlaylistResponse =
         await QuackService.getInstance()
-            .getPlaylist(accessToken, QuackLocationType.beach);
+            .getPlaylist(accessToken, QuackLocationType.forest);
     if (!getPlaylistResponse.isSuccess) {
       return false;
     }

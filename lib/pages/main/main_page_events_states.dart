@@ -27,6 +27,7 @@ enum MainTouchEvent { goToNextTrack, goToPreviousTrack }
 ///
 //region Event
 
+/// Base event class
 abstract class MainPageEvent extends Equatable {
   const MainPageEvent();
 
@@ -34,6 +35,9 @@ abstract class MainPageEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+/// Event for when a button is pressed
+///
+/// [buttonEvent] tells which button is pressed
 class ButtonPressed extends MainPageEvent {
   final MainButtonEvent buttonEvent;
 
@@ -43,6 +47,9 @@ class ButtonPressed extends MainPageEvent {
   List<Object?> get props => [buttonEvent];
 }
 
+/// Event for touch gestures
+///
+/// [touchEvent] tells which touch gesture that has been performed
 class TouchEvent extends MainPageEvent {
   final MainTouchEvent touchEvent;
 
@@ -52,6 +59,9 @@ class TouchEvent extends MainPageEvent {
   List<Object?> get props => [touchEvent];
 }
 
+/// Event for when the player state changes
+///
+/// The [playerState] holds information about the current player state
 class SpotifyPlayerStateChanged extends MainPageEvent {
   final PlayerState? playerState;
 
@@ -61,6 +71,10 @@ class SpotifyPlayerStateChanged extends MainPageEvent {
   List<Object?> get props => [playerState];
 }
 
+/// Event for when a playlist is received
+///
+/// The [playList] holds information about the playlist and contains the
+/// tracks to be played
 class PlaylistReceived extends MainPageEvent {
   final QuackPlaylist? playList;
 
@@ -70,6 +84,9 @@ class PlaylistReceived extends MainPageEvent {
   List<Object?> get props => [playList];
 }
 
+/// Event for Play/Pause track in the playlist
+///
+/// The [quackTrack] is the track that the user wants to play/pause
 class PlayPauseTrack extends MainPageEvent {
   final QuackTrack quackTrack;
 
@@ -92,24 +109,25 @@ class MainPageState extends Equatable {
   bool? isRecommendationStarted;
   PlayerState? playerState;
   QuackPlaylist? playlist;
-  bool? hasJustSkipped;
+  bool? hasJustPerformedAction;
 
   MainPageState(
       {this.isPlaylistShown,
       this.playlist,
-      this.hasJustSkipped,
+      this.hasJustPerformedAction,
       this.isRecommendationStarted,
       this.playerState});
 
   MainPageState copyWith(
       {bool? isPlaylistShown,
       QuackPlaylist? playlist,
-      bool? hasJustSkipped,
+      bool? hasJustPerformedAction,
       bool? isRecommendationStarted,
       PlayerState? playerState}) {
     return MainPageState(
         playlist: playlist ?? this.playlist,
-        hasJustSkipped: hasJustSkipped ?? this.hasJustSkipped,
+        hasJustPerformedAction:
+            hasJustPerformedAction ?? this.hasJustPerformedAction,
         isPlaylistShown: isPlaylistShown ?? this.isPlaylistShown,
         playerState: playerState ?? this.playerState,
         isRecommendationStarted:
@@ -122,7 +140,7 @@ class MainPageState extends Equatable {
         isRecommendationStarted,
         playlist,
         playerState,
-        hasJustSkipped
+        hasJustPerformedAction
       ];
 }
 

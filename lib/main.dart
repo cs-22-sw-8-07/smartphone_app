@@ -17,8 +17,6 @@ void main() async {
   await dotenv.load();
   WidgetsFlutterBinding.ensureInitialized();
   await AppValuesHelper.getInstance().init();
-  //WASPService.init(WASPService(url: "https://192.168.0.108:5001"));
-  //WASPService.init(MockWASPService());
   SpotifyService.init(SpotifyService());
   QuackService.init(MockQuackService());
 
@@ -54,6 +52,9 @@ class MyApp extends StatelessWidget {
         .toList();
 
     String? token = AppValuesHelper.getInstance().getString(AppValuesKey.accessToken);
+    if (token == "") {
+      token = null;
+    }
 
     return MaterialApp(
         builder: (context, child) {

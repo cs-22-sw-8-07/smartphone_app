@@ -23,7 +23,8 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
   late BuildContext context;
   late PermissionHelper permissionHelper;
   static const List<PermissionWithService> permissions = [
-    Permission.locationWhenInUse
+    Permission.locationWhenInUse,
+    Permission.locationAlways,
   ];
 
   //endregion
@@ -66,12 +67,25 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
           GeneralUtil.goToPage(context, const MainPage());
           break;
         case LoginButtonEvent.goToSettings:
-          // TODO: Handle this case.
-
+          await permissionHelper.openAppSettings();
           break;
       }
     });
-    on<Resumed>((event, emit) {});
+    on<Resumed>((event, emit) async {
+      for (var permission in permissions) {
+        var status = await permissionHelper.getStatus(permission);
+        if (!status.isGranted) {
+          add(const PermissionStateChanged(
+              permissionState: PermissionState.denied));
+          return;
+        }
+      }
+      add(const PermissionStateChanged(
+          permissionState: PermissionState.granted));
+    });
+    on<PermissionStateChanged>((event, emit) {
+      emit(state.copyWith(permissionState: event.permissionState));
+    });
   }
 
 //endregion
@@ -82,7 +96,6 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
 //region Methods
 
   Future<PermissionState> getPermissions() async {
-    return PermissionState.granted;
     if (Platform.isIOS) {
       return PermissionState.granted;
     }

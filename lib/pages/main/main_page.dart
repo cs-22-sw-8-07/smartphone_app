@@ -8,6 +8,7 @@ import 'package:smartphone_app/values/colors.dart' as custom_colors;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:smartphone_app/webservices/quack/models/quack_classes.dart';
 import 'package:smartphone_app/widgets/custom_label.dart';
+import 'package:smartphone_app/widgets/custom_list_tile.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 import 'package:spotify_sdk/models/track.dart';
 
@@ -379,7 +380,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       MainPageState state, PlayerState? playerState) {
     Track? track = playerState!.track;
     if (track == null) {
-      // TODO: Add design for when no track is being played
+      // Can add design for when no track is being played
       return Container();
     }
 
@@ -443,6 +444,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                           CustomLabel(
                             height: values.mainPageOverlayHeight / 2,
                             fontSize: 14,
+                            maxLines: 1,
+                            softWrap: false,
                             fontWeight: FontWeight.w900,
                             title: quackTrack.name,
                             textColor: Colors.white,
@@ -455,6 +458,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                             alignmentGeometry: Alignment.topLeft,
                             height: values.mainPageOverlayHeight / 2,
                             fontSize: 14,
+                            maxLines: 1,
+                            softWrap: false,
                             margin: const EdgeInsets.all(0),
                             padding: const EdgeInsets.only(
                                 left: 0, top: 5, bottom: 0, right: 0),
@@ -497,86 +502,95 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     QuackTrack? currentlyPlayingTrack =
         QuackTrack.trackToQuackTrack(playerState!.track);
 
-    return Container(
-      decoration: BoxDecoration(
-          color: custom_colors.black,
-          border: Border.all(width: 0, color: custom_colors.black)),
-      height: values.mainPageOverlayHeight,
-      child: Row(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-                color: Colors.transparent,
-                border: Border.all(width: 0, color: custom_colors.black)),
-            margin: const EdgeInsets.all(0),
-            width: values.mainPageOverlayHeight,
-            padding: const EdgeInsets.all(10),
-            child: ClipRRect(
-                borderRadius: const BorderRadius.all(Radius.circular(5)),
-                child: Image.network(quackTrack!.imageUrl!)), //
-          ),
-          Expanded(
-              child: ClipRect(
-                  child: Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+    return CustomListTile(
+        pressedBackground: custom_colors.transparentGradient,
+        defaultBackground: custom_colors.transparentGradient,
+        widget: Container(
+          decoration: BoxDecoration(
+              color: custom_colors.black,
+              border: Border.all(width: 0, color: custom_colors.black)),
+          height: values.mainPageOverlayHeight,
+          child: Row(
             children: [
-              CustomLabel(
-                height: values.mainPageOverlayHeight / 2,
-                fontSize: 14,
-                fontWeight: FontWeight.w900,
-                title: quackTrack.name,
-                textColor: quackTrack == currentlyPlayingTrack
-                    ? custom_colors.lightBlue
-                    : Colors.white,
-                alignmentGeometry: Alignment.bottomLeft,
-                padding:
-                    const EdgeInsets.only(left: 0, top: 0, bottom: 5, right: 0),
+              Container(
+                decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    border: Border.all(width: 0, color: custom_colors.black)),
                 margin: const EdgeInsets.all(0),
+                width: values.mainPageOverlayHeight,
+                padding: const EdgeInsets.all(10),
+                child: ClipRRect(
+                    borderRadius: const BorderRadius.all(Radius.circular(5)),
+                    child: Image.network(quackTrack!.imageUrl!)), //
               ),
-              CustomLabel(
-                alignmentGeometry: Alignment.topLeft,
-                height: values.mainPageOverlayHeight / 2,
-                fontSize: 14,
-                margin: const EdgeInsets.all(0),
-                padding:
-                    const EdgeInsets.only(left: 0, top: 5, bottom: 0, right: 0),
-                title: quackTrack.artist,
-                textColor: custom_colors.darkGrey,
-              )
+              Expanded(
+                  child: ClipRect(
+                      child: Column(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  CustomLabel(
+                    height: values.mainPageOverlayHeight / 2,
+                    fontSize: 14,
+                    maxLines: 1,
+                    softWrap: false,
+                    fontWeight: FontWeight.w900,
+                    title: quackTrack.name,
+                    textColor: quackTrack == currentlyPlayingTrack
+                        ? custom_colors.lightBlue
+                        : Colors.white,
+                    alignmentGeometry: Alignment.bottomLeft,
+                    padding: const EdgeInsets.only(
+                        left: 0, top: 0, bottom: 5, right: 10),
+                    margin: const EdgeInsets.all(0),
+                  ),
+                  CustomLabel(
+                    alignmentGeometry: Alignment.topLeft,
+                    height: values.mainPageOverlayHeight / 2,
+                    fontSize: 14,
+                    maxLines: 1,
+                    softWrap: false,
+                    margin: const EdgeInsets.all(0),
+                    padding: const EdgeInsets.only(
+                        left: 0, top: 5, bottom: 0, right: 10),
+                    title: quackTrack.artist,
+                    textColor: custom_colors.darkGrey,
+                  )
+                ],
+              ))),
+              if (currentlyPlayingTrack == quackTrack)
+                Container(
+                  decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      border: Border.all(width: 0, color: custom_colors.black)),
+                  width: values.mainPageOverlayHeight,
+                  padding: const EdgeInsets.all(10),
+                  child: Center(
+                      child: CustomButton(
+                          fontWeight: FontWeight.bold,
+                          height: 50,
+                          width: 50,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(25)),
+                          icon: Icon(
+                            playerState.isPaused
+                                ? Icons.play_arrow
+                                : Icons.pause,
+                            color: Colors.white,
+                            size: values.mainPageOverlayHeight / 2,
+                          ),
+                          onPressed: () => bloc.add(const ButtonPressed(
+                              buttonEvent: MainButtonEvent.resumePausePlayer)),
+                          textColor: custom_colors.black,
+                          pressedBackground:
+                              custom_colors.backButtonGradientPressedDefault,
+                          defaultBackground:
+                              custom_colors.transparentGradient)),
+                )
             ],
-          ))),
-          Container(
-            decoration: BoxDecoration(
-                color: Colors.transparent,
-                border: Border.all(width: 0, color: custom_colors.black)),
-            width: values.mainPageOverlayHeight,
-            padding: const EdgeInsets.all(10),
-            child: Center(
-                child: CustomButton(
-                    fontWeight: FontWeight.bold,
-                    height: 50,
-                    width: 50,
-                    borderRadius: const BorderRadius.all(Radius.circular(25)),
-                    icon: Icon(
-                      quackTrack != currentlyPlayingTrack
-                          ? Icons.play_arrow
-                          : (playerState.isPaused
-                              ? Icons.play_arrow
-                              : Icons.pause),
-                      color: Colors.white,
-                      size: values.mainPageOverlayHeight / 2,
-                    ),
-                    onPressed: () =>
-                        bloc.add(PlayPauseTrack(quackTrack: quackTrack)),
-                    textColor: custom_colors.black,
-                    pressedBackground:
-                        custom_colors.backButtonGradientPressedDefault,
-                    defaultBackground: custom_colors.transparentGradient)),
           ),
-        ],
-      ),
-    );
+        ),
+        onPressed: () => bloc.add(PlayPauseTrack(quackTrack: quackTrack)));
   }
 
   Widget _getPlaylist(MainPageState state, PlayerState? playerState) {

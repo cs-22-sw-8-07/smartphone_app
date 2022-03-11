@@ -51,7 +51,8 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    bloc = LoginPageBloc(context: context, permissionHelper: PermissionHelper());
+    bloc =
+        LoginPageBloc(context: context, permissionHelper: PermissionHelper());
 
     return WillPopScope(
         onWillPop: () async {
@@ -65,8 +66,8 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                   create: (_) => bloc!,
                   child: Container(
                       color: custom_colors.appSafeAreaColor,
-                      child: SafeArea(child:
-                      Scaffold(body: BlocBuilder<LoginPageBloc, LoginPageState>(
+                      child: SafeArea(child: Scaffold(
+                          body: BlocBuilder<LoginPageBloc, LoginPageState>(
                         builder: (context, state) {
                           return _getBody(context, bloc!, state, snapshot);
                         },
@@ -74,11 +75,12 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
             }));
   }
 
-  Widget _getBody(BuildContext context, LoginPageBloc bloc, LoginPageState state,
-      AsyncSnapshot<PermissionState> snapshot) {
+  Widget _getBody(BuildContext context, LoginPageBloc bloc,
+      LoginPageState state, AsyncSnapshot<PermissionState> snapshot) {
     /// Content shown while asking then user for OS permissions like
     /// accessing camera, location etc.
-    if (snapshot.connectionState != ConnectionState.done) {
+    if (snapshot.connectionState != ConnectionState.done ||
+        snapshot.data == null) {
       return Container(
         color: Colors.white,
       );
@@ -98,15 +100,17 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                   .please_go_to_settings_and_give_the_app_all_the_necessary_permissions,
             ),
             CustomButton(
+              defaultBackground: custom_colors.blackGradient,
+              pressedBackground: custom_colors.blackPressedGradient,
               onPressed: () => bloc.add(const ButtonPressed(
                   buttonEvent: LoginButtonEvent.goToSettings)),
               text: AppLocalizations.of(context)!.go_to_settings,
+              borderRadius: const BorderRadius.all(Radius.circular(27.5)),
+              textColor: Colors.white,
               fontWeight: FontWeight.bold,
               fontSize: 20,
               margin: const EdgeInsets.only(
-                  left: values.padding,
-                  right: values.padding,
-                  top: values.padding),
+                  left: 30, right: 30, top: values.padding),
             )
           ],
         ),
@@ -114,10 +118,9 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     }
 
     return Container(
-        decoration: const BoxDecoration(
-            gradient: custom_colors.loginBackground),
-        child: _getContent(context, bloc),
-        );
+      decoration: const BoxDecoration(gradient: custom_colors.loginBackground),
+      child: _getContent(context, bloc),
+    );
   }
 
   Widget _getContent(BuildContext context, LoginPageBloc bloc) {
