@@ -1,9 +1,10 @@
 
 
-import 'package:smartphone_app/webservices/spotify/models/spotify_classes.dart';
-import 'package:smartphone_app/webservices/spotify/service/spotify_service.dart';
 import 'package:spotify_sdk/models/connection_status.dart';
 import 'package:spotify_sdk/models/player_state.dart';
+
+import '../models/spotify_classes.dart';
+import '../service/spotify_service.dart';
 
 class ISpotifyFunctions {
 

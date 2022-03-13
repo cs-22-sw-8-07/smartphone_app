@@ -6,12 +6,12 @@ import 'package:smartphone_app/helpers/app_values_helper.dart';
 import 'package:smartphone_app/values/values.dart' as values;
 import 'package:smartphone_app/values/colors.dart' as custom_colors;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:smartphone_app/webservices/quack/models/quack_classes.dart';
 import 'package:smartphone_app/widgets/custom_label.dart';
 import 'package:smartphone_app/widgets/custom_list_tile.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 import 'package:spotify_sdk/models/track.dart';
 
+import '../../services/webservices/quack/models/quack_classes.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_drawer_tile.dart';
@@ -59,7 +59,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         vsync: this, duration: const Duration(milliseconds: 200));
     startStopRecommendationController =
         AnimationController(vsync: this, duration: const Duration(seconds: 2));
-    //startStopRecommendationController.repeat(reverse: true);
 
     pulseAnimation =
         Tween(begin: 0.0, end: 10.0).animate(startStopRecommendationController);
@@ -118,38 +117,31 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   }
 
   Widget _getContent(MainPageBloc bloc) {
-    return StreamBuilder<PlayerState>(
-        stream: bloc.getPlayerState(),
-        builder: (context, snapshot) {
-          PlayerState? playerState = snapshot.data;
-          bloc.add(SpotifyPlayerStateChanged(playerState: snapshot.data));
-
-          return BlocBuilder<MainPageBloc, MainPageState>(
-            builder: (context, state) {
-              return Stack(
-                children: [
-                  Container(
-                      decoration: const BoxDecoration(
-                          image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: ExactAssetImage(
-                                values.beachBackground,
-                              ))),
-                      child: ClipRect(
-                        child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                            child: Container(
-                              color: Colors.white.withOpacity(0.4),
-                              child: _getMainContent(bloc, state),
-                            )),
+    return BlocBuilder<MainPageBloc, MainPageState>(
+      builder: (context, state) {
+        return Stack(
+          children: [
+            Container(
+                decoration: const BoxDecoration(
+                    image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: ExactAssetImage(
+                          values.beachBackground,
+                        ))),
+                child: ClipRect(
+                  child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                      child: Container(
+                        color: Colors.white.withOpacity(0.4),
+                        child: _getMainContent(bloc, state),
                       )),
-                  if (playerState != null)
-                    _getOverlayContent(bloc, state, playerState),
-                ],
-              );
-            },
-          );
-        });
+                )),
+            if (state.playerState != null)
+              _getOverlayContent(bloc, state, state.playerState),
+          ],
+        );
+      },
+    );
   }
 
   Widget _getDrawer(MainPageBloc bloc) {
@@ -332,7 +324,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       color: Colors.white,
                       size: 40,
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       bloc.add(const ButtonPressed(
                           buttonEvent:
                               MainButtonEvent.startStopRecommendation));

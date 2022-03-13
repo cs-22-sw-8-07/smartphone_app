@@ -1,14 +1,27 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
 import 'package:smartphone_app/pages/login/login_page.dart';
 import 'package:smartphone_app/pages/main/main_page_events_states.dart';
-import 'package:smartphone_app/webservices/quack/models/quack_classes.dart';
-import 'package:smartphone_app/webservices/quack/service/quack_service.dart';
-import 'package:smartphone_app/webservices/spotify/service/spotify_service.dart';
+import 'package:smartphone_app/services/webservices/foursquare/service/foursquare_service.dart';
 import 'package:spotify_sdk/models/connection_status.dart';
 import 'package:spotify_sdk/models/player_state.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+// ignore: unnecessary_import, implementation_imports
+import 'package:geolocator_android/src/types/foreground_settings.dart';
+
+import '../../helpers/position_helper/mock_position_helper.dart';
+import '../../helpers/position_helper/position_helper.dart';
+import '../../services/webservices/foursquare/models/foursquare_classes.dart';
+import '../../services/webservices/quack/models/quack_classes.dart';
+import '../../services/webservices/quack/service/quack_service.dart';
+import '../../services/webservices/spotify/service/spotify_service.dart';
 import '../../utilities/general_util.dart';
 
 class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
@@ -18,6 +31,8 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
   //region Variables
 
   late BuildContext context;
+  PositionHelper? positionHelper;
+  late StreamSubscription<Position?> positionStreamSubscription;
 
   //endregion
 
@@ -31,7 +46,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
             hasJustPerformedAction: false,
             isPlaylistShown: false,
             isRecommendationStarted: false)) {
-    // ButtonPressed
+    /// ButtonPressed
     on<ButtonPressed>((event, emit) async {
       switch (event.buttonEvent) {
         case MainButtonEvent.startStopRecommendation:
@@ -67,7 +82,8 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
           break;
       }
     });
-    // SpotifyPlayerStateChanged
+
+    /// SpotifyPlayerStateChanged
     on<SpotifyPlayerStateChanged>(((event, emit) {
       if (state.playerState == null || event.playerState == null) {
         emit(state.copyWith(playerState: event.playerState));
@@ -97,7 +113,8 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
         emit(state.copyWith(playerState: event.playerState));
       }
     }));
-    // TouchEvent
+
+    /// TouchEvent
     on<TouchEvent>((event, emit) async {
       QuackTrack? currentlyPlayingTrack =
           QuackTrack.trackToQuackTrack(state.playerState!.track!);
@@ -156,11 +173,13 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
         emit(state.copyWith(hasJustPerformedAction: true));
       }
     });
-    // PlaylistReceived
+
+    /// PlaylistReceived
     on<PlaylistReceived>((event, emit) {
       emit(state.copyWith(playlist: event.playList));
     });
-    // PlayPauseTrack
+
+    /// PlayPauseTrack
     on<PlayPauseTrack>((event, emit) async {
       QuackTrack? currentlyPlayingTrack =
           QuackTrack.trackToQuackTrack(state.playerState!.track!);
@@ -178,6 +197,71 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       }
     });
 
+    subscribeToConnectionStatus();
+    subscribeToPosition();
+  }
+
+//endregion
+
+  ///
+  /// OVERRIDE METHODS
+  ///
+  //Region Override methods
+
+  @override
+  Future<void> close() {
+    try {
+      positionStreamSubscription.cancel();
+      if (positionHelper != null) {
+        positionHelper!.dispose();
+      }
+      // ignore: empty_catches
+    } on Exception {}
+    return super.close();
+  }
+
+  //endregion
+
+  ///
+  /// METHODS
+  ///
+//region Methods
+
+  void subscribeToPosition() async {
+    positionHelper = MockPositionHelper(
+        androidSettings: AndroidSettings(
+            accuracy: LocationAccuracy.high,
+            distanceFilter: 0,
+            forceLocationManager: true,
+            intervalDuration: const Duration(seconds: 10),
+            //(Optional) Set foreground notification config to keep the app alive
+            //when going to the background
+            foregroundNotificationConfig: ForegroundNotificationConfig(
+              notificationIcon: const AndroidResource(
+                  name: "notification_icon", defType: "drawable"),
+              notificationText:
+                  AppLocalizations.of(context)!.getting_location_in_background,
+              notificationTitle: AppLocalizations.of(context)!.app_name,
+              enableWakeLock: true,
+            )),
+        appleSettings: AppleSettings(
+          accuracy: LocationAccuracy.high,
+          activityType: ActivityType.fitness,
+          distanceFilter: 100,
+          pauseLocationUpdatesAutomatically: true,
+          // Only set to true if our app will be started up in the background.
+          showBackgroundLocationIndicator: false,
+        ));
+
+    positionStreamSubscription =
+        positionHelper!.getPositionStream().listen((position) {
+      if (kDebugMode) {
+        print(position != null ? "Got position" : "Got no position");
+      }
+    });
+  }
+
+  void subscribeToConnectionStatus() {
     SpotifySdkResponseWithResult<Stream<ConnectionStatus>>
         subscribeConnectionStatus =
         SpotifyService.getInstance().subscribeConnectionStatus();
@@ -185,18 +269,25 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     Stream<ConnectionStatus>? connectionStatusStream =
         subscribeConnectionStatus.resultType;
     connectionStatusStream!.listen((connectionStatus) async {
-      if (!connectionStatus.connected) {
+      if (kDebugMode) {
+        print("Spotify connected: " + connectionStatus.connected.toString());
+      }
+      if (connectionStatus.connected) {
+        SpotifySdkResponseWithResult<Stream<PlayerState>> subscribePlayerState =
+            SpotifyService.getInstance().subscribePlayerState();
+
+        if (!subscribePlayerState.isSuccess) {
+          return;
+        }
+
+        subscribePlayerState.resultType!.listen((playerState) {
+          add(SpotifyPlayerStateChanged(playerState: playerState));
+        });
+      } else {
         await connectToSpotifyRemote();
       }
     });
   }
-
-//endregion
-
-  ///
-  /// METHODS
-  ///
-//region Methods
 
   Future<SpotifySdkResponse> playNextTrack(int index) async {
     QuackTrack? nextTrack;
@@ -258,6 +349,12 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
     // Call event
     add(PlaylistReceived(playList: getPlaylistResponse.quackResponse!.result));
+
+    //Position? position = await positionHelper!.getLastKnownLocation();
+
+    /*FoursquareServiceResponse<GetNearbyPlacesResponse> foursquareResponse =
+        await FoursquareService.getInstance().getNearbyPlaces(
+            latitude: 57.01784385722257, longitude: 9.99038585955572);*/
 
     return true;
   }

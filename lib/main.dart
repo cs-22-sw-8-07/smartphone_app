@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:smartphone_app/pages/login/login_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:smartphone_app/pages/main/main_page.dart';
+import 'package:smartphone_app/services/webservices/foursquare/service/foursquare_service.dart';
+import 'package:smartphone_app/services/webservices/quack/service/mock_quack_service.dart';
+import 'package:smartphone_app/services/webservices/quack/service/quack_service.dart';
+import 'package:smartphone_app/services/webservices/spotify/service/spotify_service.dart';
 import 'package:smartphone_app/values/values.dart' as values;
-import 'package:smartphone_app/webservices/quack/service/mock_quack_service.dart';
-import 'package:smartphone_app/webservices/quack/service/quack_service.dart';
-import 'package:smartphone_app/webservices/spotify/service/spotify_service.dart';
 
 import 'helpers/app_values_helper.dart';
 
@@ -19,6 +19,7 @@ void main() async {
   await AppValuesHelper.getInstance().init();
   SpotifyService.init(SpotifyService());
   QuackService.init(MockQuackService());
+  FoursquareService.init(FoursquareService());
 
   // Pre-cache SVG
   await Future.wait([
@@ -51,7 +52,8 @@ class MyApp extends StatelessWidget {
         .expand((element) => element)
         .toList();
 
-    String? token = AppValuesHelper.getInstance().getString(AppValuesKey.accessToken);
+    String? token =
+        AppValuesHelper.getInstance().getString(AppValuesKey.accessToken);
     if (token == "") {
       token = null;
     }

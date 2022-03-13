@@ -38,5 +38,9 @@
   "log_off": "Log off",
   "@log_off": {
     "description": "Button text"
+  },
+  "getting_location_in_background": "Getting location in background",
+  "@getting_location_in_background": {
+    "description": "Notification text"
   }
 }

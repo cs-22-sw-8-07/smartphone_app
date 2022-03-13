@@ -1,6 +1,5 @@
-import 'package:smartphone_app/webservices/quack/interfaces/quack_functions.dart';
-
-import '../../../helpers/rest_helper.dart';
+import '../../../../helpers/rest_helper.dart';
+import '../interfaces/quack_functions.dart';
 import '../models/quack_classes.dart';
 
 class QuackServiceResponse<Response extends QuackResponse> {

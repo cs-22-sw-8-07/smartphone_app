@@ -11,7 +11,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../lib/main.dart';
 
 void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();

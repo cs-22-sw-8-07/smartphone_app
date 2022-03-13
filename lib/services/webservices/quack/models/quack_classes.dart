@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:spotify_sdk/models/track.dart';
 
-import '../../../localization/localization_helper.dart';
+import '../../../../localization/localization_helper.dart';
 
 part 'quack_classes.g.dart';
 

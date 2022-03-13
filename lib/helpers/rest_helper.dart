@@ -118,12 +118,12 @@ class RestHelper {
     };
   }
 
-  String _getParametersString(List<RestParameter>? parameters) {
+  String _getParametersString(Map<String, String>? parameters) {
     if (parameters == null || parameters.isEmpty) return "";
     var tempString = "";
-    for (var parameter in parameters) {
+    for (var entry in parameters.entries) {
       tempString += tempString.isEmpty ? "?" : "&";
-      tempString += "${parameter.name}=${parameter.value}";
+      tempString += "${entry.key}=${entry.value}";
     }
     return tempString;
   }
@@ -170,10 +170,13 @@ class RestHelper {
   //region Public methods
 
   Future<RestResponse> sendGetRequest(String function,
-      {List<RestParameter>? parameters, Map<String, String>? headers}) async {
+      {Map<String, String>? parameters, Map<String, String>? headers}) async {
+    // Construct url with optional parameters
     String urlComplete = url + function + _getParametersString(parameters);
 
+    // Get default headers
     var defaultHeaders = _getHeaders();
+    // Add additional headers
     if (headers != null) {
       defaultHeaders.addAll(headers);
     }
@@ -193,14 +196,25 @@ class RestHelper {
   }
 
   Future<RestResponse> sendPostRequest(String function,
-      {List<RestParameter>? parameters, required String? body}) async {
+      {Map<String, String>? parameters,
+      Map<String, String>? headers,
+      required String? body}) async {
+    // Construct url with optional parameters
     String urlComplete = url + function + _getParametersString(parameters);
+
+    // Get default headers
+    var defaultHeaders = _getHeaders();
+    // Add additional headers
+    if (headers != null) {
+      defaultHeaders.addAll(headers);
+    }
+
     // Make request
     var bodyString = body == null ? null : utf8.encode(body);
     return await _makeRequest(() async {
       return await _getIOClient()
           .post(Uri.parse(urlComplete),
-              headers: _getHeaders(),
+              headers: defaultHeaders,
               body: bodyString,
               encoding: Encoding.getByName("UTF-8"))
           .timeout(Duration(seconds: timeoutInSeconds))
@@ -212,14 +226,25 @@ class RestHelper {
   }
 
   Future<RestResponse> sendPutRequest(String function,
-      {List<RestParameter>? parameters, required String body}) async {
+      {Map<String, String>? parameters,
+      Map<String, String>? headers,
+      required String body}) async {
+    // Construct url with optional parameters
     String urlComplete = url + function + _getParametersString(parameters);
+
+    // Get default headers
+    var defaultHeaders = _getHeaders();
+    // Add additional headers
+    if (headers != null) {
+      defaultHeaders.addAll(headers);
+    }
+
     // Make request
     var bodyString = utf8.encode(body);
     return await _makeRequest(() async {
       return await _getIOClient()
           .put(Uri.parse(urlComplete),
-              headers: _getHeaders(),
+              headers: defaultHeaders,
               body: bodyString,
               encoding: Encoding.getByName("UTF-8"))
           .timeout(Duration(seconds: timeoutInSeconds))
@@ -231,14 +256,24 @@ class RestHelper {
   }
 
   Future<RestResponse> sendDeleteRequest(String function,
-      {List<RestParameter>? parameters, required String? body}) async {
+      {Map<String, String>? parameters,
+      Map<String, String>? headers,
+      required String? body}) async {
     String urlComplete = url + function + _getParametersString(parameters);
+
+    // Get default headers
+    var defaultHeaders = _getHeaders();
+    // Add additional headers
+    if (headers != null) {
+      defaultHeaders.addAll(headers);
+    }
+
     // Make request
     var bodyString = body == null ? null : utf8.encode(body);
     return await _makeRequest(() async {
       return await _getIOClient()
           .delete(Uri.parse(urlComplete),
-              headers: _getHeaders(),
+              headers: defaultHeaders,
               body: bodyString,
               encoding: Encoding.getByName("UTF-8"))
           .timeout(Duration(seconds: timeoutInSeconds))
