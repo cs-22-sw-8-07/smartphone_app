@@ -18,14 +18,32 @@ import '../../widgets/custom_drawer_tile.dart';
 import 'main_page_bloc.dart';
 import 'main_page_events_states.dart';
 
-class MainPage extends StatefulWidget {
-  const MainPage({Key? key}) : super(key: key);
+class MainPage2 extends StatefulWidget {
+  const MainPage2({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
+class RoundShape extends CustomClipper<Path> {
+  @override
+  getClip(Size size) {
+    double height = size.height;
+    double width = size.width;
+    double curveHeight = size.height / 2;
+    var p = Path();
+    p.lineTo(0, height - curveHeight);
+    p.quadraticBezierTo(width / 2, height, width, height - curveHeight);
+    p.lineTo(width, 0);
+    p.close();
+    return p;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper oldClipper) => true;
+}
+
+class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
   ///
   /// VARIABLES
   ///
@@ -83,11 +101,13 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     bloc = MainPageBloc(context: context);
 
     var availableHeight = MediaQuery.of(context).size.height -
-        56 -
+        values.actionBarHeight -
         MediaQuery.of(context).padding.top -
         MediaQuery.of(context).padding.bottom;
 
-    playlistHeight = availableHeight - 55 - 100;
+    playlistHeight = availableHeight -
+        values.mainPageOverlayButtonHeight -
+        values.mainPageOverlayTopMargin;
 
     playlistSizeAnimation ??=
         Tween<double>(begin: values.mainPageOverlayHeight, end: playlistHeight)
@@ -121,21 +141,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       builder: (context, state) {
         return Stack(
           children: [
-            Container(
-                decoration: const BoxDecoration(
-                    image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: ExactAssetImage(
-                          values.beachBackground,
-                        ))),
-                child: ClipRect(
-                  child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                      child: Container(
-                        color: Colors.white.withOpacity(0.4),
-                        child: _getMainContent(bloc, state),
-                      )),
-                )),
+            _getMainContent(bloc, state),
             if (state.playerState != null)
               _getOverlayContent(bloc, state, state.playerState),
           ],
@@ -153,8 +159,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             padding: EdgeInsets.zero,
             children: [
               Container(
-                decoration:
-                    const BoxDecoration(gradient: custom_colors.blackGradient),
+                decoration: const BoxDecoration(
+                    gradient: custom_colors.appButtonGradient),
                 child: Column(
                   children: [
                     Row(children: [
@@ -180,14 +186,14 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                 .getString(AppValuesKey.displayName))),
                     const Image(
                         fit: BoxFit.fitWidth,
-                        image: AssetImage("assets/locations.png"))
+                        image: AssetImage(values.locationShadowImage))
                   ],
                 ),
               ),
               CustomDrawerTile(
                 icon: const Icon(
                   Icons.list_outlined,
-                  color: Colors.black,
+                  color: custom_colors.darkBlue,
                   size: 30,
                 ),
                 onPressed: () {
@@ -200,7 +206,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               CustomDrawerTile(
                 icon: const Icon(
                   Icons.settings_outlined,
-                  color: Colors.black,
+                  color: custom_colors.darkBlue,
                   size: 30,
                 ),
                 onPressed: () {
@@ -212,7 +218,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               ),
               CustomDrawerTile(
                 icon: const Icon(Icons.logout_outlined,
-                    color: Colors.black, size: 30),
+                    color: custom_colors.darkBlue, size: 30),
                 text: AppLocalizations.of(context)!.log_off,
                 onPressed: () async {
                   Navigator.pop(context);
@@ -235,34 +241,36 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        CustomButton(
-            fontWeight: FontWeight.bold,
-            height: 30,
-            icon: Icon(
-              state.isPlaylistShown! ? Icons.expand_more : Icons.expand_less,
-              color: Colors.white,
-              size: 25,
-            ),
-            onPressed: () {
-              bloc.add(const ButtonPressed(
-                  buttonEvent: MainButtonEvent.resizePlaylist));
-              bloc.state.isPlaylistShown!
-                  ? playlistAnimationController.reverse()
-                  : playlistAnimationController.forward();
-            },
-            borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-            margin: const EdgeInsets.all(0),
-            textColor: custom_colors.black,
-            pressedBackground: custom_colors.blackGradient,
-            defaultBackground: custom_colors.blackGradient),
+        if (state.playlist != null)
+          CustomButton(
+              fontWeight: FontWeight.bold,
+              height: values.mainPageOverlayButtonHeight,
+              icon: Icon(
+                state.isPlaylistShown! ? Icons.expand_more : Icons.expand_less,
+                color: Colors.white,
+                size: 25,
+              ),
+              onPressed: () {
+                bloc.add(const ButtonPressed(
+                    buttonEvent: MainButtonEvent.resizePlaylist));
+                bloc.state.isPlaylistShown!
+                    ? playlistAnimationController.reverse()
+                    : playlistAnimationController.forward();
+              },
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+              margin: const EdgeInsets.all(0),
+              textColor: custom_colors.black,
+              pressedBackground: custom_colors.appButtonPressedGradient,
+              defaultBackground: custom_colors.appButtonGradient),
         AnimatedBuilder(
             animation: playlistAnimationController,
             builder: (context, _) {
               return Container(
                 decoration: BoxDecoration(
-                    color: custom_colors.black,
-                    border: Border.all(color: custom_colors.black, width: 0)),
+                    color: custom_colors.darkBlue,
+                    border:
+                        Border.all(color: custom_colors.darkBlue, width: 0)),
                 height: playlistSizeAnimation!.value,
                 child: AnimatedSwitcher(
                   child: overlayContent,
@@ -276,39 +284,91 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   Widget _getMainContent(MainPageBloc bloc, MainPageState state) {
     return Container(
-        margin:
+        decoration:
+            const BoxDecoration(gradient: custom_colors.mainPageGradient),
+        padding:
             const EdgeInsets.only(bottom: values.mainPageOverlayHeight + 30),
         child: Column(
           children: [
             CustomAppBar(
               title: AppLocalizations.of(context)!.app_name,
-              titleColor: Colors.black,
+              titleColor: Colors.white,
               background: custom_colors.appBarBackground,
               appBarLeftButton: AppBarLeftButton.menu,
               leftButtonPressed: () async =>
                   {_scaffoldKey.currentState!.openDrawer()},
             ),
-            const SizedBox(
-              height: 40,
-            ),
-            Container(
-              height: 40,
-              decoration: const BoxDecoration(
-                  color: custom_colors.black,
-                  borderRadius: BorderRadius.all(Radius.circular(20))),
-              child: CustomLabel(
-                isWrapping: true,
-                fontSize: 20,
-                title: "Beach",
-                fontWeight: FontWeight.bold,
-                textColor: Colors.white,
-                alignmentGeometry: Alignment.center,
-                padding: const EdgeInsets.only(
-                    left: 20, top: 7, bottom: 10, right: 20),
-                margin: const EdgeInsets.all(0),
+            ClipPath(
+              clipper: RoundShape(),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: custom_colors.darkBlue,
+                    border:
+                        Border.all(color: custom_colors.darkBlue, width: 0)),
+                height: 20,
               ),
             ),
-            Expanded(child: Container()),
+            const SizedBox(
+              height: 30,
+            ),
+            Expanded(
+                flex: 2,
+                child: Stack(
+                  fit: StackFit.loose,
+                  children: [
+                    Positioned.fill(
+                        child: Container(
+                            decoration: const BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(27.5))),
+                            padding: const EdgeInsets.only(top: 40),
+                            margin: const EdgeInsets.only(
+                                top: 0, left: 30, right: 30, bottom: 30),
+                            child: ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                    bottomLeft: Radius.circular(27.5),
+                                    bottomRight: Radius.circular(27.5)),
+                                child: Image.asset(
+                                  values.beachWindowBackground,
+                                  fit: BoxFit.cover,
+                                )))),
+                    Container(
+                      child: CustomLabel(
+                        textColor: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        alignmentGeometry: Alignment.center,
+                        margin: const EdgeInsets.all(0),
+                        padding: const EdgeInsets.all(0),
+                        title: 'Beach',
+                      ),
+                      height: 40,
+                      margin: const EdgeInsets.only(left: 30, right: 30),
+                      decoration: BoxDecoration(
+                          border: Border.all(color: custom_colors.darkBlue),
+                          color: custom_colors.darkBlue,
+                          borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(27.5),
+                              topRight: Radius.circular(27.5))),
+                    ),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: CustomButton(
+                          margin: const EdgeInsets.only(bottom: 40),
+                          width: 40,
+                          height: 40,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(40 / 2)),
+                          icon: const Icon(
+                            Icons.lock_outline,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {},
+                          pressedBackground:
+                              custom_colors.appButtonPressedGradient,
+                          defaultBackground: custom_colors.appButtonGradient),
+                    )
+                  ],
+                )),
             AnimatedBuilder(
               animation: startStopRecommendationController,
               builder: (context, _) {
@@ -339,20 +399,20 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         color: custom_colors.blue,
                         blurRadius: pulseAnimation!.value,
                         spreadRadius: pulseAnimation!.value),
-                    pressedBackground: custom_colors.blackPressedGradient,
-                    defaultBackground: custom_colors.blackGradient);
+                    pressedBackground: custom_colors.appButtonPressedGradient,
+                    defaultBackground: custom_colors.appButtonGradient);
               },
             ),
             CustomLabel(
               height: 40,
               fontSize: 16,
               title: "Preference profile",
-              textColor: Colors.black,
-              fontWeight: FontWeight.w600,
+              textColor: custom_colors.darkBlue,
+              fontWeight: FontWeight.w700,
               alignmentGeometry: Alignment.center,
               padding: const EdgeInsets.only(
                   left: 30, top: 10, bottom: 0, right: 30),
-              margin: const EdgeInsets.only(top: 30, bottom: 10),
+              margin: const EdgeInsets.only(top: 10, bottom: 10),
             ),
             CustomButton(
                 fontWeight: FontWeight.w900,
@@ -361,8 +421,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 text: "None selected",
                 onPressed: () {},
                 textColor: Colors.white,
-                pressedBackground: custom_colors.blackPressedGradient,
-                defaultBackground: custom_colors.blackGradient),
+                pressedBackground: custom_colors.appButtonPressedGradient,
+                defaultBackground: custom_colors.appButtonGradient),
             Expanded(child: Container()),
           ],
         ));
@@ -380,7 +440,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
     return Container(
       decoration: BoxDecoration(
-          color: custom_colors.black,
+          color: custom_colors.darkBlue,
           border: Border.all(width: 0, color: custom_colors.darkBlue)),
       height: values.mainPageOverlayHeight,
       child: Row(
@@ -471,7 +531,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     fontWeight: FontWeight.bold,
                     height: 50,
                     width: 50,
-                    border: Border.all(color: custom_colors.darkBlue, width: 0),
                     borderRadius: const BorderRadius.all(Radius.circular(25)),
                     icon: Icon(
                       playerState.isPaused ? Icons.play_arrow : Icons.pause,
@@ -500,15 +559,16 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         defaultBackground: custom_colors.transparentGradient,
         widget: Container(
           decoration: BoxDecoration(
-              color: custom_colors.black,
-              border: Border.all(width: 0, color: custom_colors.black)),
+              color: custom_colors.darkBlue,
+              border: Border.all(width: 0, color: custom_colors.darkBlue)),
           height: values.mainPageOverlayHeight,
           child: Row(
             children: [
               Container(
                 decoration: BoxDecoration(
                     color: Colors.transparent,
-                    border: Border.all(width: 0, color: custom_colors.black)),
+                    border:
+                        Border.all(width: 0, color: custom_colors.darkBlue)),
                 margin: const EdgeInsets.all(0),
                 width: values.mainPageOverlayHeight,
                 padding: const EdgeInsets.all(10),

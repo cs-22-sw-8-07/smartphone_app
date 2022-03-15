@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'foursquare_classes.g.dart';
@@ -26,7 +27,7 @@ class GetNearbyPlacesResponse extends FoursquareResponse {
 }
 
 @JsonSerializable()
-class FoursquarePlace {
+class FoursquarePlace extends Equatable {
   @JsonKey(name: "fsq_id")
   String id;
   List<FoursquareCategory>? categories;
@@ -47,6 +48,9 @@ class FoursquarePlace {
       _$FoursquarePlaceFromJson(json);
 
   Map<String, dynamic> toJson() => _$FoursquarePlaceToJson(this);
+
+  @override
+  List<Object?> get props => [id];
 }
 
 @JsonSerializable()

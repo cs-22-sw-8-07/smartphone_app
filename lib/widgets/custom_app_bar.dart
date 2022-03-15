@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smartphone_app/values/colors.dart' as custom_colors;
+import 'package:smartphone_app/values/values.dart' as values;
 
 import 'custom_button.dart';
 
@@ -78,7 +80,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               title,
               style: GoogleFonts.roboto(
                   textStyle: TextStyle(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w900,
                       fontSize: 20,
                       color: titleColor)),
             ),
@@ -86,18 +88,18 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           )),
           Row(
             children: [
-                CustomButton(
-                    height: preferredSize.height - 12,
-                    width: preferredSize.height - 12,
-                    margin: const EdgeInsets.only(left: 8),
-                    imagePadding: const EdgeInsets.all(10),
-                    showBorder: false,
-                    borderRadius: const BorderRadius.all(Radius.circular(22)),
-                    defaultBackground: custom_colors.transparentGradient,
-                    pressedBackground:
-                        custom_colors.backButtonGradientPressedDefault,
-                    icon: _getLeftButtonIcon(appBarLeftButton),
-                    onPressed: leftButtonPressed!),
+              CustomButton(
+                  height: preferredSize.height - 12,
+                  width: preferredSize.height - 12,
+                  margin: const EdgeInsets.only(left: 8),
+                  imagePadding: const EdgeInsets.all(10),
+                  showBorder: false,
+                  borderRadius: const BorderRadius.all(Radius.circular(22)),
+                  defaultBackground: custom_colors.transparentGradient,
+                  pressedBackground:
+                      custom_colors.backButtonGradientPressedDefault,
+                  icon: _getLeftButtonIcon(appBarLeftButton),
+                  onPressed: leftButtonPressed!),
               Expanded(child: Container()),
               if (onButton2Pressed != null)
                 CustomButton(
@@ -131,14 +133,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           )
         ],
       ),
-      decoration: BoxDecoration(gradient: background),
+      decoration: BoxDecoration(
+          gradient: background,
+          border: Border.all(color: custom_colors.darkBlue, width: 0)),
     );
   }
 
   Icon _getLeftButtonIcon(AppBarLeftButton appBarLeftButton) {
     switch (appBarLeftButton) {
       case AppBarLeftButton.menu:
-        return const Icon(Icons.menu, color: Colors.black);
+        return const Icon(Icons.menu, color: Colors.white);
       case AppBarLeftButton.back:
         return const Icon(Icons.arrow_back, color: Colors.black);
       case AppBarLeftButton.close:

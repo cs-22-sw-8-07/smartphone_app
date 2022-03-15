@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 const Color blue = Color(0xFF0067B0);
 const Color lightBlue = Color(0xFF00AEEF);
+const Color darkBlue = Color(0xFF3B3D4D);
 const Color orange_1 = Color(0xFFF58220);
 const Color orange_2 = Color(0xFFFFA500);
 const Color orange3 = Color(0xFFEB9800);
@@ -9,7 +10,10 @@ const Color transparent = Color(0x00000000);
 const Color transparentWhite = Color(0x20FFFFFF);
 const Color black = Color(0xFF202020);
 const Color black2 = Color(0xFF252525);
-const Color darkGrey = Color(0xFF808080);
+const Color darkGrey = Color(0xFFD0D0D0);
+const Color lightGrey = Color(0xFFF0F0F0);
+
+const Color sand = Color(0xFFc2b280);
 
 const Color appBarColor = Color(0xFF202020);
 const Color borderColor = Color(0xFFFFFFFF);
@@ -37,7 +41,7 @@ const LinearGradient loginBackground = LinearGradient(
     begin: Alignment(0.0, -1.0),
     end: Alignment(0.0, 1.0));
 const LinearGradient appBarBackground = LinearGradient(
-    colors: <Color>[Colors.transparent, Colors.transparent],
+    colors: <Color>[darkBlue, darkBlue],
     begin: Alignment(0.0, -1.0),
     end: Alignment(0.0, 1.0));
 
@@ -96,6 +100,22 @@ const Gradient blackGradient = LinearGradient(
     end: Alignment(0.0, 1.0));
 const Gradient blackPressedGradient = LinearGradient(
     colors: <Color>[black2, black2],
+    begin: Alignment(0.0, -1.0),
+    end: Alignment(0.0, 1.0));
+
+
+const Gradient appButtonGradient = LinearGradient(
+    colors: <Color>[darkBlue, darkBlue],
+    begin: Alignment(0.0, -1.0),
+    end: Alignment(0.0, 1.0));
+const Gradient appButtonPressedGradient = LinearGradient(
+    colors: <Color>[darkBlue, darkBlue],
+    begin: Alignment(0.0, -1.0),
+    end: Alignment(0.0, 1.0));
+
+
+const Gradient mainPageGradient = LinearGradient(
+    colors: <Color>[lightGrey, lightGrey],
     begin: Alignment(0.0, -1.0),
     end: Alignment(0.0, 1.0));
 

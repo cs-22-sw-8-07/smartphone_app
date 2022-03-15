@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smartphone_app/localization/local_app_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:smartphone_app/services/webservices/quack/models/quack_classes.dart';
 
 class LocalizationHelper {
   ///
@@ -27,7 +28,8 @@ class LocalizationHelper {
 
   Future<String?> getLocalizedResponseError(int errorNo) async {
     String? localizedResponseError;
-    AppLocalizations appLocalizations = await LocalAppLocalizations.getAppLocalizations();
+    AppLocalizations appLocalizations =
+        await LocalAppLocalizations.getAppLocalizations();
     switch (errorNo) {
       case 1:
         localizedResponseError = "This is an error";
@@ -35,6 +37,22 @@ class LocalizationHelper {
     }
 
     return localizedResponseError;
+  }
+
+  Future<String?> getLocalizedQuackLocationType(QuackLocationType qlt) async {
+    String? localizedQlt;
+    AppLocalizations appLocalizations =
+        await LocalAppLocalizations.getAppLocalizations();
+    switch (qlt) {
+      case QuackLocationType.forest:
+        localizedQlt = appLocalizations.recommendations;
+        break;
+      case QuackLocationType.beach:
+        localizedQlt = "Beach";
+        break;
+    }
+
+    return localizedQlt;
   }
 
 //endregion

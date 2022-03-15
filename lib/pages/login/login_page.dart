@@ -137,7 +137,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
         Container(
             margin: const EdgeInsets.only(bottom: 50, left: 5, right: 5),
             child: SvgPicture.asset(
-              values.appFeatureImage,
+              values.appFeatureImage2,
               fit: BoxFit.contain,
               height: 160,
             )),

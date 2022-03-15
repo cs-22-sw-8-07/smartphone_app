@@ -47,9 +47,10 @@ dependencies:
   fluttertoast: ^8.0.9
   json_annotation: ^4.4.0
   devicelocale: ^0.5.0
-  build_runner: ^2.1.7
+  build_runner: ^2.1.8
   geolocator: ^8.2.0
   json_serializable: ^6.1.5
+  flutter_native_splash: ^2.1.1
   spotify_sdk:
     git:
       url: git://github.com/brim-borium/spotify_sdk.git
@@ -66,6 +67,10 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^1.0.4
+
+flutter_native_splash:
+  color: '#F0F0F0'
+  image: assets/launcher_icon/android_launcher_icon.png
 
 flutter_icons:
   android: true

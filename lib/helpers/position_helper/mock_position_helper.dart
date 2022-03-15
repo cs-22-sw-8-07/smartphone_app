@@ -1,19 +1,22 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:geolocator_android/src/types/android_settings.dart';
-import 'package:geolocator_apple/src/types/apple_settings.dart';
 import 'package:smartphone_app/helpers/position_helper/position_helper.dart';
 
-class MockPositionHelper extends PositionHelper {
+import '../udp_helper.dart';
+import 'models/position_helper_classes.dart';
 
+class MockPositionHelper extends PositionHelper {
   ///
   /// VARIABLES
   ///
   //region Variables
 
-  bool runThread = true;
-  Timer? timer;
+  UdpHelper? _udpHelper;
+  String? _ipAddress;
+  StreamSubscription<String>? _streamSubscription;
 
   //endregion
 
@@ -22,9 +25,35 @@ class MockPositionHelper extends PositionHelper {
   ///
   //region Constructor
 
-  MockPositionHelper({required AndroidSettings androidSettings,
-    required AppleSettings appleSettings})
+  MockPositionHelper(
+      {required AndroidSettings androidSettings,
+      required AppleSettings appleSettings})
       : super(androidSettings: androidSettings, appleSettings: appleSettings);
+
+  //endregion
+
+  ///
+  /// METHODS
+  ///
+  //region Methods
+
+  Position? parseUdpPacket(String udpPacket) {
+    try {
+      MockLatLng mockLatLng = MockLatLng.fromJson(jsonDecode(udpPacket));
+
+      return Position(
+          longitude: mockLatLng.longitude!,
+          latitude: mockLatLng.latitude!,
+          timestamp: DateTime.now(),
+          accuracy: 0,
+          altitude: 0,
+          heading: 0,
+          speed: 0,
+          speedAccuracy: 0);
+    } on Exception {
+      return null;
+    }
+  }
 
   //endregion
 
@@ -35,24 +64,19 @@ class MockPositionHelper extends PositionHelper {
 
   @override
   void setupPositionStream() {
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      Position position = Position(longitude: 50.11111,
-          latitude: 9.999,
-          timestamp: DateTime.now(),
-          accuracy: 0,
-          altitude: 0,
-          heading: 0,
-          speed: 0,
-          speedAccuracy: 0);
-      positionStreamController.add(position);
+    _ipAddress = dotenv.env['MOCK_POSITION_SERVER_IP'].toString();
+    _udpHelper = UdpHelper(ipAddress: _ipAddress!, inPort: 2201);
+    _udpHelper!.start();
+
+    _streamSubscription = _udpHelper!.onDataReceived.listen((str) {
+      positionStreamController.add(parseUdpPacket(str));
     });
   }
 
   @override
   void dispose() {
-    runThread = false;
-    if (timer != null) {
-      timer!.cancel();
+    if (_streamSubscription != null) {
+      _streamSubscription!.cancel();
     }
   }
 

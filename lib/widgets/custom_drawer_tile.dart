@@ -84,7 +84,7 @@ class _CustomDrawerTileState extends State<CustomDrawerTile> {
                   child: AutoSizeText(
                 widget.text,
                 style: GoogleFonts.roboto(
-                    textStyle: textStyle, color: Colors.black),
+                    textStyle: textStyle, color: custom_colors.darkBlue),
                 minFontSize: 5,
               ))
             ],

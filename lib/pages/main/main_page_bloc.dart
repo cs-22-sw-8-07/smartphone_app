@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
 import 'package:smartphone_app/pages/login/login_page.dart';
@@ -119,7 +120,8 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       QuackTrack? currentlyPlayingTrack =
           QuackTrack.trackToQuackTrack(state.playerState!.track!);
 
-      if (state.playlist!.tracks!.contains(currentlyPlayingTrack)) {
+      if (state.playlist != null &&
+          state.playlist!.tracks!.contains(currentlyPlayingTrack)) {
         int index = state.playlist!.tracks!.indexOf(currentlyPlayingTrack!);
         switch (event.touchEvent) {
           case MainTouchEvent.goToNextTrack:
@@ -256,7 +258,11 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     positionStreamSubscription =
         positionHelper!.getPositionStream().listen((position) {
       if (kDebugMode) {
-        print(position != null ? "Got position" : "Got no position");
+        print(position != null
+            ? (position.latitude.toString().replaceAll(",", ".") +
+                ", " +
+                position.longitude.toString().replaceAll(",", "."))
+            : "Unknown");
       }
     });
   }
@@ -319,6 +325,19 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     }
   }
 
+  Future<void> getPlaylist() async {
+    var accessToken =
+    AppValuesHelper.getInstance().getString(AppValuesKey.accessToken);
+    QuackServiceResponse<GetPlaylistResponse> getPlaylistResponse =
+        await QuackService.getInstance()
+        .getPlaylist(accessToken, QuackLocationType.forest);
+    if (!getPlaylistResponse.isSuccess) {
+      return;
+    }
+
+    add(PlaylistReceived(playList: getPlaylistResponse.quackResponse!.result));
+  }
+
   Stream<PlayerState>? getPlayerState() {
     var response = SpotifyService.getInstance().subscribePlayerState();
     return response.resultType;
@@ -338,17 +357,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       return false;
     }
 
-    var accessToken =
-        AppValuesHelper.getInstance().getString(AppValuesKey.accessToken);
-    QuackServiceResponse<GetPlaylistResponse> getPlaylistResponse =
-        await QuackService.getInstance()
-            .getPlaylist(accessToken, QuackLocationType.forest);
-    if (!getPlaylistResponse.isSuccess) {
-      return false;
-    }
-
-    // Call event
-    add(PlaylistReceived(playList: getPlaylistResponse.quackResponse!.result));
+    await getPlaylist();
 
     //Position? position = await positionHelper!.getLastKnownLocation();
 

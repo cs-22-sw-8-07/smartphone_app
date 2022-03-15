@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smartphone_app/pages/login/login_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:smartphone_app/pages/main/main_page.dart';
+import 'package:smartphone_app/pages/main/main_page_2.dart';
 import 'package:smartphone_app/services/webservices/foursquare/service/foursquare_service.dart';
 import 'package:smartphone_app/services/webservices/quack/service/mock_quack_service.dart';
 import 'package:smartphone_app/services/webservices/quack/service/quack_service.dart';
@@ -15,7 +17,8 @@ import 'helpers/app_values_helper.dart';
 
 void main() async {
   await dotenv.load();
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await AppValuesHelper.getInstance().init();
   SpotifyService.init(SpotifyService());
   QuackService.init(MockQuackService());
@@ -25,7 +28,7 @@ void main() async {
   await Future.wait([
     precachePicture(
       ExactAssetPicture(
-          SvgPicture.svgStringDecoderBuilder, values.appFeatureImage),
+          SvgPicture.svgStringDecoderBuilder, values.appFeatureImage2),
       null,
     ),
     // other SVGs or images here
@@ -42,6 +45,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    FlutterNativeSplash.remove();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -71,7 +75,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blueGrey,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: token == null ? const LoginPage() : const MainPage());
+        home: token == null ? const LoginPage() : const MainPage2());
   }
 }
 
