@@ -6,7 +6,16 @@ import '../../../../localization/localization_helper.dart';
 
 part 'quack_classes.g.dart';
 
-enum QuackLocationType { forest, beach }
+enum QuackLocationType {
+  unknown,
+  forest,
+  beach,
+  nightLife,
+  urban,
+  cemetery,
+  education,
+  church
+}
 
 @JsonSerializable()
 class QuackResponse {
