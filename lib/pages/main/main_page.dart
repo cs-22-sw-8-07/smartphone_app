@@ -126,7 +126,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     image: DecorationImage(
                         fit: BoxFit.cover,
                         image: ExactAssetImage(
-                          values.beachBackground,
+                          values.qltBeach,
                         ))),
                 child: ClipRect(
                   child: BackdropFilter(
