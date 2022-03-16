@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
+import 'package:smartphone_app/localization/localization_helper.dart';
 import 'package:smartphone_app/pages/login/login_page.dart';
 import 'package:smartphone_app/pages/main/main_page_events_states.dart';
 import 'package:smartphone_app/services/quack_location_service/service/quack_location_service.dart';
@@ -218,12 +219,13 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
   //Region Override methods
 
   @override
-  Future<void> close() {
+  Future<void> close() async {
     try {
       positionStreamSubscription.cancel();
       if (positionHelper != null) {
         positionHelper!.dispose();
       }
+      await SpotifyService.getInstance().disconnect();
       // ignore: empty_catches
     } on Exception {}
     return super.close();
@@ -279,6 +281,15 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
         QuackLocationType? qlt = await QuackLocationService.getInstance()
             .getQuackLocationType(position);
         gettingLocationType = false;
+
+        if (kDebugMode) {
+          print("QLT: " +
+            (qlt == null
+                ? "null"
+                : LocalizationHelper.getInstance()
+                    .getLocalizedQuackLocationType(context, qlt)));
+        }
+
         if (qlt != null) {
           add(QuackLocationTypeChanged(quackLocationType: qlt));
         }

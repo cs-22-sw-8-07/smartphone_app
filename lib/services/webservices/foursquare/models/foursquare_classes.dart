@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'foursquare_classes.g.dart';
@@ -36,13 +37,12 @@ class FoursquarePlace extends Equatable {
   FoursquareLocation? location;
   String? name;
 
-  FoursquarePlace(
-      {required this.id,
-      this.categories,
-      this.distance,
-      this.geocodes,
-      this.location,
-      this.name});
+  FoursquarePlace({required this.id,
+    this.categories,
+    this.distance,
+    this.geocodes,
+    this.location,
+    this.name});
 
   factory FoursquarePlace.fromJson(Map<String, dynamic> json) =>
       _$FoursquarePlaceFromJson(json);
@@ -51,6 +51,23 @@ class FoursquarePlace extends Equatable {
 
   @override
   List<Object?> get props => [id];
+
+  FoursquareLatLng? getLatLng() {
+    if (geocodes == null) {
+      return null;
+    }
+    return geocodes!["main"];
+  }
+
+  double? distanceBetween(Position position) {
+    FoursquareLatLng? latLng = getLatLng();
+    if (latLng == null) {
+      return null;
+    }
+    return Geolocator.distanceBetween(
+        position.latitude, position.longitude, latLng.latitude!,
+        latLng.longitude!);
+  }
 }
 
 @JsonSerializable()
@@ -65,14 +82,13 @@ class FoursquareLocation {
   String? postcode;
   String? region;
 
-  FoursquareLocation(
-      {this.address,
-      this.country,
-      this.crossStreet,
-      this.formattedAddress,
-      this.locality,
-      this.postcode,
-      this.region});
+  FoursquareLocation({this.address,
+    this.country,
+    this.crossStreet,
+    this.formattedAddress,
+    this.locality,
+    this.postcode,
+    this.region});
 
   factory FoursquareLocation.fromJson(Map<String, dynamic> json) =>
       _$FoursquareLocationFromJson(json);

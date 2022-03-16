@@ -60,6 +60,7 @@ class QuackLocationService implements IQuackLocationFunctions {
   //region Variables
 
   final int _inPerimeterDistance = 100;
+  Position? latestSearchPosition;
   Position? latestPosition;
   List<FoursquarePlace> allPlaces = [];
   double? updateRadius;
@@ -80,16 +81,45 @@ class QuackLocationService implements IQuackLocationFunctions {
   ///
   //region Methods
 
-  Future<List<FoursquarePlace>?> getFoursquarePlaces(Position position) async {
+  Future<List<FoursquarePlace>?> _getFoursquarePlaces(Position position) async {
     FoursquareServiceResponse<GetNearbyPlacesResponse> response =
-    await FoursquareService.getInstance().getNearbyPlaces(
-        latitude: position.latitude, longitude: position.longitude);
+        await FoursquareService.getInstance().getNearbyPlaces(
+            latitude: position.latitude, longitude: position.longitude);
 
     if (!response.isSuccess) {
       return null;
     }
 
     return response.foursquareResponse!.results!;
+  }
+
+  List<FoursquarePlace> _getAllPlacesWithinPerimeter(Position position) {
+    return allPlaces.where((x) {
+      double? distance = x.distanceBetween(position);
+      x.distance = distance?.toInt();
+      return distance != null && distance <= _inPerimeterDistance;
+    }).toList(growable: true);
+  }
+
+  /// Sort after distance closest -> to furthest away
+  void _sortPlacesAfterDistance(List<FoursquarePlace> places) {
+    places.sort((a, b) => a.distance!.compareTo(b.distance!));
+  }
+
+  QuackLocationType _getQuackLocationTypeFromPlacesInPerimeter(
+      List<FoursquarePlace> places) {
+    // Check places within the perimeter
+    for (var place in places) {
+      if (place.distance! > _inPerimeterDistance) {
+        return QuackLocationType.unknown;
+      }
+      QuackLocationType locationType =
+      QuackLocationHelper.getQuackLocationType(place);
+      if (locationType != QuackLocationType.unknown) {
+        return locationType;
+      }
+    }
+    return QuackLocationType.unknown;
   }
 
   //endregion
@@ -101,46 +131,58 @@ class QuackLocationService implements IQuackLocationFunctions {
 
   @override
   Future<QuackLocationType?> getQuackLocationType(Position position) async {
+    double? distanceBetweenSearchPlaces;
     double? distanceBetween;
 
-    if (latestPosition != null) {
-      distanceBetween = Geolocator.distanceBetween(
-          latestPosition!.latitude, latestPosition!.longitude,
-          position.latitude, position.longitude);
+    if (latestSearchPosition != null) {
+      distanceBetweenSearchPlaces = Geolocator.distanceBetween(
+          latestSearchPosition!.latitude,
+          latestSearchPosition!.longitude,
+          position.latitude,
+          position.longitude);
     }
 
-    if (updateRadius == null || distanceBetween! >= updateRadius!) {
+    if (updateRadius == null || distanceBetweenSearchPlaces! >= updateRadius!) {
+      latestSearchPosition = position;
       latestPosition = position;
-     var places = await getFoursquarePlaces(position);
-     if (places == null) {
-       return null;
-     }
-     // Sort after distance closest -> to furthest away
-     places.sort((a, b) => a.distance!.compareTo(b.distance!));
+      var places = await _getFoursquarePlaces(position);
+      if (places == null) {
+        return null;
+      }
 
-     updateRadius = places.last.distance!.toDouble();
+      _sortPlacesAfterDistance(places);
+      updateRadius = places.last.distance!.toDouble();
 
-     // Add to complete list
-     for (var place in places) {
-       if (!allPlaces.contains(place)) {
-         allPlaces.add(place);
-       }
-     }
+      var allPlacesInPerimeter = _getAllPlacesWithinPerimeter(position);
 
-     for (var place in places) {
-       if (place.distance! > _inPerimeterDistance) {
-         return QuackLocationType.unknown;
-       }
-       QuackLocationType locationType = QuackLocationHelper.getQuackLocationType(place);
-       if (locationType != QuackLocationType.unknown) {
-         return locationType;
-       }
-     }
+      // Add to old places list
+      for (var place in places) {
+        if (!allPlaces.contains(place)) {
+          allPlaces.add(place);
+        }
+      }
 
-     return QuackLocationType.unknown;
+      // All new places plus old places within the perimeter
+      var placesInPerimeter = places;
+      placesInPerimeter.addAll(allPlacesInPerimeter);
+      _sortPlacesAfterDistance(placesInPerimeter);
+
+      return _getQuackLocationTypeFromPlacesInPerimeter(placesInPerimeter);
     }
 
-    return null;
+    if (latestPosition != null) {
+      distanceBetween = Geolocator.distanceBetween(latestPosition!.latitude,
+          latestPosition!.longitude, position.latitude, position.longitude);
+    }
+
+    if (distanceBetween != null && distanceBetween >= _inPerimeterDistance) {
+      latestPosition = position;
+
+      var allPlacesInPerimeter = _getAllPlacesWithinPerimeter(position);
+      _sortPlacesAfterDistance(allPlacesInPerimeter);
+
+      return _getQuackLocationTypeFromPlacesInPerimeter(allPlacesInPerimeter);
+    }
   }
 
 //endregion
