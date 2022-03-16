@@ -1,4 +1,5 @@
 import 'package:geolocator/geolocator.dart';
+import 'package:smartphone_app/services/quack_location_service/helpers/quack_location_helper.dart';
 import 'package:smartphone_app/services/webservices/foursquare/models/foursquare_classes.dart';
 import 'package:smartphone_app/services/webservices/foursquare/service/foursquare_service.dart';
 import 'package:smartphone_app/services/webservices/quack/models/quack_classes.dart';
@@ -19,6 +20,7 @@ class QuackLocationService implements IQuackLocationFunctions {
       case QuackLocationType.beach:
         return 2;
     }
+    return 0;
   }
 
   static IQuackLocationFunctions? _quackLocationFunctions;
@@ -38,6 +40,7 @@ class QuackLocationService implements IQuackLocationFunctions {
   ///
   //region Variables
 
+  final int _inPerimeterDistance = 100;
   Position? latestPosition;
   List<FoursquarePlace> allPlaces = [];
   double? updateRadius;
@@ -99,12 +102,16 @@ class QuackLocationService implements IQuackLocationFunctions {
      updateRadius = places.last.distance! as double?;
 
      for (var place in places) {
-       // TODO: Get Quack location type -> From Daniel
-       return QuackLocationType.beach;
+       if (place.distance! > _inPerimeterDistance) {
+         return QuackLocationType.unknown;
+       }
+       QuackLocationType locationType = QuackLocationHelper.getQuackLocationType(place);
+       if (locationType != QuackLocationType.unknown) {
+         return locationType;
+       }
      }
 
-     // TODO: QuackLocationType.unknown
-     return null;
+     return QuackLocationType.unknown;
     }
 
     return null;

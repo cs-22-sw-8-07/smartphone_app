@@ -5,8 +5,7 @@ class QuackLocationHelper {
   ///
   /// Convert a supplied [FoursquarePlace]'s category into a [QuackLocationType]
   ///
-  ///
-  QuackLocationType getQuackLocationType(FoursquarePlace place) {
+  static QuackLocationType getQuackLocationType(FoursquarePlace place) {
     QuackLocationType qlt = QuackLocationType.unknown;
     for (var category in place.categories!) {
       int cat = category.id;

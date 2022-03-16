@@ -21,8 +21,7 @@ void main() async {
   setUp(() async {});
 
   test("Test getQuackLocationType", () async {
-    QuackLocationHelper qlh = QuackLocationHelper();
     FoursquarePlace qplace = FoursquarePlace(id: "55");
-    qlh.getQuackLocationType(qplace);
+    QuackLocationHelper.getQuackLocationType(qplace);
   });
 }
