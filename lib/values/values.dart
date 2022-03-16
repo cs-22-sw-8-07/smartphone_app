@@ -38,4 +38,7 @@ const String appFeatureImage2 = "assets/feature_image2.svg";
 const String beachBackground = "assets/beach.jpg";
 const String beachWindowBackground = "assets/crack_locationtypes/beach.jpg";
 
+/// Quack Location Type Images
+const String qltBeach = "assets/beach_background.jpg";
+
 //endregion

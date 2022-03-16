@@ -96,6 +96,15 @@ class PlayPauseTrack extends MainPageEvent {
   List<Object?> get props => [quackTrack];
 }
 
+class QuackLocationTypeChanged extends MainPageEvent {
+  final QuackLocationType? quackLocationType;
+
+  const QuackLocationTypeChanged({this.quackLocationType});
+
+  @override
+  List<Object?> get props => [quackLocationType];
+}
+
 //endregion
 
 ///

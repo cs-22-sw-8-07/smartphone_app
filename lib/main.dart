@@ -7,6 +7,7 @@ import 'package:smartphone_app/pages/login/login_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:smartphone_app/pages/main/main_page.dart';
 import 'package:smartphone_app/pages/main/main_page_2.dart';
+import 'package:smartphone_app/services/quack_location_service/service/quack_location_service.dart';
 import 'package:smartphone_app/services/webservices/foursquare/service/foursquare_service.dart';
 import 'package:smartphone_app/services/webservices/quack/service/mock_quack_service.dart';
 import 'package:smartphone_app/services/webservices/quack/service/quack_service.dart';
@@ -14,6 +15,7 @@ import 'package:smartphone_app/services/webservices/spotify/service/spotify_serv
 import 'package:smartphone_app/values/values.dart' as values;
 
 import 'helpers/app_values_helper.dart';
+import 'localization/localization_helper.dart';
 
 void main() async {
   await dotenv.load();
@@ -23,6 +25,7 @@ void main() async {
   SpotifyService.init(SpotifyService());
   QuackService.init(MockQuackService());
   FoursquareService.init(FoursquareService());
+  QuackLocationService.init(QuackLocationService());
 
   // Pre-cache SVG
   await Future.wait([
