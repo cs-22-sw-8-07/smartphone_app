@@ -79,27 +79,28 @@ class LocalizationHelper {
   String getQuackLocationTypeImagePath(QuackLocationType qlt) {
     switch (qlt) {
       case QuackLocationType.unknown:
-        // TODO: Handle this case.
+        return values.qltUnknown;
         break;
       case QuackLocationType.forest:
-        // TODO: Handle this case.
+        return values.qltForest;
         break;
       case QuackLocationType.beach:
         return values.qltBeach;
+        break;
       case QuackLocationType.nightLife:
-        // TODO: Handle this case.
+        return values.qltNightLife;
         break;
       case QuackLocationType.urban:
-        // TODO: Handle this case.
+        return values.qltUrban;
         break;
       case QuackLocationType.cemetery:
-        // TODO: Handle this case.
+        return values.qltCemetery;
         break;
       case QuackLocationType.education:
-        // TODO: Handle this case.
+        return values.qltEducation;
         break;
       case QuackLocationType.church:
-        // TODO: Handle this case.
+        return values.qltChurch;
         break;
     }
     return qltBeach;
