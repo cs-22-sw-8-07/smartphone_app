@@ -37,7 +37,7 @@ const String appFeatureImage2 = "assets/feature_image2.svg";
 
 /// Quack Location Type Images
 const String qltBeach = "assets/cuack_locationtypes/beach.jpg";
-const String qltEducation = "assets/cuack_locationtypes/altEducation.jpg";
+const String qltEducation = "assets/cuack_locationtypes/education.jpg";
 const String qltCemetery = "assets/cuack_locationtypes/cemetery.jpg";
 const String qltChurch = "assets/cuack_locationtypes/church.jpg";
 const String qltForest = "assets/cuack_locationtypes/forest.jpg";
