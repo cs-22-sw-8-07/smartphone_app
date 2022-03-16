@@ -39,7 +39,7 @@ class QuackLocationService implements IQuackLocationFunctions {
   //region Variables
 
   Position? latestPosition;
-  List<FoursquarePlace> places = [];
+  List<FoursquarePlace> allPlaces = [];
   double? updateRadius;
 
   //endregion
@@ -58,13 +58,13 @@ class QuackLocationService implements IQuackLocationFunctions {
   ///
   //region Methods
 
-  Future<List<FoursquarePlace>> getFoursquarePlaces(Position position) async {
+  Future<List<FoursquarePlace>?> getFoursquarePlaces(Position position) async {
     FoursquareServiceResponse<GetNearbyPlacesResponse> response =
-        await FoursquareService.getInstance().getNearbyPlaces(
-            latitude: position.latitude, longitude: position.longitude);
+    await FoursquareService.getInstance().getNearbyPlaces(
+        latitude: position.latitude, longitude: position.longitude);
 
     if (!response.isSuccess) {
-      return [];
+      return null;
     }
 
     return response.foursquareResponse!.results!;
@@ -78,15 +78,36 @@ class QuackLocationService implements IQuackLocationFunctions {
   //region Override methods
 
   @override
-  Future<QuackLocationType> getQuackLocationType(Position position) async {
-    /*Geolocator.get
+  Future<QuackLocationType?> getQuackLocationType(Position position) async {
+    double? distanceBetween;
 
-    if (updateRadius == null || updateRadius) {
+    if (latestPosition != null) {
+      distanceBetween = Geolocator.distanceBetween(
+          latestPosition!.latitude, latestPosition!.longitude,
+          position.latitude, position.longitude);
+    }
 
+    if (updateRadius == null || distanceBetween! >= updateRadius!) {
+      latestPosition = position;
+     var places = await getFoursquarePlaces(position);
+     if (places == null) {
+       return null;
+     }
+     // Sort after distance closest -> to furthest away
+     places.sort((a, b) => a.distance!.compareTo(b.distance!));
 
+     updateRadius = places.last.distance! as double?;
 
-    } else {}*/
-    return QuackLocationType.beach;
+     for (var place in places) {
+       // TODO: Get Quack location type -> From Daniel
+       return QuackLocationType.beach;
+     }
+
+     // TODO: QuackLocationType.unknown
+     return null;
+    }
+
+    return null;
   }
 
 //endregion

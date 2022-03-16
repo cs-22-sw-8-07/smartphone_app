@@ -4,7 +4,7 @@ import 'package:smartphone_app/services/webservices/quack/models/quack_classes.d
 
 class IQuackLocationFunctions {
 
-  Future<QuackLocationType> getQuackLocationType(Position position) {
+  Future<QuackLocationType?> getQuackLocationType(Position position) {
     throw UnimplementedError();
   }
 

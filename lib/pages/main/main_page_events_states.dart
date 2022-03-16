@@ -110,10 +110,12 @@ class MainPageState extends Equatable {
   PlayerState? playerState;
   QuackPlaylist? playlist;
   bool? hasJustPerformedAction;
+  QuackLocationType? quackLocationType;
 
   MainPageState(
       {this.isPlaylistShown,
       this.playlist,
+      this.quackLocationType,
       this.hasJustPerformedAction,
       this.isRecommendationStarted,
       this.playerState});
@@ -121,6 +123,7 @@ class MainPageState extends Equatable {
   MainPageState copyWith(
       {bool? isPlaylistShown,
       QuackPlaylist? playlist,
+      QuackLocationType? quackLocationType,
       bool? hasJustPerformedAction,
       bool? isRecommendationStarted,
       PlayerState? playerState}) {
@@ -128,6 +131,7 @@ class MainPageState extends Equatable {
         playlist: playlist ?? this.playlist,
         hasJustPerformedAction:
             hasJustPerformedAction ?? this.hasJustPerformedAction,
+        quackLocationType: quackLocationType ?? this.quackLocationType,
         isPlaylistShown: isPlaylistShown ?? this.isPlaylistShown,
         playerState: playerState ?? this.playerState,
         isRecommendationStarted:

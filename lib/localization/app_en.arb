@@ -42,5 +42,13 @@
   "getting_location_in_background": "Getting location in background",
   "@getting_location_in_background": {
     "description": "Notification text"
+  },
+  "unknown": "Unknown",
+  "@unknown": {
+    "description": "Quack location type"
+  },
+  "forest": "Forest",
+  "@forest": {
+    "description": "Quack location type"
   }
 }
