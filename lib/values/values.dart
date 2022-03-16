@@ -35,13 +35,16 @@ const String locationShadowImage = "assets/locations_shadow.png";
 const String appFeatureImage = "assets/feature_image.svg";
 const String appFeatureImage2 = "assets/feature_image2.svg";
 
-const String beachBackground = "assets/beach.jpg";
-const String beachWindowBackground = "assets/crack_locationtypes/beach.jpg";
-
 /// Quack Location Type Images
-const String qltBeach = "assets/beach_background.jpg";
+const String qltBeach = "assets/cuack_locationtypes/beach.jpg";
+const String qltEducation = "assets/cuack_locationtypes/education.jpg";
+const String qltCemetery = "assets/cuack_locationtypes/cemetery.jpg";
+const String qltChurch = "assets/cuack_locationtypes/church.jpg";
+const String qltForest = "assets/cuack_locationtypes/forest.jpg";
+const String qltNightLife = "assets/cuack_locationtypes/nightLife.jpg";
+const String qltUnknown = "assets/cuack_locationtypes/unknown.png";
+const String qltUrban = "assets/cuack_locationtypes/urban.jpg";
 
-/// Quack Location Type Images
-const String qltBeach = "assets/beach_background.jpg";
+
 
 //endregion

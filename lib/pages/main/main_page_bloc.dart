@@ -47,7 +47,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       : super(MainPageState(
             hasJustPerformedAction: false,
             isPlaylistShown: false,
-            quackLocationType: QuackLocationType.unknown,
+            quackLocationType: QuackLocationType.nightLife,
             isRecommendationStarted: false)) {
     /// ButtonPressed
     on<ButtonPressed>((event, emit) async {
