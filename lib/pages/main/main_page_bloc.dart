@@ -204,6 +204,9 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
     /// QuackLocationTypeChanged
     on<QuackLocationTypeChanged>((event, emit) {
+      if (kDebugMode) {
+        print("QLT state change");
+      }
       emit(state.copyWith(quackLocationType: event.quackLocationType));
     });
 
@@ -280,7 +283,6 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
         gettingLocationType = true;
         QuackLocationType? qlt = await QuackLocationService.getInstance()
             .getQuackLocationType(position);
-        gettingLocationType = false;
 
         if (kDebugMode) {
           print("QLT: " +
@@ -291,8 +293,13 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
         }
 
         if (qlt != null) {
+          if (kDebugMode) {
+            print("QLT updated");
+          }
           add(QuackLocationTypeChanged(quackLocationType: qlt));
         }
+
+        gettingLocationType = false;
       }
     });
   }

@@ -153,7 +153,8 @@ class MainPageState extends Equatable {
         isRecommendationStarted,
         playlist,
         playerState,
-        hasJustPerformedAction
+        hasJustPerformedAction,
+        quackLocationType
       ];
 }
 

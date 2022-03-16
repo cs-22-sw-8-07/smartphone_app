@@ -328,15 +328,16 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
                             margin: const EdgeInsets.only(
                                 top: 0, left: 30, right: 30, bottom: 30),
                             child: ClipRRect(
-                                borderRadius: const BorderRadius.only(
-                                    bottomLeft: Radius.circular(27.5),
-                                    bottomRight: Radius.circular(27.5)),
-                                child: Image.asset(
-                                  LocalizationHelper.getInstance()
-                                      .getQuackLocationTypeImagePath(
-                                          state.quackLocationType!),
-                                  fit: BoxFit.cover,
-                                )))),
+                              borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.circular(27.5),
+                                  bottomRight: Radius.circular(27.5)),
+                              child: Image.asset(
+                                LocalizationHelper.getInstance()
+                                    .getQuackLocationTypeImagePath(
+                                        state.quackLocationType!),
+                                fit: BoxFit.cover,
+                              ),
+                            ))),
                     Container(
                       child: CustomLabel(
                         textColor: Colors.white,
