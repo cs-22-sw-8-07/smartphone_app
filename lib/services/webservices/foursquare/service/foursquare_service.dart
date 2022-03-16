@@ -85,7 +85,9 @@ class FoursquareService implements IFoursquareFunctions {
           await restHelper.sendGetRequest("/v3/places/nearby", parameters: {
         "ll": latitude.toString().replaceAll(",", ".") +
             "," +
-            longitude.toString().replaceAll(",", ".")
+            longitude.toString().replaceAll(",", "."),
+        "limit": "50",
+        "radius": "10000"
       }, headers: {
         "Authorization": _apiKey!
       });

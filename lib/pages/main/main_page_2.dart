@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
+import 'package:smartphone_app/localization/localization_helper.dart';
 import 'package:smartphone_app/values/values.dart' as values;
 import 'package:smartphone_app/values/colors.dart' as custom_colors;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -98,6 +99,7 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    LocalizationHelper.init(context: context);
     bloc = MainPageBloc(context: context);
 
     var availableHeight = MediaQuery.of(context).size.height -
@@ -286,8 +288,9 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
     return Container(
         decoration:
             const BoxDecoration(gradient: custom_colors.mainPageGradient),
-        padding:
-            const EdgeInsets.only(bottom: values.mainPageOverlayHeight + 30),
+        padding: const EdgeInsets.only(
+            bottom: values.mainPageOverlayHeight +
+                values.mainPageOverlayButtonHeight),
         child: Column(
           children: [
             CustomAppBar(
@@ -329,7 +332,9 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
                                     bottomLeft: Radius.circular(27.5),
                                     bottomRight: Radius.circular(27.5)),
                                 child: Image.asset(
-                                  values.beachWindowBackground,
+                                  LocalizationHelper.getInstance()
+                                      .getQuackLocationTypeImagePath(
+                                          state.quackLocationType!),
                                   fit: BoxFit.cover,
                                 )))),
                     Container(
@@ -339,7 +344,9 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
                         alignmentGeometry: Alignment.center,
                         margin: const EdgeInsets.all(0),
                         padding: const EdgeInsets.all(0),
-                        title: 'Beach',
+                        title: LocalizationHelper.getInstance()
+                            .getLocalizedQuackLocationType(
+                                context, state.quackLocationType!),
                       ),
                       height: 40,
                       margin: const EdgeInsets.only(left: 30, right: 30),

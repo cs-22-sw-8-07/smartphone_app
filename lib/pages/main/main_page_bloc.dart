@@ -9,6 +9,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
 import 'package:smartphone_app/pages/login/login_page.dart';
 import 'package:smartphone_app/pages/main/main_page_events_states.dart';
+import 'package:smartphone_app/services/quack_location_service/service/quack_location_service.dart';
 import 'package:smartphone_app/services/webservices/foursquare/service/foursquare_service.dart';
 import 'package:spotify_sdk/models/connection_status.dart';
 import 'package:spotify_sdk/models/player_state.dart';
@@ -46,6 +47,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       : super(MainPageState(
             hasJustPerformedAction: false,
             isPlaylistShown: false,
+            quackLocationType: QuackLocationType.unknown,
             isRecommendationStarted: false)) {
     /// ButtonPressed
     on<ButtonPressed>((event, emit) async {
@@ -199,6 +201,11 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       }
     });
 
+    /// QuackLocationTypeChanged
+    on<QuackLocationTypeChanged>((event, emit) {
+      emit(state.copyWith(quackLocationType: event.quackLocationType));
+    });
+
     subscribeToConnectionStatus();
     subscribeToPosition();
   }
@@ -255,14 +262,26 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
           showBackgroundLocationIndicator: false,
         ));
 
+    bool gettingLocationType = false;
+
     positionStreamSubscription =
-        positionHelper!.getPositionStream().listen((position) {
+        positionHelper!.getPositionStream().listen((position) async {
       if (kDebugMode) {
         print(position != null
             ? (position.latitude.toString().replaceAll(",", ".") +
                 ", " +
                 position.longitude.toString().replaceAll(",", "."))
             : "Unknown");
+      }
+
+      if (position != null && !gettingLocationType) {
+        gettingLocationType = true;
+        QuackLocationType? qlt = await QuackLocationService.getInstance()
+            .getQuackLocationType(position);
+        gettingLocationType = false;
+        if (qlt != null) {
+          add(QuackLocationTypeChanged(quackLocationType: qlt));
+        }
       }
     });
   }
@@ -327,10 +346,10 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
   Future<void> getPlaylist() async {
     var accessToken =
-    AppValuesHelper.getInstance().getString(AppValuesKey.accessToken);
+        AppValuesHelper.getInstance().getString(AppValuesKey.accessToken);
     QuackServiceResponse<GetPlaylistResponse> getPlaylistResponse =
         await QuackService.getInstance()
-        .getPlaylist(accessToken, QuackLocationType.forest);
+            .getPlaylist(accessToken, QuackLocationType.forest);
     if (!getPlaylistResponse.isSuccess) {
       return;
     }

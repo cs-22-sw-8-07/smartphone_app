@@ -3,6 +3,7 @@ import 'package:smartphone_app/services/quack_location_service/helpers/quack_loc
 import 'package:smartphone_app/services/webservices/foursquare/models/foursquare_classes.dart';
 import 'package:smartphone_app/services/webservices/foursquare/service/foursquare_service.dart';
 import 'package:smartphone_app/services/webservices/quack/models/quack_classes.dart';
+import 'package:darq/darq.dart';
 
 import '../../../helpers/position_helper/position_helper.dart';
 import '../interfaces/quack_location_functions.dart';
@@ -19,6 +20,24 @@ class QuackLocationService implements IQuackLocationFunctions {
         return 1;
       case QuackLocationType.beach:
         return 2;
+      case QuackLocationType.unknown:
+        // TODO: Handle this case.
+        break;
+      case QuackLocationType.nightLife:
+        // TODO: Handle this case.
+        break;
+      case QuackLocationType.urban:
+        // TODO: Handle this case.
+        break;
+      case QuackLocationType.cemetery:
+        // TODO: Handle this case.
+        break;
+      case QuackLocationType.education:
+        // TODO: Handle this case.
+        break;
+      case QuackLocationType.church:
+        // TODO: Handle this case.
+        break;
     }
     return 0;
   }
@@ -99,7 +118,14 @@ class QuackLocationService implements IQuackLocationFunctions {
      // Sort after distance closest -> to furthest away
      places.sort((a, b) => a.distance!.compareTo(b.distance!));
 
-     updateRadius = places.last.distance! as double?;
+     updateRadius = places.last.distance!.toDouble();
+
+     // Add to complete list
+     for (var place in places) {
+       if (!allPlaces.contains(place)) {
+         allPlaces.add(place);
+       }
+     }
 
      for (var place in places) {
        if (place.distance! > _inPerimeterDistance) {

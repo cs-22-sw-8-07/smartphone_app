@@ -50,5 +50,29 @@
   "forest": "Forest",
   "@forest": {
     "description": "Quack location type"
+  },
+  "beach": "Beach",
+  "@beach": {
+    "description": "Quack location type"
+  },
+  "night_life": "Night Life",
+  "@night_life": {
+    "description": "Quack location type"
+  },
+  "urban": "Urban",
+  "@urban": {
+    "description": "Quack location type"
+  },
+  "cemetery": "Cemetery",
+  "@cemetery": {
+    "description": "Quack location type"
+  },
+  "education": "Education",
+  "@education": {
+    "description": "Quack location type"
+  },
+  "church": "Church",
+  "@church": {
+    "description": "Quack location type"
   }
 }
