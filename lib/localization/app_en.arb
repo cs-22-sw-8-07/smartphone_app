@@ -74,5 +74,17 @@
   "church": "Church",
   "@church": {
     "description": "Quack location type"
+  },
+  "preference_profile": "Preference profile",
+  "@preference_profile": {
+    "description": "Button text"
+  },
+  "locked_location": "Locked location",
+  "@locked_location": {
+    "description": "Snackbar text"
+  },
+  "unlocked_location": "Unlocked location",
+  "@unlocked_location": {
+    "description": "Snackbar text"
   }
 }

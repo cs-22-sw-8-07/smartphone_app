@@ -15,7 +15,8 @@ enum MainButtonEvent {
   goToSettings,
   logOff,
   resizePlaylist,
-  resumePausePlayer
+  resumePausePlayer,
+  lockUnlockQuackLocationType
 }
 
 enum MainTouchEvent { goToNextTrack, goToPreviousTrack }
@@ -84,13 +85,13 @@ class PlaylistReceived extends MainPageEvent {
   List<Object?> get props => [playList];
 }
 
-/// Event for Play/Pause track in the playlist
+/// Event for selecting a track in the playlist
 ///
 /// The [quackTrack] is the track that the user wants to play/pause
-class PlayPauseTrack extends MainPageEvent {
+class TrackSelected extends MainPageEvent {
   final QuackTrack quackTrack;
 
-  const PlayPauseTrack({required this.quackTrack});
+  const TrackSelected({required this.quackTrack});
 
   @override
   List<Object?> get props => [quackTrack];
@@ -103,6 +104,24 @@ class QuackLocationTypeChanged extends MainPageEvent {
 
   @override
   List<Object?> get props => [quackLocationType];
+}
+
+class IsLoadingChanged extends MainPageEvent {
+  final bool isLoading;
+
+  const IsLoadingChanged({required this.isLoading});
+
+  @override
+  List<Object?> get props => [isLoading];
+}
+
+class IsRecommendationStartedChanged extends MainPageEvent {
+  final bool isRecommendationStarted;
+
+  const IsRecommendationStartedChanged({required this.isRecommendationStarted});
+
+  @override
+  List<Object?> get props => [isRecommendationStarted];
 }
 
 //endregion
@@ -120,10 +139,14 @@ class MainPageState extends Equatable {
   QuackPlaylist? playlist;
   bool? hasJustPerformedAction;
   QuackLocationType? quackLocationType;
+  QuackLocationType? lockedQuackLocationType;
+  bool? isLoading;
 
   MainPageState(
       {this.isPlaylistShown,
       this.playlist,
+      this.isLoading,
+      this.lockedQuackLocationType,
       this.quackLocationType,
       this.hasJustPerformedAction,
       this.isRecommendationStarted,
@@ -132,12 +155,17 @@ class MainPageState extends Equatable {
   MainPageState copyWith(
       {bool? isPlaylistShown,
       QuackPlaylist? playlist,
+      QuackLocationType? lockedQuackLocationType,
       QuackLocationType? quackLocationType,
       bool? hasJustPerformedAction,
+      bool? isLoading,
       bool? isRecommendationStarted,
       PlayerState? playerState}) {
     return MainPageState(
         playlist: playlist ?? this.playlist,
+        isLoading: isLoading ?? this.isLoading,
+        lockedQuackLocationType:
+            lockedQuackLocationType ?? this.lockedQuackLocationType,
         hasJustPerformedAction:
             hasJustPerformedAction ?? this.hasJustPerformedAction,
         quackLocationType: quackLocationType ?? this.quackLocationType,
@@ -151,6 +179,8 @@ class MainPageState extends Equatable {
   List<Object?> get props => [
         isPlaylistShown,
         isRecommendationStarted,
+        lockedQuackLocationType,
+        isLoading,
         playlist,
         playerState,
         hasJustPerformedAction,

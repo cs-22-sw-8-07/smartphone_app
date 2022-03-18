@@ -20,6 +20,7 @@ const double actionBarHeight = 56;
 const double mainPageOverlayHeight = 60;
 const double mainPageOverlayButtonHeight = 30;
 const double mainPageOverlayTopMargin = 100;
+const double mainPagePlayPauseButtonSize = 100;
 
 //endregion
 

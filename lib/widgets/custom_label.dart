@@ -1,5 +1,7 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:marquee/marquee.dart';
 import 'package:smartphone_app/values/colors.dart' as custom_colors;
 
 class CustomLabel extends StatelessWidget {
@@ -24,6 +26,7 @@ class CustomLabel extends StatelessWidget {
   final int? maxLines;
   final TextOverflow textOverflow;
   final bool? softWrap;
+  final bool useOverflowReplacement;
 
   //endregion
 
@@ -38,6 +41,7 @@ class CustomLabel extends StatelessWidget {
       required this.title,
       this.fontSize = 20,
       this.height,
+      this.useOverflowReplacement = false,
       this.softWrap,
       this.textOverflow = TextOverflow.fade,
       this.width,
@@ -89,11 +93,14 @@ class CustomLabel extends StatelessWidget {
           width: width,
           child: Align(
             alignment: alignmentGeometry,
-            child: Text(
+            child: AutoSizeText(
               title ?? "",
+              overflowReplacement: useOverflowReplacement == true
+                  ? _getOverflowReplacement()
+                  : null,
               softWrap: softWrap,
               maxLines: maxLines,
-              overflow: textOverflow,
+              //overflow: textOverflow,
               textAlign: textAlign,
               style: GoogleFonts.roboto(
                   textStyle: TextStyle(
@@ -103,6 +110,23 @@ class CustomLabel extends StatelessWidget {
             ),
           ));
     }
+  }
+
+  Widget _getOverflowReplacement() {
+    return Marquee(
+      text: title ?? "",
+      style: GoogleFonts.roboto(
+          textStyle: TextStyle(
+              color: textColor, fontWeight: fontWeight, fontSize: fontSize)),
+      scrollAxis: Axis.horizontal,
+      blankSpace: 100.0,
+      velocity: 100.0,
+      startAfter: const Duration(seconds: 2),
+      showFadingOnlyWhenScrolling: false,
+      fadingEdgeEndFraction: 0.05,
+      pauseAfterRound: const Duration(seconds: 3),
+      startPadding: 0.0,
+    );
   }
 
 //endregion

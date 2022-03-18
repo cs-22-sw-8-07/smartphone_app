@@ -7,6 +7,7 @@ class QuackLocationHelper {
   ///
   static QuackLocationType getQuackLocationType(FoursquarePlace place) {
     QuackLocationType qlt = QuackLocationType.unknown;
+
     for (var category in place.categories!) {
       int cat = category.id;
       // if (cat >= 10000 && cat < 11000) {

@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
@@ -9,13 +7,13 @@ import 'package:smartphone_app/values/colors.dart' as custom_colors;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:smartphone_app/widgets/custom_label.dart';
 import 'package:smartphone_app/widgets/custom_list_tile.dart';
-import 'package:spotify_sdk/models/player_state.dart';
 import 'package:spotify_sdk/models/track.dart';
 
 import '../../services/webservices/quack/models/quack_classes.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_drawer_tile.dart';
+import '../../widgets/custom_play_button.dart';
 import 'main_page_bloc.dart';
 import 'main_page_events_states.dart';
 
@@ -138,17 +136,34 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
             }));
   }
 
+  //endregion
+
+  ///
+  /// METHODS
+  ///
+  //region Methods
+
+  bool _shouldUpdateQuackLocationType(
+      MainPageState previous, MainPageState current) {
+    if (previous.quackLocationType == current.quackLocationType &&
+        previous.lockedQuackLocationType == null &&
+        current.lockedQuackLocationType == null) {
+      return false;
+    }
+
+    return previous.quackLocationType != current.quackLocationType ||
+        (current.lockedQuackLocationType != null &&
+            current.lockedQuackLocationType != previous.quackLocationType) ||
+        (current.lockedQuackLocationType == null &&
+            current.quackLocationType != previous.lockedQuackLocationType);
+  }
+
   Widget _getContent(MainPageBloc bloc) {
-    return BlocBuilder<MainPageBloc, MainPageState>(
-      builder: (context, state) {
-        return Stack(
-          children: [
-            _getMainContent(bloc, state),
-            if (state.playerState != null)
-              _getOverlayContent(bloc, state, state.playerState),
-          ],
-        );
-      },
+    return Stack(
+      children: [
+        _getMainContent(bloc),
+        _getOverlayContent(bloc),
+      ],
     );
   }
 
@@ -234,57 +249,65 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
     );
   }
 
-  Widget _getOverlayContent(
-      MainPageBloc bloc, MainPageState state, PlayerState? playerState) {
-    var overlayContent = state.isPlaylistShown!
-        ? _getPlaylist(state, playerState)
-        : _getCurrentlyPlayingTrack(state, playerState);
+  Widget _getOverlayContent(MainPageBloc bloc) {
+    return BlocBuilder<MainPageBloc, MainPageState>(builder: (context, state) {
+      var overlayContent = state.isPlaylistShown!
+          ? _getPlaylist(state)
+          : _getCurrentlyPlayingTrack(state);
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        if (state.playlist != null)
-          CustomButton(
-              fontWeight: FontWeight.bold,
-              height: values.mainPageOverlayButtonHeight,
-              icon: Icon(
-                state.isPlaylistShown! ? Icons.expand_more : Icons.expand_less,
-                color: Colors.white,
-                size: 25,
-              ),
-              onPressed: () {
-                bloc.add(const ButtonPressed(
-                    buttonEvent: MainButtonEvent.resizePlaylist));
-                bloc.state.isPlaylistShown!
-                    ? playlistAnimationController.reverse()
-                    : playlistAnimationController.forward();
-              },
-              borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-              margin: const EdgeInsets.all(0),
-              textColor: custom_colors.black,
-              pressedBackground: custom_colors.appButtonPressedGradient,
-              defaultBackground: custom_colors.appButtonGradient),
-        AnimatedBuilder(
-            animation: playlistAnimationController,
-            builder: (context, _) {
-              return Container(
-                decoration: BoxDecoration(
-                    color: custom_colors.darkBlue,
-                    border:
-                        Border.all(color: custom_colors.darkBlue, width: 0)),
-                height: playlistSizeAnimation!.value,
-                child: AnimatedSwitcher(
-                  child: overlayContent,
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          AnimatedContainer(
+                  height: state.playlist == null
+                      ? 0
+                      : values.mainPageOverlayButtonHeight,
                   duration: const Duration(milliseconds: 200),
-                ),
-              );
-            })
-      ],
-    );
+                  child: CustomButton(
+                      fontWeight: FontWeight.bold,
+                      height: null,
+                      icon: Icon(
+                        state.isPlaylistShown!
+                            ? Icons.expand_more
+                            : Icons.expand_less,
+                        color: Colors.white,
+                        size: 25,
+                      ),
+                      onPressed: () {
+                        bloc.add(const ButtonPressed(
+                            buttonEvent: MainButtonEvent.resizePlaylist));
+                        bloc.state.isPlaylistShown!
+                            ? playlistAnimationController.reverse()
+                            : playlistAnimationController.forward();
+                      },
+                      borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30)),
+                      margin: const EdgeInsets.all(0),
+                      textColor: custom_colors.black,
+                      pressedBackground: custom_colors.appButtonPressedGradient,
+                      defaultBackground: custom_colors.appButtonGradient)),
+          AnimatedBuilder(
+              animation: playlistAnimationController,
+              builder: (context, _) {
+                return Container(
+                  decoration: BoxDecoration(
+                      color: custom_colors.darkBlue,
+                      border:
+                          Border.all(color: custom_colors.darkBlue, width: 0)),
+                  height: playlistSizeAnimation!.value,
+                  child: AnimatedSwitcher(
+                    child: overlayContent,
+                    duration: const Duration(milliseconds: 200),
+                  ),
+                );
+              })
+        ],
+      );
+    });
   }
 
-  Widget _getMainContent(MainPageBloc bloc, MainPageState state) {
+  Widget _getMainContent(MainPageBloc bloc) {
     return Container(
         decoration:
             const BoxDecoration(gradient: custom_colors.mainPageGradient),
@@ -317,128 +340,145 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
             Expanded(
                 flex: 2,
                 child: Stack(
-                  fit: StackFit.loose,
                   children: [
-                    Positioned.fill(
-                        child: Container(
-                            decoration: const BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(27.5))),
-                            padding: const EdgeInsets.only(top: 40),
-                            margin: const EdgeInsets.only(
-                                top: 0, left: 30, right: 30, bottom: 30),
-                            child: ClipRRect(
-                              borderRadius: const BorderRadius.only(
-                                  bottomLeft: Radius.circular(27.5),
-                                  bottomRight: Radius.circular(27.5)),
-                              child: Image.asset(
-                                LocalizationHelper.getInstance()
-                                    .getQuackLocationTypeImagePath(
-                                        state.quackLocationType!),
-                                fit: BoxFit.cover,
-                              ),
-                            ))),
-                    Container(
-                      child: CustomLabel(
-                        textColor: Colors.white,
-                        fontWeight: FontWeight.w700,
-                        alignmentGeometry: Alignment.center,
-                        margin: const EdgeInsets.all(0),
-                        padding: const EdgeInsets.all(0),
-                        title: LocalizationHelper.getInstance()
-                            .getLocalizedQuackLocationType(
-                                context, state.quackLocationType!),
-                      ),
-                      height: 40,
-                      margin: const EdgeInsets.only(left: 30, right: 30),
-                      decoration: BoxDecoration(
-                          border: Border.all(color: custom_colors.darkBlue),
-                          color: custom_colors.darkBlue,
-                          borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(27.5),
-                              topRight: Radius.circular(27.5))),
-                    ),
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: CustomButton(
-                          margin: const EdgeInsets.only(bottom: 40),
-                          width: 40,
-                          height: 40,
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(40 / 2)),
-                          icon: const Icon(
-                            Icons.lock_outline,
-                            color: Colors.white,
-                          ),
-                          onPressed: () {},
-                          pressedBackground:
-                              custom_colors.appButtonPressedGradient,
-                          defaultBackground: custom_colors.appButtonGradient),
-                    )
+                    BlocBuilder<MainPageBloc, MainPageState>(
+                        buildWhen: (previous, current) {
+                      return _shouldUpdateQuackLocationType(previous, current);
+                    }, builder: (context, state) {
+                      return Positioned.fill(
+                          child: Container(
+                              decoration: const BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(27.5))),
+                              padding: const EdgeInsets.only(top: 40),
+                              margin: const EdgeInsets.only(
+                                  top: 0, left: 30, right: 30, bottom: 30),
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                    bottomLeft: Radius.circular(27.5),
+                                    bottomRight: Radius.circular(27.5)),
+                                child: FittedBox(
+                                    fit: BoxFit.fill,
+                                    child: AnimatedSwitcher(
+                                        duration:
+                                            const Duration(milliseconds: 500),
+                                        child: Image.asset(
+                                          LocalizationHelper.getInstance()
+                                              .getQuackLocationTypeImagePath(
+                                                  state.lockedQuackLocationType ==
+                                                          null
+                                                      ? state.quackLocationType!
+                                                      : state
+                                                          .lockedQuackLocationType!),
+                                          key: UniqueKey(),
+                                        ))),
+                              )));
+                    }),
+                    BlocBuilder<MainPageBloc, MainPageState>(
+                        buildWhen: (previous, current) {
+                      return _shouldUpdateQuackLocationType(previous, current);
+                    }, builder: (context, state) {
+                      return Container(
+                        child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 500),
+                            child: CustomLabel(
+                              key: UniqueKey(),
+                              textColor: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              alignmentGeometry: Alignment.center,
+                              margin: const EdgeInsets.all(0),
+                              padding: const EdgeInsets.all(0),
+                              title: LocalizationHelper.getInstance()
+                                  .getLocalizedQuackLocationType(
+                                      context,
+                                      state.lockedQuackLocationType == null
+                                          ? state.quackLocationType!
+                                          : state.lockedQuackLocationType!),
+                            )),
+                        height: 40,
+                        margin: const EdgeInsets.only(left: 30, right: 30),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: custom_colors.darkBlue),
+                            color: custom_colors.darkBlue,
+                            borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(27.5),
+                                topRight: Radius.circular(27.5))),
+                      );
+                    }),
+                    BlocBuilder<MainPageBloc, MainPageState>(
+                        builder: (context, state) {
+                      return Align(
+                        alignment: Alignment.bottomRight,
+                        child: PlayButton(
+                            margin: const EdgeInsets.only(bottom: 40, right: 40),
+                            width: 40,
+                            height: 40,
+                            isPlaying: state.lockedQuackLocationType != null,
+                            foreground: Icon(
+                              state.lockedQuackLocationType == null
+                                  ? Icons.lock_outline
+                                  : Icons.lock_open_outlined,
+                              color: Colors.white,
+                            ),
+                            onPressed: () => bloc.add(const ButtonPressed(
+                                buttonEvent: MainButtonEvent
+                                    .lockUnlockQuackLocationType)),
+                            pressedBackground:
+                                custom_colors.appButtonPressedGradient,
+                            defaultBackground: custom_colors.appButtonGradient),
+                      );
+                    }),
                   ],
                 )),
-            AnimatedBuilder(
-              animation: startStopRecommendationController,
-              builder: (context, _) {
-                return CustomButton(
-                    fontWeight: FontWeight.bold,
-                    height: 100,
-                    width: 100,
-                    borderRadius: const BorderRadius.all(Radius.circular(50)),
-                    icon: Icon(
-                      !state.isRecommendationStarted!
-                          ? Icons.play_arrow
-                          : Icons.pause,
-                      color: Colors.white,
-                      size: 40,
-                    ),
-                    onPressed: () async {
-                      bloc.add(const ButtonPressed(
-                          buttonEvent:
-                              MainButtonEvent.startStopRecommendation));
-                      if (!bloc.state.isRecommendationStarted!) {
-                        startStopRecommendationController.repeat(reverse: true);
-                      } else {
-                        startStopRecommendationController.stop();
-                        startStopRecommendationController.reset();
-                      }
-                    },
-                    boxShadow: BoxShadow(
-                        color: custom_colors.blue,
-                        blurRadius: pulseAnimation!.value,
-                        spreadRadius: pulseAnimation!.value),
+            BlocBuilder<MainPageBloc, MainPageState>(builder: (context, state) {
+              return AnimatedBuilder(
+                animation: startStopRecommendationController,
+                builder: (context, _) {
+                  return PlayButton(
+                    height: values.mainPagePlayPauseButtonSize,
+                    width: values.mainPagePlayPauseButtonSize,
+                    defaultBackground: custom_colors.appButtonGradient,
                     pressedBackground: custom_colors.appButtonPressedGradient,
-                    defaultBackground: custom_colors.appButtonGradient);
-              },
-            ),
-            CustomLabel(
-              height: 40,
-              fontSize: 16,
-              title: "Preference profile",
-              textColor: custom_colors.darkBlue,
-              fontWeight: FontWeight.w700,
-              alignmentGeometry: Alignment.center,
-              padding: const EdgeInsets.only(
-                  left: 30, top: 10, bottom: 0, right: 30),
-              margin: const EdgeInsets.only(top: 10, bottom: 10),
-            ),
-            CustomButton(
-                fontWeight: FontWeight.w900,
-                margin: const EdgeInsets.only(left: 30, right: 30),
-                borderRadius: const BorderRadius.all(Radius.circular(55 / 2)),
-                text: "None selected",
-                onPressed: () {},
-                textColor: Colors.white,
-                pressedBackground: custom_colors.appButtonPressedGradient,
-                defaultBackground: custom_colors.appButtonGradient),
+                    isPlaying: state.isRecommendationStarted!,
+                    foreground: state.isLoading!
+                        ? Container(
+                            padding: const EdgeInsets.all(35),
+                            child: const CircularProgressIndicator(
+                                color: Colors.white))
+                        : Icon(
+                            state.isRecommendationStarted!
+                                ? Icons.pause
+                                : Icons.play_arrow,
+                            color: Colors.white,
+                            size: 40),
+                    onPressed: () => bloc.add(const ButtonPressed(
+                        buttonEvent: MainButtonEvent.startStopRecommendation)),
+                  );
+                },
+              );
+            }),
+            BlocBuilder<MainPageBloc, MainPageState>(builder: (context, state) {
+              return CustomButton(
+                  fontWeight: FontWeight.w700,
+                  icon: const Icon(
+                    Icons.tune_outlined,
+                    color: Colors.white,
+                  ),
+                  margin: const EdgeInsets.only(left: 30, right: 30, top: 30),
+                  borderRadius: const BorderRadius.all(Radius.circular(55 / 2)),
+                  text: AppLocalizations.of(context)!.preference_profile,
+                  onPressed: () {},
+                  textColor: Colors.white,
+                  pressedBackground: custom_colors.appButtonPressedGradient,
+                  defaultBackground: custom_colors.appButtonGradient);
+            }),
             Expanded(child: Container()),
           ],
         ));
   }
 
-  Widget _getCurrentlyPlayingTrack(
-      MainPageState state, PlayerState? playerState) {
-    Track? track = playerState!.track;
+  Widget _getCurrentlyPlayingTrack(MainPageState state) {
+    Track? track = state.playerState!.track;
     if (track == null) {
       // Can add design for when no track is being played
       return Container();
@@ -509,9 +549,10 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
                             fontWeight: FontWeight.w900,
                             title: quackTrack.name,
                             textColor: Colors.white,
+                            useOverflowReplacement: true,
                             alignmentGeometry: Alignment.bottomLeft,
                             padding: const EdgeInsets.only(
-                                left: 0, top: 0, bottom: 5, right: 0),
+                                left: 0, top: 10, bottom: 5, right: 10),
                             margin: const EdgeInsets.all(0),
                           ),
                           CustomLabel(
@@ -520,9 +561,10 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
                             fontSize: 14,
                             maxLines: 1,
                             softWrap: false,
+                            useOverflowReplacement: true,
                             margin: const EdgeInsets.all(0),
                             padding: const EdgeInsets.only(
-                                left: 0, top: 5, bottom: 0, right: 0),
+                                left: 0, top: 5, bottom: 10, right: 10),
                             title: quackTrack.artist,
                             textColor: custom_colors.darkGrey,
                           )
@@ -541,7 +583,9 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
                     width: 50,
                     borderRadius: const BorderRadius.all(Radius.circular(25)),
                     icon: Icon(
-                      playerState.isPaused ? Icons.play_arrow : Icons.pause,
+                      state.playerState!.isPaused
+                          ? Icons.play_arrow
+                          : Icons.pause,
                       color: Colors.white,
                       size: values.mainPageOverlayHeight / 2,
                     ),
@@ -557,10 +601,9 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
     );
   }
 
-  Widget _getTrack(
-      MainPageState state, PlayerState? playerState, QuackTrack? quackTrack) {
+  Widget _getTrack(MainPageState state, QuackTrack? quackTrack) {
     QuackTrack? currentlyPlayingTrack =
-        QuackTrack.trackToQuackTrack(playerState!.track);
+        QuackTrack.trackToQuackTrack(state.playerState!.track);
 
     return CustomListTile(
         pressedBackground: custom_colors.transparentGradient,
@@ -595,25 +638,33 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
                     fontSize: 14,
                     maxLines: 1,
                     softWrap: false,
+                    useOverflowReplacement: true,
                     fontWeight: FontWeight.w900,
                     title: quackTrack.name,
                     textColor: quackTrack == currentlyPlayingTrack
                         ? custom_colors.lightBlue
                         : Colors.white,
-                    alignmentGeometry: Alignment.bottomLeft,
-                    padding: const EdgeInsets.only(
-                        left: 0, top: 0, bottom: 5, right: 10),
+                    alignmentGeometry: Alignment.centerLeft,
+                    padding: EdgeInsets.only(
+                        left: 0,
+                        top: 10,
+                        bottom: 5,
+                        right: currentlyPlayingTrack == quackTrack ? 0 : 10),
                     margin: const EdgeInsets.all(0),
                   ),
                   CustomLabel(
-                    alignmentGeometry: Alignment.topLeft,
+                    alignmentGeometry: Alignment.centerLeft,
                     height: values.mainPageOverlayHeight / 2,
                     fontSize: 14,
                     maxLines: 1,
                     softWrap: false,
+                    useOverflowReplacement: true,
                     margin: const EdgeInsets.all(0),
-                    padding: const EdgeInsets.only(
-                        left: 0, top: 5, bottom: 0, right: 10),
+                    padding: EdgeInsets.only(
+                        left: 0,
+                        top: 5,
+                        bottom: 10,
+                        right: currentlyPlayingTrack == quackTrack ? 0 : 10),
                     title: quackTrack.artist,
                     textColor: custom_colors.darkGrey,
                   )
@@ -635,7 +686,7 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
                           borderRadius:
                               const BorderRadius.all(Radius.circular(25)),
                           icon: Icon(
-                            playerState.isPaused
+                            state.playerState!.isPaused
                                 ? Icons.play_arrow
                                 : Icons.pause,
                             color: Colors.white,
@@ -652,16 +703,16 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
             ],
           ),
         ),
-        onPressed: () => bloc.add(PlayPauseTrack(quackTrack: quackTrack)));
+        onPressed: () => bloc.add(TrackSelected(quackTrack: quackTrack)));
   }
 
-  Widget _getPlaylist(MainPageState state, PlayerState? playerState) {
+  Widget _getPlaylist(MainPageState state) {
     List<QuackTrack>? tracks = state.playlist!.tracks;
 
     return ListView.builder(
       itemCount: tracks!.length,
       itemBuilder: (context, index) {
-        return _getTrack(state, playerState, tracks[index]);
+        return _getTrack(state, tracks[index]);
       },
     );
   }

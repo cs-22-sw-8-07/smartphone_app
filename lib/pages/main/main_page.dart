@@ -584,7 +584,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             ],
           ),
         ),
-        onPressed: () => bloc.add(PlayPauseTrack(quackTrack: quackTrack)));
+        onPressed: () => bloc.add(TrackSelected(quackTrack: quackTrack)));
   }
 
   Widget _getPlaylist(MainPageState state, PlayerState? playerState) {
