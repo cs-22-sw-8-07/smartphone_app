@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:smartphone_app/values/values.dart';
 
 enum PermissionState { granted, denied }
@@ -101,6 +102,22 @@ class GeneralUtil {
     if (message != null) {
       Fluttertoast.showToast(msg: message, toastLength: Toast.LENGTH_LONG);
     }
+  }
+
+  /// Show a snackbar to the user (A message popup in the bottom of the screen)
+  /// [message] is the string shown to the user
+  static showSnackBar({required BuildContext context, required String message}) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.white,
+        content: Text(
+          message,
+          style: GoogleFonts.roboto(
+              textStyle: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16)),
+        )));
   }
 
   /// Check for a internet connection

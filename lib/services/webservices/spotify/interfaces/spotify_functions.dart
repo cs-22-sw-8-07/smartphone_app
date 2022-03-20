@@ -14,6 +14,10 @@ class ISpotifyFunctions {
     throw UnimplementedError();
   }
 
+  Future<SpotifySdkResponse> queueTrack(String trackId) async {
+    throw UnimplementedError();
+  }
+
   Future<SpotifySdkResponseWithResult<String>> getAuthenticationToken() async {
     throw UnimplementedError();
   }

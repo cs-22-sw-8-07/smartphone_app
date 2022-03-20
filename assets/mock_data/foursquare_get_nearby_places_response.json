@@ -1,0 +1,1617 @@
+{
+  "results": [
+    {
+      "fsq_id": "5d234a71fac612002379be33",
+      "categories": [
+        {
+          "id": 16003,
+          "name": "Beach",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/parks_outdoors/beach_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 475,
+      "geocodes": {
+        "main": {
+          "latitude": 57.743939,
+          "longitude": 10.648037
+        }
+      },
+      "location": {
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "9990 Skagen",
+        "locality": "Skagen",
+        "postcode": "9990",
+        "region": "North Denmark"
+      },
+      "name": "Kattegatt Meets Skagerrak",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "56656859498e87cb799f76eb",
+      "categories": [
+        {
+          "id": 16023,
+          "name": "Lake",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/parks_outdoors/lake_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 93,
+      "geocodes": {
+        "main": {
+          "latitude": 57.744692,
+          "longitude": 10.65449
+        }
+      },
+      "location": {
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "",
+        "postcode": ""
+      },
+      "name": "Skagerak - Dänemark",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "5bd2fcc5911fc4002c7e8d3d",
+      "categories": [
+        {
+          "id": 17069,
+          "name": "Grocery Store / Supermarket",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/shops/food_grocery_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [
+        {
+          "id": "b0b33b60-d890-0132-61d2-7a163eb2a6fc",
+          "name": "Netto"
+        }
+      ],
+      "distance": 4524,
+      "geocodes": {
+        "main": {
+          "latitude": 57.724104,
+          "longitude": 10.5903
+        },
+        "roof": {
+          "latitude": 57.724104,
+          "longitude": 10.5903
+        }
+      },
+      "location": {
+        "address": "Chr. Xs Vej 6A",
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "Chr. Xs Vej 6A, 9990 Skagen",
+        "locality": "Skagen",
+        "postcode": "9990",
+        "region": "North Denmark"
+      },
+      "name": "Netto",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4c3c3f425418897c6a800803",
+      "categories": [
+        {
+          "id": 10027,
+          "name": "Museum",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/arts_entertainment/museum_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 4166,
+      "geocodes": {
+        "main": {
+          "latitude": 57.724625,
+          "longitude": 10.59723
+        },
+        "roof": {
+          "latitude": 57.724625,
+          "longitude": 10.59723
+        }
+      },
+      "location": {
+        "address": "Brøndumsvej 4",
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "Brøndumsvej 4, 9990 Skagen",
+        "locality": "Skagen",
+        "postcode": "9990",
+        "region": "North Denmark"
+      },
+      "name": "Skagens Museum",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "5931824346e1b6531c1e45bb",
+      "categories": [
+        {
+          "id": 16049,
+          "name": "Surf Spot",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/parks_outdoors/surfspot_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 181,
+      "geocodes": {
+        "main": {
+          "latitude": 57.745051,
+          "longitude": 10.652702
+        }
+      },
+      "location": {
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "",
+        "postcode": ""
+      },
+      "name": "Skagen",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4c1651d77fd00f476903fab6",
+      "categories": [
+        {
+          "id": 10030,
+          "name": "History Museum",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/arts_entertainment/museum_history_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 1867,
+      "geocodes": {
+        "main": {
+          "latitude": 57.735535,
+          "longitude": 10.630382
+        },
+        "roof": {
+          "latitude": 57.735535,
+          "longitude": 10.630382
+        }
+      },
+      "location": {
+        "address": "",
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "",
+        "postcode": ""
+      },
+      "name": "Fyrtårnet",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4e368191a8092599ee0f4f96",
+      "categories": [
+        {
+          "id": 10027,
+          "name": "Museum",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/arts_entertainment/museum_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 4110,
+      "geocodes": {
+        "main": {
+          "latitude": 57.725966,
+          "longitude": 10.596817
+        },
+        "roof": {
+          "latitude": 57.725966,
+          "longitude": 10.596817
+        }
+      },
+      "location": {
+        "address": "Markvej 2-4",
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "Markvej 2-4, 9990 Skagen",
+        "locality": "Skagen",
+        "postcode": "9990",
+        "region": "North Denmark"
+      },
+      "name": "Michael & Anna Anchers Hus",
+      "related_places": {
+        "children": [
+          {
+            "fsq_id": "5901e978286fda74de76d520",
+            "name": "Anchers café & butik"
+          }
+        ]
+      },
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "502fd72ae4b04d70be938c3d",
+      "categories": [
+        {
+          "id": 16017,
+          "name": "Garden",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/parks_outdoors/garden_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 3841,
+      "geocodes": {
+        "main": {
+          "latitude": 57.736825,
+          "longitude": 10.592819
+        }
+      },
+      "location": {
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "",
+        "postcode": ""
+      },
+      "name": "15 Morgensol",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4c39f4873849c9286812c2b1",
+      "categories": [
+        {
+          "id": 11039,
+          "name": "Event Space",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/building/eventspace_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 3554,
+      "geocodes": {
+        "main": {
+          "latitude": 55.48639,
+          "longitude": 12.173246
+        },
+        "roof": {
+          "latitude": 55.48639,
+          "longitude": 12.173246
+        }
+      },
+      "location": {
+        "address": "",
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "",
+        "postcode": ""
+      },
+      "name": "Julie's Place",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "517a8c49e4b04ad96c5bdd5c",
+      "categories": [
+        {
+          "id": 16023,
+          "name": "Lake",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/parks_outdoors/lake_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 2856,
+      "geocodes": {
+        "main": {
+          "latitude": 57.740657,
+          "longitude": 10.608308
+        }
+      },
+      "location": {
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "",
+        "postcode": ""
+      },
+      "name": "Eventyr Søen",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4c274659a852c92887f4e76c",
+      "categories": [
+        {
+          "id": 19010,
+          "name": "Bed and Breakfast",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/travel/bedandbreakfast_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 3664,
+      "geocodes": {
+        "main": {
+          "latitude": 57.726096,
+          "longitude": 10.605708
+        },
+        "roof": {
+          "latitude": 57.726096,
+          "longitude": 10.605708
+        }
+      },
+      "location": {
+        "address": "",
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "Skagen",
+        "locality": "Skagen",
+        "postcode": "",
+        "region": "North Denmark"
+      },
+      "name": "Casa Østerbyvej 34",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4bb3b8ef14cfd13af97316ab",
+      "categories": [
+        {
+          "id": 19000,
+          "name": "Travel and Transportation",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/travel/default_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 4000,
+      "geocodes": {
+        "main": {
+          "latitude": 57.72986,
+          "longitude": 10.594531
+        },
+        "roof": {
+          "latitude": 57.72986,
+          "longitude": 10.594531
+        }
+      },
+      "location": {
+        "country": "DK",
+        "formatted_address": ""
+      },
+      "name": "Huset i Skagen",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4def996a7d8bb02cbefdc355",
+      "categories": [
+        {
+          "id": 16024,
+          "name": "Lighthouse",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/parks_outdoors/lighthouse_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 3485,
+      "geocodes": {
+        "main": {
+          "latitude": 57.726889,
+          "longitude": 10.608117
+        }
+      },
+      "location": {
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "Skagen",
+        "locality": "Skagen",
+        "postcode": "",
+        "region": "North Denmark"
+      },
+      "name": "Vippefyret",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4baf4603f964a520e3f43be3",
+      "categories": [],
+      "chains": [],
+      "distance": 2377,
+      "geocodes": {
+        "main": {
+          "latitude": 57.73494,
+          "longitude": 10.620826
+        }
+      },
+      "location": {
+        "address": "",
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "",
+        "postcode": ""
+      },
+      "name": "Brøndums",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4e3c519a62e19d61095f3512",
+      "categories": [],
+      "chains": [],
+      "distance": 3422,
+      "geocodes": {
+        "main": {
+          "latitude": 57.731322,
+          "longitude": 10.604019
+        },
+        "roof": {
+          "latitude": 57.731322,
+          "longitude": 10.604019
+        }
+      },
+      "location": {
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "",
+        "postcode": ""
+      },
+      "name": "Strandly Hotel",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4e2969a952b1c37d35cb72eb",
+      "categories": [],
+      "chains": [],
+      "distance": 3402,
+      "geocodes": {
+        "main": {
+          "latitude": 57.731907,
+          "longitude": 10.60388
+        },
+        "roof": {
+          "latitude": 57.731907,
+          "longitude": 10.60388
+        }
+      },
+      "location": {
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "Skagen",
+        "locality": "Skagen",
+        "postcode": "",
+        "region": "North Denmark"
+      },
+      "name": "Mors Brusekabine",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4db1735b4df03036e8ce1aa1",
+      "categories": [],
+      "chains": [],
+      "distance": 4020,
+      "geocodes": {
+        "main": {
+          "latitude": 57.724964,
+          "longitude": 10.599704
+        },
+        "roof": {
+          "latitude": 57.724964,
+          "longitude": 10.599704
+        }
+      },
+      "location": {
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "",
+        "postcode": ""
+      },
+      "name": "Skagen Sommerhuset",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4c3c47fb7d00d13a04a33850",
+      "categories": [],
+      "chains": [],
+      "distance": 4105,
+      "geocodes": {
+        "main": {
+          "latitude": 57.725236,
+          "longitude": 10.597424
+        },
+        "roof": {
+          "latitude": 57.725236,
+          "longitude": 10.597424
+        }
+      },
+      "location": {
+        "address": "",
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "",
+        "postcode": ""
+      },
+      "name": "Krøyers Atelier",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4cd5048ab2a4370441677b44",
+      "categories": [],
+      "chains": [],
+      "distance": 4078,
+      "geocodes": {
+        "main": {
+          "latitude": 57.729375,
+          "longitude": 10.593646
+        },
+        "roof": {
+          "latitude": 57.729375,
+          "longitude": 10.593646
+        }
+      },
+      "location": {
+        "address": "Spliidsvej 37",
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "Spliidsvej 37, 9990 Skagen",
+        "locality": "Skagen",
+        "postcode": "9990",
+        "region": "North Denmark"
+      },
+      "name": "Skawbulls",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4db27a47cda118d4d672eba5",
+      "categories": [],
+      "chains": [],
+      "distance": 3550,
+      "geocodes": {
+        "main": {
+          "latitude": 57.735284,
+          "longitude": 10.598641
+        }
+      },
+      "location": {
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "Skagen",
+        "locality": "Skagen",
+        "postcode": "",
+        "region": "North Denmark"
+      },
+      "name": "Maison Du Nord",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4dee74677d8bb216743c6d52",
+      "categories": [],
+      "chains": [],
+      "distance": 4032,
+      "geocodes": {
+        "main": {
+          "latitude": 57.729851,
+          "longitude": 10.59442
+        },
+        "roof": {
+          "latitude": 57.729851,
+          "longitude": 10.59442
+        }
+      },
+      "location": {
+        "address": "Rimmervej 44",
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "Rimmervej 44, 9990 Skagen",
+        "locality": "Skagen",
+        "postcode": "9990",
+        "region": "North Denmark"
+      },
+      "name": "Fru Jensen",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "58a87c9c8ee5601dbaa68a9f",
+      "categories": [
+        {
+          "id": 10004,
+          "name": "Art Gallery",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/arts_entertainment/artgallery_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 4335,
+      "geocodes": {
+        "main": {
+          "latitude": 57.723936,
+          "longitude": 10.594414
+        },
+        "roof": {
+          "latitude": 57.723936,
+          "longitude": 10.594414
+        }
+      },
+      "location": {
+        "address": "Sct. Laurentii Vej 23, st",
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "Sct. Laurentii Vej 23, st, 9990 Skagen",
+        "locality": "Skagen",
+        "postcode": "9990",
+        "region": "Nordjylland"
+      },
+      "name": "Galerie Contour ApS",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "5901e978286fda74de76d520",
+      "categories": [
+        {
+          "id": 13034,
+          "name": "Café",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/food/cafe_",
+            "suffix": ".png"
+          }
+        },
+        {
+          "id": 13065,
+          "name": "Restaurant",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/food/default_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 4125,
+      "geocodes": {
+        "main": {
+          "latitude": 57.726102,
+          "longitude": 10.596237
+        },
+        "roof": {
+          "latitude": 57.726102,
+          "longitude": 10.596237
+        }
+      },
+      "location": {
+        "address": "Markvej 2\/4",
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "Markvej 2\/4, 9990 Skagen",
+        "locality": "Skagen",
+        "postcode": "9990",
+        "region": "North Denmark"
+      },
+      "name": "Anchers café & butik",
+      "related_places": {
+        "parent": {
+          "fsq_id": "4e368191a8092599ee0f4f96",
+          "name": "Michael & Anna Anchers Hus"
+        }
+      },
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4cbc3438bac93704ce7bf67c",
+      "categories": [
+        {
+          "id": 10027,
+          "name": "Museum",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/arts_entertainment/museum_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 4070,
+      "geocodes": {
+        "main": {
+          "latitude": 57.725776,
+          "longitude": 10.597852
+        },
+        "roof": {
+          "latitude": 57.725776,
+          "longitude": 10.597852
+        }
+      },
+      "location": {
+        "address": "Oddevej 2 A",
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "Oddevej 2 A, 9990 Skagen",
+        "locality": "Skagen",
+        "postcode": "9990",
+        "region": "North Denmark"
+      },
+      "name": "Skagens Bamsemuseum",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4e29b2c2a809ec0663fb3233",
+      "categories": [
+        {
+          "id": 16030,
+          "name": "Other Great Outdoors",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/parks_outdoors/outdoors_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 3755,
+      "geocodes": {
+        "main": {
+          "latitude": 57.738334,
+          "longitude": 10.593895
+        }
+      },
+      "location": {
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "Skagen",
+        "locality": "Skagen",
+        "postcode": "",
+        "region": "North Denmark"
+      },
+      "name": "Staldgrenen",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4e3146aeb0fb3ee64670cfee",
+      "categories": [
+        {
+          "id": 16003,
+          "name": "Beach",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/parks_outdoors/beach_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 3398,
+      "geocodes": {
+        "main": {
+          "latitude": 55.032103,
+          "longitude": 11.884858
+        },
+        "roof": {
+          "latitude": 55.032103,
+          "longitude": 11.884858
+        }
+      },
+      "location": {
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "",
+        "postcode": ""
+      },
+      "name": "I Vandet",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4e245d14b0fbdf9ba7c682b6",
+      "categories": [
+        {
+          "id": 16017,
+          "name": "Garden",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/parks_outdoors/garden_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 3402,
+      "geocodes": {
+        "main": {
+          "latitude": 57.731907,
+          "longitude": 10.60388
+        },
+        "roof": {
+          "latitude": 57.731907,
+          "longitude": 10.60388
+        }
+      },
+      "location": {
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "Skagen",
+        "locality": "Skagen",
+        "postcode": "",
+        "region": "North Denmark"
+      },
+      "name": "Hængekøjen",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "51d824f5498e6c3e25b87698",
+      "categories": [
+        {
+          "id": 16008,
+          "name": "Campground",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/parks_outdoors/campground_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 3525,
+      "geocodes": {
+        "main": {
+          "latitude": 57.734491,
+          "longitude": 10.599593
+        }
+      },
+      "location": {
+        "address": "Poul Eeg Camping",
+        "country": "DK",
+        "cross_street": "Bøjlevejen",
+        "formatted_address": "Poul Eeg Camping (Bøjlevejen), Skagen",
+        "locality": "Skagen",
+        "postcode": "",
+        "region": "North Denmark"
+      },
+      "name": "Vej 44 Plads 415",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4e240d21d22d0a3f5a117b63",
+      "categories": [
+        {
+          "id": 16017,
+          "name": "Garden",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/parks_outdoors/garden_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 3377,
+      "geocodes": {
+        "main": {
+          "latitude": 57.731952,
+          "longitude": 10.604434
+        },
+        "roof": {
+          "latitude": 57.731952,
+          "longitude": 10.604434
+        }
+      },
+      "location": {
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "9990 Skagen",
+        "locality": "Skagen",
+        "postcode": "9990",
+        "region": "North Denmark"
+      },
+      "name": "Croquet banen",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "5305d23c498e3cb3d55f0dd5",
+      "categories": [
+        {
+          "id": 16030,
+          "name": "Other Great Outdoors",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/parks_outdoors/outdoors_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 3157,
+      "geocodes": {
+        "main": {
+          "latitude": 57.742801,
+          "longitude": 10.602569
+        },
+        "roof": {
+          "latitude": 57.742801,
+          "longitude": 10.602569
+        }
+      },
+      "location": {
+        "address": "Batterivej 44",
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "Batterivej 44, 9990 Skagen",
+        "locality": "Skagen",
+        "postcode": "9990",
+        "region": "Nordjylland"
+      },
+      "name": "Radarhoved Skagen",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "50029f20e4b07b95768fe98e",
+      "categories": [
+        {
+          "id": 16008,
+          "name": "Campground",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/parks_outdoors/campground_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 3529,
+      "geocodes": {
+        "main": {
+          "latitude": 57.73445,
+          "longitude": 10.599655
+        }
+      },
+      "location": {
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "",
+        "postcode": ""
+      },
+      "name": "Plads 246",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4c3dc0297d002d7f492ab018",
+      "categories": [
+        {
+          "id": 17089,
+          "name": "Gift Store",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/shops/giftshop_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 4289,
+      "geocodes": {
+        "main": {
+          "latitude": 57.724212,
+          "longitude": 10.594991
+        },
+        "roof": {
+          "latitude": 57.724212,
+          "longitude": 10.594991
+        }
+      },
+      "location": {
+        "address": "Sct. Laurentii Vej 17 C",
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "Sct. Laurentii Vej 17 C, 9990 Skagen",
+        "locality": "Skagen",
+        "postcode": "9990",
+        "region": "Nordjylland"
+      },
+      "name": "Mølbak",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4e1afdfed22d8a338fe8fc8b",
+      "categories": [
+        {
+          "id": 13025,
+          "name": "Wine Bar",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/food/winery_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 4095,
+      "geocodes": {
+        "main": {
+          "latitude": 57.724812,
+          "longitude": 10.598319
+        }
+      },
+      "location": {
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "Skagen",
+        "locality": "Skagen",
+        "postcode": "",
+        "region": "North Denmark"
+      },
+      "name": "Brøndums Champagneterasse",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4e3933d8a809d73012e30c30",
+      "categories": [
+        {
+          "id": 17043,
+          "name": "Clothing Store",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/shops/apparel_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 4373,
+      "geocodes": {
+        "main": {
+          "latitude": 57.724144,
+          "longitude": 10.594721
+        },
+        "roof": {
+          "latitude": 57.724144,
+          "longitude": 10.594721
+        }
+      },
+      "location": {
+        "address": "Sct. Laurentii Vej 21",
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "Sct. Laurentii Vej 21, 9990 Skagen",
+        "locality": "Skagen",
+        "postcode": "9990",
+        "region": "Nordjylland"
+      },
+      "name": "Kig Ind",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "5ad1e9484acb19710c90674b",
+      "categories": [
+        {
+          "id": 17020,
+          "name": "Boutique",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/shops/apparel_boutique_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 4302,
+      "geocodes": {
+        "main": {
+          "latitude": 57.724144,
+          "longitude": 10.594721
+        },
+        "roof": {
+          "latitude": 57.724144,
+          "longitude": 10.594721
+        }
+      },
+      "location": {
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "9990 Skagen",
+        "locality": "Skagen",
+        "postcode": "9990",
+        "region": "North Denmark"
+      },
+      "name": "2Trinop",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4c3c4a425418897c3d8c0803",
+      "categories": [
+        {
+          "id": 17082,
+          "name": "Furniture and Home Store",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/shops/furniture_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 4346,
+      "geocodes": {
+        "main": {
+          "latitude": 57.723949,
+          "longitude": 10.59402
+        },
+        "roof": {
+          "latitude": 57.723949,
+          "longitude": 10.59402
+        }
+      },
+      "location": {
+        "address": "",
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "",
+        "postcode": ""
+      },
+      "name": "Berg",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4c3c495f4bc9a5935e66d271",
+      "categories": [
+        {
+          "id": 17000,
+          "name": "Retail",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/shops/default_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 4254,
+      "geocodes": {
+        "main": {
+          "latitude": 57.724543,
+          "longitude": 10.595113
+        },
+        "roof": {
+          "latitude": 57.724543,
+          "longitude": 10.595113
+        }
+      },
+      "location": {
+        "address": "",
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "",
+        "postcode": "",
+        "region": "Nordjylland"
+      },
+      "name": "Harbour Club Skagen",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4b59c0dff964a5203d9628e3",
+      "categories": [
+        {
+          "id": 12080,
+          "name": "Library",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/building/library_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 4498,
+      "geocodes": {
+        "main": {
+          "latitude": 57.723977,
+          "longitude": 10.594352
+        },
+        "roof": {
+          "latitude": 57.723977,
+          "longitude": 10.594352
+        }
+      },
+      "location": {
+        "address": "Sct. Laurentii Vej 23",
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "Sct. Laurentii Vej 23, 9990 Skagen",
+        "locality": "Skagen",
+        "postcode": "9990",
+        "region": "Nordjylland"
+      },
+      "name": "Skagens Bibliotek",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4e36857fd22d86185a76baea",
+      "categories": [
+        {
+          "id": 11000,
+          "name": "Business and Professional Services",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/building/default_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 3884,
+      "geocodes": {
+        "main": {
+          "latitude": 57.732289,
+          "longitude": 10.595084
+        },
+        "roof": {
+          "latitude": 57.732289,
+          "longitude": 10.595084
+        }
+      },
+      "location": {
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "",
+        "postcode": ""
+      },
+      "name": "Skagen Midtpunkt",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4e32d4b42271f49bf79210fd",
+      "categories": [
+        {
+          "id": 12080,
+          "name": "Library",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/building/library_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 4330,
+      "geocodes": {
+        "main": {
+          "latitude": 57.724534,
+          "longitude": 10.593881
+        },
+        "roof": {
+          "latitude": 57.724534,
+          "longitude": 10.593881
+        }
+      },
+      "location": {
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "",
+        "postcode": ""
+      },
+      "name": "Biblioteket",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4e2896551f6e88a15463db2f",
+      "categories": [
+        {
+          "id": 19047,
+          "name": "Rail Station",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/travel/trainstation_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 4471,
+      "geocodes": {
+        "main": {
+          "latitude": 57.724049,
+          "longitude": 10.590756
+        },
+        "roof": {
+          "latitude": 57.724049,
+          "longitude": 10.590756
+        }
+      },
+      "location": {
+        "address": "Chr. Xs Vej 4",
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "Chr. Xs Vej 4, 9990 Skagen",
+        "locality": "Skagen",
+        "postcode": "9990",
+        "region": "North Denmark"
+      },
+      "name": "Skagen Station",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4c4588b6dd1f2d7f124b81f9",
+      "categories": [
+        {
+          "id": 16003,
+          "name": "Beach",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/parks_outdoors/beach_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 4015,
+      "geocodes": {
+        "main": {
+          "latitude": 57.724524,
+          "longitude": 10.602735
+        },
+        "roof": {
+          "latitude": 57.724524,
+          "longitude": 10.602735
+        }
+      },
+      "location": {
+        "address": "Østre Strandvej 73",
+        "country": "DK",
+        "formatted_address": "Østre Strandvej 73, 9990 Skagen",
+        "locality": "Skagen",
+        "postcode": "9990",
+        "region": "North Denmark"
+      },
+      "name": "Skagen Sønderstrand",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4e2e7eaed4c058fdbee9ed39",
+      "categories": [
+        {
+          "id": 10027,
+          "name": "Museum",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/arts_entertainment/museum_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 3607,
+      "geocodes": {
+        "main": {
+          "latitude": 57.739847,
+          "longitude": 10.595587
+        },
+        "roof": {
+          "latitude": 57.739847,
+          "longitude": 10.595587
+        }
+      },
+      "location": {
+        "address": "Bøjlevejen 66",
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "Bøjlevejen 66, 9990 Skagen",
+        "locality": "Skagen",
+        "postcode": "9990",
+        "region": "North Denmark"
+      },
+      "name": "Skagen Odde Naturcenter",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4c500ab12a73c928ec0ad2d1",
+      "categories": [
+        {
+          "id": 16003,
+          "name": "Beach",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/parks_outdoors/beach_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 3093,
+      "geocodes": {
+        "main": {
+          "latitude": 57.721407,
+          "longitude": 10.585918
+        },
+        "roof": {
+          "latitude": 57.721407,
+          "longitude": 10.585918
+        }
+      },
+      "location": {
+        "address": "",
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "Skagen",
+        "locality": "Skagen",
+        "postcode": "",
+        "region": "North Denmark"
+      },
+      "name": "Skagen Nordstrand",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4cadcf288b57a1cdc4da9a75",
+      "categories": [
+        {
+          "id": 13034,
+          "name": "Café",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/food/cafe_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 4008,
+      "geocodes": {
+        "main": {
+          "latitude": 57.726533,
+          "longitude": 10.597577
+        },
+        "roof": {
+          "latitude": 57.726533,
+          "longitude": 10.597577
+        }
+      },
+      "location": {
+        "address": "Brøndumsvej 4",
+        "country": "DK",
+        "cross_street": "Anchersvej",
+        "formatted_address": "Brøndumsvej 4 (Anchersvej), 9990 Skagen",
+        "locality": "Skagen",
+        "postcode": "9990",
+        "region": "North Denmark"
+      },
+      "name": "Museumscaféen Brøndums Havehus - Skagens Museum",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "5e9eb16d0606090008bb967e",
+      "categories": [
+        {
+          "id": 16046,
+          "name": "Scenic Lookout",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/parks_outdoors/sceniclookout_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 474,
+      "geocodes": {
+        "main": {
+          "latitude": 57.743939,
+          "longitude": 10.648037
+        }
+      },
+      "location": {
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "Skagen",
+        "locality": "Skagen",
+        "postcode": "",
+        "region": "North Denmark"
+      },
+      "name": "Grenen",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4c4affb3712ac9289980486c",
+      "categories": [
+        {
+          "id": 10030,
+          "name": "History Museum",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/arts_entertainment/museum_history_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 1597,
+      "geocodes": {
+        "main": {
+          "latitude": 55.570184,
+          "longitude": 9.761695
+        }
+      },
+      "location": {
+        "address": "",
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "",
+        "postcode": ""
+      },
+      "name": "Bunkermuseet",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    },
+    {
+      "fsq_id": "4e2b037118a80bb0585424cb",
+      "categories": [
+        {
+          "id": 13338,
+          "name": "Seafood Restaurant",
+          "icon": {
+            "prefix": "https://ss3.4sqi.net/img/categories_v2/food/seafood_",
+            "suffix": ".png"
+          }
+        }
+      ],
+      "chains": [],
+      "distance": 3402,
+      "geocodes": {
+        "main": {
+          "latitude": 57.731934,
+          "longitude": 10.604213
+        },
+        "roof": {
+          "latitude": 57.731934,
+          "longitude": 10.604213
+        }
+      },
+      "location": {
+        "country": "DK",
+        "cross_street": "",
+        "formatted_address": "Skagen",
+        "locality": "Skagen",
+        "postcode": "",
+        "region": "North Denmark"
+      },
+      "name": "Skaldyrsfest",
+      "related_places": {},
+      "timezone": "Europe/Copenhagen"
+    }
+  ]
+}

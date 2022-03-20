@@ -8,6 +8,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:smartphone_app/widgets/custom_label.dart';
 import 'package:smartphone_app/widgets/custom_list_tile.dart';
 import 'package:spotify_sdk/models/track.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 import '../../services/webservices/quack/models/quack_classes.dart';
 import '../../widgets/custom_app_bar.dart';
@@ -151,6 +152,12 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
       return false;
     }
 
+    if (previous.lockedQuackLocationType != null &&
+        current.lockedQuackLocationType != null &&
+        previous.lockedQuackLocationType == current.lockedQuackLocationType) {
+      return false;
+    }
+
     return previous.quackLocationType != current.quackLocationType ||
         (current.lockedQuackLocationType != null &&
             current.lockedQuackLocationType != previous.quackLocationType) ||
@@ -259,34 +266,34 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           AnimatedContainer(
-                  height: state.playlist == null
-                      ? 0
-                      : values.mainPageOverlayButtonHeight,
-                  duration: const Duration(milliseconds: 200),
-                  child: CustomButton(
-                      fontWeight: FontWeight.bold,
-                      height: null,
-                      icon: Icon(
-                        state.isPlaylistShown!
-                            ? Icons.expand_more
-                            : Icons.expand_less,
-                        color: Colors.white,
-                        size: 25,
-                      ),
-                      onPressed: () {
-                        bloc.add(const ButtonPressed(
-                            buttonEvent: MainButtonEvent.resizePlaylist));
-                        bloc.state.isPlaylistShown!
-                            ? playlistAnimationController.reverse()
-                            : playlistAnimationController.forward();
-                      },
-                      borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(30),
-                          topRight: Radius.circular(30)),
-                      margin: const EdgeInsets.all(0),
-                      textColor: custom_colors.black,
-                      pressedBackground: custom_colors.appButtonPressedGradient,
-                      defaultBackground: custom_colors.appButtonGradient)),
+              height: state.playlist == null
+                  ? 0
+                  : values.mainPageOverlayButtonHeight,
+              duration: const Duration(milliseconds: 200),
+              child: CustomButton(
+                  fontWeight: FontWeight.bold,
+                  height: null,
+                  icon: Icon(
+                    state.isPlaylistShown!
+                        ? Icons.expand_more
+                        : Icons.expand_less,
+                    color: Colors.white,
+                    size: 25,
+                  ),
+                  onPressed: () {
+                    bloc.add(const ButtonPressed(
+                        buttonEvent: MainButtonEvent.resizePlaylist));
+                    bloc.state.isPlaylistShown!
+                        ? playlistAnimationController.reverse()
+                        : playlistAnimationController.forward();
+                  },
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30)),
+                  margin: const EdgeInsets.all(0),
+                  textColor: custom_colors.black,
+                  pressedBackground: custom_colors.appButtonPressedGradient,
+                  defaultBackground: custom_colors.appButtonGradient)),
           AnimatedBuilder(
               animation: playlistAnimationController,
               builder: (context, _) {
@@ -345,23 +352,49 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
                         buildWhen: (previous, current) {
                       return _shouldUpdateQuackLocationType(previous, current);
                     }, builder: (context, state) {
-                      return Positioned.fill(
-                          child: Container(
-                              decoration: const BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(27.5))),
-                              padding: const EdgeInsets.only(top: 40),
-                              margin: const EdgeInsets.only(
-                                  top: 0, left: 30, right: 30, bottom: 30),
-                              child: ClipRRect(
+                      return Column(
+                        children: [
+                          Container(
+                            child: AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 500),
+                                child: CustomLabel(
+                                  key: UniqueKey(),
+                                  textColor: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  alignmentGeometry: Alignment.center,
+                                  margin: const EdgeInsets.all(0),
+                                  padding: const EdgeInsets.all(0),
+                                  title: LocalizationHelper.getInstance()
+                                      .getLocalizedQuackLocationType(
+                                          context,
+                                          state.lockedQuackLocationType == null
+                                              ? state.quackLocationType!
+                                              : state.lockedQuackLocationType!),
+                                )),
+                            height: 40,
+                            margin: const EdgeInsets.only(left: 30, right: 30),
+                            decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: custom_colors.darkBlue),
+                                color: custom_colors.darkBlue,
                                 borderRadius: const BorderRadius.only(
-                                    bottomLeft: Radius.circular(27.5),
-                                    bottomRight: Radius.circular(27.5)),
-                                child: FittedBox(
-                                    fit: BoxFit.fill,
-                                    child: AnimatedSwitcher(
-                                        duration:
-                                            const Duration(milliseconds: 500),
+                                    topLeft: Radius.circular(27.5),
+                                    topRight: Radius.circular(27.5))),
+                          ),
+                          Expanded(
+                              child: AnimatedSwitcher(
+                                  child: Container(
+                                    key: UniqueKey(),
+                                    decoration: const BoxDecoration(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(27.5))),
+                                    padding: const EdgeInsets.all(0),
+                                    margin: const EdgeInsets.only(
+                                        top: 0, left: 30, right: 30, bottom: 0),
+                                    child: ClipRRect(
+                                        borderRadius: const BorderRadius.only(
+                                            bottomLeft: Radius.circular(27.5),
+                                            bottomRight: Radius.circular(27.5)),
                                         child: Image.asset(
                                           LocalizationHelper.getInstance()
                                               .getQuackLocationTypeImagePath(
@@ -371,38 +404,13 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
                                                       : state
                                                           .lockedQuackLocationType!),
                                           key: UniqueKey(),
-                                        ))),
-                              )));
-                    }),
-                    BlocBuilder<MainPageBloc, MainPageState>(
-                        buildWhen: (previous, current) {
-                      return _shouldUpdateQuackLocationType(previous, current);
-                    }, builder: (context, state) {
-                      return Container(
-                        child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 500),
-                            child: CustomLabel(
-                              key: UniqueKey(),
-                              textColor: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              alignmentGeometry: Alignment.center,
-                              margin: const EdgeInsets.all(0),
-                              padding: const EdgeInsets.all(0),
-                              title: LocalizationHelper.getInstance()
-                                  .getLocalizedQuackLocationType(
-                                      context,
-                                      state.lockedQuackLocationType == null
-                                          ? state.quackLocationType!
-                                          : state.lockedQuackLocationType!),
-                            )),
-                        height: 40,
-                        margin: const EdgeInsets.only(left: 30, right: 30),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: custom_colors.darkBlue),
-                            color: custom_colors.darkBlue,
-                            borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(27.5),
-                                topRight: Radius.circular(27.5))),
+                                          height: double.infinity,
+                                          width: double.infinity,
+                                          fit: BoxFit.fill,
+                                        )),
+                                  ),
+                                  duration: const Duration(milliseconds: 500)))
+                        ],
                       );
                     }),
                     BlocBuilder<MainPageBloc, MainPageState>(
@@ -410,10 +418,10 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
                       return Align(
                         alignment: Alignment.bottomRight,
                         child: PlayButton(
-                            margin: const EdgeInsets.only(bottom: 40, right: 40),
+                            margin:
+                                const EdgeInsets.only(bottom: 10, right: 40),
                             width: 40,
                             height: 40,
-                            isPlaying: state.lockedQuackLocationType != null,
                             foreground: Icon(
                               state.lockedQuackLocationType == null
                                   ? Icons.lock_outline
@@ -435,6 +443,7 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
                 animation: startStopRecommendationController,
                 builder: (context, _) {
                   return PlayButton(
+                    margin: const EdgeInsets.only(top: 30, bottom: 30),
                     height: values.mainPagePlayPauseButtonSize,
                     width: values.mainPagePlayPauseButtonSize,
                     defaultBackground: custom_colors.appButtonGradient,
@@ -464,7 +473,7 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
                     Icons.tune_outlined,
                     color: Colors.white,
                   ),
-                  margin: const EdgeInsets.only(left: 30, right: 30, top: 30),
+                  margin: const EdgeInsets.only(left: 30, right: 30),
                   borderRadius: const BorderRadius.all(Radius.circular(55 / 2)),
                   text: AppLocalizations.of(context)!.preference_profile,
                   onPressed: () {},
@@ -602,9 +611,6 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
   }
 
   Widget _getTrack(MainPageState state, QuackTrack? quackTrack) {
-    QuackTrack? currentlyPlayingTrack =
-        QuackTrack.trackToQuackTrack(state.playerState!.track);
-
     return CustomListTile(
         pressedBackground: custom_colors.transparentGradient,
         defaultBackground: custom_colors.transparentGradient,
@@ -641,15 +647,15 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
                     useOverflowReplacement: true,
                     fontWeight: FontWeight.w900,
                     title: quackTrack.name,
-                    textColor: quackTrack == currentlyPlayingTrack
-                        ? custom_colors.lightBlue
+                    textColor: state.currentTrack == quackTrack
+                        ? custom_colors.orange_1
                         : Colors.white,
                     alignmentGeometry: Alignment.centerLeft,
                     padding: EdgeInsets.only(
                         left: 0,
                         top: 10,
                         bottom: 5,
-                        right: currentlyPlayingTrack == quackTrack ? 0 : 10),
+                        right: state.currentTrack == quackTrack ? 0 : 10),
                     margin: const EdgeInsets.all(0),
                   ),
                   CustomLabel(
@@ -664,13 +670,13 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
                         left: 0,
                         top: 5,
                         bottom: 10,
-                        right: currentlyPlayingTrack == quackTrack ? 0 : 10),
+                        right: state.currentTrack == quackTrack ? 0 : 10),
                     title: quackTrack.artist,
                     textColor: custom_colors.darkGrey,
                   )
                 ],
               ))),
-              if (currentlyPlayingTrack == quackTrack)
+              if (state.currentTrack == quackTrack)
                 Container(
                   decoration: BoxDecoration(
                       color: Colors.transparent,

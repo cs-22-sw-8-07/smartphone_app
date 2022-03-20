@@ -124,6 +124,27 @@ class IsRecommendationStartedChanged extends MainPageEvent {
   List<Object?> get props => [isRecommendationStarted];
 }
 
+// ignore: must_be_immutable
+class MainPageValueChanged extends MainPageEvent {
+  QuackTrack? currentTrack;
+  bool? isRecommendationStarted;
+  bool? isLoading;
+  QuackLocationType? quackLocationType;
+
+  MainPageValueChanged(
+      {this.currentTrack,
+      this.isRecommendationStarted,
+      this.quackLocationType,
+      this.isLoading});
+
+  @override
+  List<Object?> get props => [currentTrack];
+}
+
+class HasPerformedSpotifyPlayerAction extends MainPageEvent {
+  const HasPerformedSpotifyPlayerAction();
+}
+
 //endregion
 
 ///
@@ -141,10 +162,12 @@ class MainPageState extends Equatable {
   QuackLocationType? quackLocationType;
   QuackLocationType? lockedQuackLocationType;
   bool? isLoading;
+  QuackTrack? currentTrack;
 
   MainPageState(
       {this.isPlaylistShown,
       this.playlist,
+      this.currentTrack,
       this.isLoading,
       this.lockedQuackLocationType,
       this.quackLocationType,
@@ -155,6 +178,7 @@ class MainPageState extends Equatable {
   MainPageState copyWith(
       {bool? isPlaylistShown,
       QuackPlaylist? playlist,
+      QuackTrack? currentTrack,
       QuackLocationType? lockedQuackLocationType,
       QuackLocationType? quackLocationType,
       bool? hasJustPerformedAction,
@@ -164,6 +188,7 @@ class MainPageState extends Equatable {
     return MainPageState(
         playlist: playlist ?? this.playlist,
         isLoading: isLoading ?? this.isLoading,
+        currentTrack: currentTrack ?? this.currentTrack,
         lockedQuackLocationType:
             lockedQuackLocationType ?? this.lockedQuackLocationType,
         hasJustPerformedAction:
@@ -178,6 +203,7 @@ class MainPageState extends Equatable {
   @override
   List<Object?> get props => [
         isPlaylistShown,
+        currentTrack,
         isRecommendationStarted,
         lockedQuackLocationType,
         isLoading,

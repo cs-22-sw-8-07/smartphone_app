@@ -1,22 +1,10 @@
 # smartphone_app
 
-Flutter client project made by group cs-21-sw-7-08
+Flutter client project made by group cs-22-sw-8-07
 
 ## Getting Started
 
-Google API keys has been GIT ignored from the project so they have to be added manually.
-
-First a google-services files have to be added to both the Android and iOS projects: 
-
-```
-project
-└───android
-│   └───app   
-│       │   google-services.json
-└───ios
-```
-
-Afterwards a .env has to be added in the root of the project
+A .env has to be added in the root of the project
 
 ```
 project
@@ -27,4 +15,8 @@ With the following values:
 
 ```
 GOOGLE_API_KEY=API_KEY_FROM_GOOGLE_CLOUD_CONSOLE
+CLIENT_ID=SPOTIFY_CLIENT_ID
+REDIRECT_URL=myappdemo://callback
+FOURSQUARE_API=API_KEY_FROM_FOURSQUARE
+MOCK_POSITION_SERVER_IP=192.168.0.255
 ```

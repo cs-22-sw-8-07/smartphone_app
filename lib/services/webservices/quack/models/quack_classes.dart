@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:spotify_sdk/models/track.dart';
 
@@ -19,11 +20,11 @@ enum QuackLocationType {
 
 @JsonSerializable()
 class QuackResponse {
-  @JsonKey(name: "IsSuccessful")
+  @JsonKey(name: "is_successful")
   late bool isSuccessful;
-  @JsonKey(name: "ErrorNo")
+  @JsonKey(name: "error_no")
   late int errorNo;
-  @JsonKey(name: "ErrorMessage")
+  @JsonKey(name: "error_message")
   late String? errorMessage;
 
   QuackResponse(
@@ -56,7 +57,7 @@ class QuackResponse {
 
 @JsonSerializable()
 class GetPlaylistResponse extends QuackResponse {
-  @JsonKey(name: "Result")
+  @JsonKey(name: "result")
   QuackPlaylist? result;
 
   GetPlaylistResponse({this.result});
@@ -70,11 +71,11 @@ class GetPlaylistResponse extends QuackResponse {
 
 @JsonSerializable()
 class QuackPlaylist {
-  @JsonKey(name: "Id")
+  @JsonKey(name: "id")
   String? id;
-  @JsonKey(name: "LocationType")
+  @JsonKey(name: "location_type")
   String? locationType;
-  @JsonKey(name: "Tracks")
+  @JsonKey(name: "tracks")
   List<QuackTrack>? tracks;
 
   QuackPlaylist({this.id, this.locationType, this.tracks});
@@ -83,19 +84,35 @@ class QuackPlaylist {
       _$QuackPlaylistFromJson(json);
 
   Map<String, dynamic> toJson() => _$QuackPlaylistToJson(this);
+
+  QuackLocationType? get quackLocationType {
+    if (locationType == null) {
+      return null;
+    }
+
+    for (var qlt in QuackLocationType.values) {
+      if (qlt.name.toLowerCase() == locationType!.toLowerCase()) {
+        return qlt;
+      }
+    }
+    return null;
+  }
 }
 
 @JsonSerializable()
 // ignore: must_be_immutable
 class QuackTrack extends Equatable {
-  @JsonKey(name: "Id")
+  @JsonKey(name: "id")
   String? id;
-  @JsonKey(name: "Name")
+  @JsonKey(name: "name")
   String? name;
-  @JsonKey(name: "Artist")
+  @JsonKey(name: "artist")
   String? artist;
-  @JsonKey(name: "ImageUrl")
+  @JsonKey(name: "image")
   String? imageUrl;
+
+  @JsonKey(ignore: true)
+  Key? key;
 
   QuackTrack({this.id, this.name, this.artist, this.imageUrl});
 
@@ -117,5 +134,5 @@ class QuackTrack extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [id, key];
 }

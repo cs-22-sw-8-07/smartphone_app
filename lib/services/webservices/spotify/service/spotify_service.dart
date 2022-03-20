@@ -265,6 +265,18 @@ class SpotifyService implements ISpotifyFunctions {
   }
 
   @override
+  Future<SpotifySdkResponse> queueTrack(String trackId) async {
+    try {
+      return callSpotifySdkFunction(() async {
+        await queue(spotifyUri: "spotify:track:" + trackId);
+        return SpotifySdkResponse.success();
+      });
+    } on Exception catch (e) {
+      return SpotifySdkResponse.error(e.toString());
+    }
+  }
+
+  @override
   SpotifySdkResponseWithResult<Stream<PlayerState>> subscribePlayerState() {
     try {
       return SpotifySdkResponseWithResult.success(

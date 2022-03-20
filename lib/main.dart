@@ -23,7 +23,8 @@ void main() async {
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await AppValuesHelper.getInstance().init();
   SpotifyService.init(SpotifyService());
-  QuackService.init(MockQuackService());
+  //QuackService.init(MockQuackService());
+  QuackService.init(QuackService(url: "https://192.168.0.108:5001"));
   FoursquareService.init(FoursquareService());
   QuackLocationService.init(QuackLocationService());
 

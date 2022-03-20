@@ -27,7 +27,7 @@ class MockQuackService implements IQuackFunctions {
 
   @override
   Future<QuackServiceResponse<GetPlaylistResponse>> getPlaylist(
-      String? spotifyAccessToken, QuackLocationType qlt) async {
+      QuackLocationType qlt) async {
     if (qlt == QuackLocationType.beach) {
       return QuackServiceResponse.success(GetPlaylistResponse.fromJson(
           await getJsonData("get_playlist_response.json")));

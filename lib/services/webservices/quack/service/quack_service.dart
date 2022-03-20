@@ -1,4 +1,7 @@
+import 'package:smartphone_app/helpers/app_values_helper.dart';
+
 import '../../../../helpers/rest_helper.dart';
+import '../../spotify/service/spotify_service.dart';
 import '../interfaces/quack_functions.dart';
 import '../models/quack_classes.dart';
 
@@ -74,9 +77,30 @@ class QuackService implements IQuackFunctions {
 
   @override
   Future<QuackServiceResponse<GetPlaylistResponse>> getPlaylist(
-      String? spotifyAccessToken, QuackLocationType qlt) {
-    // TODO: implement getPlaylist
-    throw UnimplementedError();
+      QuackLocationType qlt) async {
+    try {
+      String accessToken =
+          AppValuesHelper.getInstance().getString(AppValuesKey.accessToken)!;
+
+      // Send GET request
+      RestResponse restResponse = await restHelper.sendGetRequest(
+          recommenderControllerPath + "GetPlaylist",
+          parameters: {
+            "accessToken": accessToken,
+            "location": qlt.name.toLowerCase()
+          });
+      // Check for errors
+      if (!restResponse.isSuccess) {
+        return QuackServiceResponse.error(restResponse.errorMessage);
+      }
+      // Decode json
+      GetPlaylistResponse response =
+          GetPlaylistResponse.fromJson(restResponse.jsonResponse);
+      // Return success response
+      return QuackServiceResponse.success(response);
+    } on Exception catch (e) {
+      return QuackServiceResponse.error(e.toString());
+    }
   }
 
 //endregion

@@ -12,6 +12,7 @@ import '../../helpers/permission_helper.dart';
 import '../../services/webservices/spotify/models/spotify_classes.dart';
 import '../../services/webservices/spotify/service/spotify_service.dart';
 import '../../utilities/general_util.dart';
+import '../main/main_page_2.dart';
 
 class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
   ///
@@ -63,7 +64,7 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
               getCurrentUsersProfileResponse.spotifyResponse!.displayName);
           AppValuesHelper.getInstance().saveString(AppValuesKey.userImageUrl,
               getCurrentUsersProfileResponse.spotifyResponse!.images![0].url);
-          GeneralUtil.goToPage(context, const MainPage());
+          GeneralUtil.goToPage(context, const MainPage2());
           break;
         case LoginButtonEvent.goToSettings:
           await permissionHelper.openAppSettings();

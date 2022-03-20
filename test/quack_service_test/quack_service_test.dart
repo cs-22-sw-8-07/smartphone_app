@@ -25,15 +25,13 @@ void main() async {
   //tester på om beach får den rigtige playliste
   test("getPlaylist beach test", () async {
     QuackServiceResponse<GetPlaylistResponse> response =
-        await QuackService.getInstance()
-            .getPlaylist("123", QuackLocationType.beach);
+        await QuackService.getInstance().getPlaylist(QuackLocationType.beach);
     expect(response.quackResponse!.result!.id!, "1");
   });
   //tester om alle andre locationer får den anden playliste. I dette tilfælde er det forest
   test("getPlaylist other test", () async {
     QuackServiceResponse<GetPlaylistResponse> response =
-    await QuackService.getInstance()
-        .getPlaylist("123", QuackLocationType.forest);
+        await QuackService.getInstance().getPlaylist(QuackLocationType.forest);
     expect(response.quackResponse!.result!.id!, "2");
   });
 }
