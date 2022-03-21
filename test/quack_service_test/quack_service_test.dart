@@ -10,6 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:smartphone_app/services/quack_location_service/service/quack_location_service.dart';
+import 'package:smartphone_app/services/webservices/foursquare/service/foursquare_service.dart';
+import 'package:smartphone_app/services/webservices/foursquare/service/mock_foursquare_service.dart';
 import 'package:smartphone_app/services/webservices/quack/models/quack_classes.dart';
 import 'package:smartphone_app/services/webservices/quack/service/mock_quack_service.dart';
 import 'package:smartphone_app/services/webservices/quack/service/quack_service.dart';
@@ -22,16 +25,19 @@ void main() async {
     QuackService.init(MockQuackService());
   });
 
-  //tester på om beach får den rigtige playliste
-  test("getPlaylist beach test", () async {
-    QuackServiceResponse<GetPlaylistResponse> response =
-        await QuackService.getInstance().getPlaylist(QuackLocationType.beach);
-    expect(response.quackResponse!.result!.id!, "1");
-  });
-  //tester om alle andre locationer får den anden playliste. I dette tilfælde er det forest
-  test("getPlaylist other test", () async {
-    QuackServiceResponse<GetPlaylistResponse> response =
-        await QuackService.getInstance().getPlaylist(QuackLocationType.forest);
-    expect(response.quackResponse!.result!.id!, "2");
+  group("getPlaylist", () {
+    //tester på om beach får den rigtige playliste
+    test("getPlaylist beach test", () async {
+      QuackServiceResponse<GetPlaylistResponse> response =
+          await QuackService.getInstance().getPlaylist(QuackLocationType.beach);
+      expect(response.quackResponse!.result!.id!, "1");
+    });
+    //tester om alle andre locationer får den anden playliste. I dette tilfælde er det forest
+    test("getPlaylist other test", () async {
+      QuackServiceResponse<GetPlaylistResponse> response =
+          await QuackService.getInstance()
+              .getPlaylist(QuackLocationType.forest);
+      expect(response.quackResponse!.result!.id!, "2");
+    });
   });
 }
