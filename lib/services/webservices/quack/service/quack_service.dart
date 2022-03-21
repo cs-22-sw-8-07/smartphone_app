@@ -1,4 +1,5 @@
 import 'package:smartphone_app/helpers/app_values_helper.dart';
+import 'package:smartphone_app/services/quack_location_service/service/quack_location_service.dart';
 
 import '../../../../helpers/rest_helper.dart';
 import '../../spotify/service/spotify_service.dart';
@@ -87,7 +88,8 @@ class QuackService implements IQuackFunctions {
           recommenderControllerPath + "GetPlaylist",
           parameters: {
             "accessToken": accessToken,
-            "location": qlt.name.toLowerCase()
+            "location":
+                QuackLocationService.getQuackLocationTypeInt(qlt).toString()
           });
       // Check for errors
       if (!restResponse.isSuccess) {

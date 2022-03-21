@@ -1,10 +1,10 @@
 {
   "result": {
     "id": "2",
-    "location_type": "Forest",
+    "location_type": 2,
     "tracks": [
       {
-        "id": "1OwBJitJZ9XDid0cFBDrLx",
+        "id": "1OwBJitJZ9XDId0cFBDrLx",
         "name": "Brand New World (Lo-Fi Remix)",
         "artist": "GlitchxCity",
         "image": "https://i.scdn.co/image/ab67616d00004851764e6f7077af95bc7abf0b8f"

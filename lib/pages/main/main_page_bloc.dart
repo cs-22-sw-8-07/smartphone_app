@@ -45,7 +45,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
             hasJustPerformedAction: false,
             isPlaylistShown: false,
             isLoading: false,
-            quackLocationType: QuackLocationType.unknown,
+            quackLocationType: QuackLocationType.beach,
             isRecommendationStarted: false)) {
     /// ButtonPressed
     on<ButtonPressed>((event, emit) async {
@@ -61,9 +61,6 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
           } else {
             await _startRecommendation();
           }
-          break;
-        case MainButtonEvent.selectPreferenceProfile:
-          // TODO: Handle this case.
           break;
         case MainButtonEvent.seeRecommendations:
           // TODO: Handle this case.
@@ -104,6 +101,11 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
           // Show message to the user
           GeneralUtil.showSnackBar(context: context, message: message);
+          break;
+        case MainButtonEvent.selectManualLocation:
+          if (kDebugMode) {
+            print("Test");
+          }
           break;
       }
     });

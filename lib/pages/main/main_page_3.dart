@@ -1,5 +1,7 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
 import 'package:smartphone_app/localization/localization_helper.dart';
 import 'package:smartphone_app/values/values.dart' as values;
@@ -8,7 +10,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:smartphone_app/widgets/custom_label.dart';
 import 'package:smartphone_app/widgets/custom_list_tile.dart';
 import 'package:spotify_sdk/models/track.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 import '../../services/webservices/quack/models/quack_classes.dart';
 import '../../widgets/custom_app_bar.dart';
@@ -18,32 +19,14 @@ import '../../widgets/custom_play_button.dart';
 import 'main_page_bloc.dart';
 import 'main_page_events_states.dart';
 
-class MainPage2 extends StatefulWidget {
-  const MainPage2({Key? key}) : super(key: key);
+class MainPage3 extends StatefulWidget {
+  const MainPage3({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _MainPageState();
 }
 
-class RoundShape extends CustomClipper<Path> {
-  @override
-  getClip(Size size) {
-    double height = size.height;
-    double width = size.width;
-    double curveHeight = size.height / 2;
-    var p = Path();
-    p.lineTo(0, height - curveHeight);
-    p.quadraticBezierTo(width / 2, height, width, height - curveHeight);
-    p.lineTo(width, 0);
-    p.close();
-    return p;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper oldClipper) => true;
-}
-
-class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
+class _MainPageState extends State<MainPage3> with TickerProviderStateMixin {
   ///
   /// VARIABLES
   ///
@@ -54,9 +37,11 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
   late AnimationController playlistAnimationController;
   late AnimationController startStopRecommendationController;
   Animation<double>? playlistSizeAnimation;
-  Animation<double>? pulseAnimation;
   late double playlistHeight;
   Image? userImage;
+
+  late double availableHeight;
+  late double availableWidth;
 
   //endregion
 
@@ -77,9 +62,6 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
         vsync: this, duration: const Duration(milliseconds: 200));
     startStopRecommendationController =
         AnimationController(vsync: this, duration: const Duration(seconds: 2));
-
-    pulseAnimation =
-        Tween(begin: 0.0, end: 10.0).animate(startStopRecommendationController);
   }
 
   @override
@@ -101,14 +83,13 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
     LocalizationHelper.init(context: context);
     bloc = MainPageBloc(context: context);
 
-    var availableHeight = MediaQuery.of(context).size.height -
-        values.actionBarHeight -
+    availableWidth = MediaQuery.of(context).size.width;
+
+    availableHeight = MediaQuery.of(context).size.height -
         MediaQuery.of(context).padding.top -
         MediaQuery.of(context).padding.bottom;
 
-    playlistHeight = availableHeight -
-        values.mainPageOverlayButtonHeight -
-        values.mainPageOverlayTopMargin;
+    playlistHeight = availableHeight - 40;
 
     playlistSizeAnimation ??=
         Tween<double>(begin: values.mainPageOverlayHeight, end: playlistHeight)
@@ -268,7 +249,7 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
           AnimatedContainer(
               height: state.playlist == null
                   ? 0
-                  : values.mainPageOverlayButtonHeight,
+                  : 40,
               duration: const Duration(milliseconds: 200),
               child: CustomButton(
                   fontWeight: FontWeight.bold,
@@ -278,7 +259,7 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
                         ? Icons.expand_more
                         : Icons.expand_less,
                     color: Colors.white,
-                    size: 25,
+                    size: 30,
                   ),
                   onPressed: () {
                     bloc.add(const ButtonPressed(
@@ -287,9 +268,9 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
                         ? playlistAnimationController.reverse()
                         : playlistAnimationController.forward();
                   },
-                  borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30)),
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(0),
+                  ),
                   margin: const EdgeInsets.all(0),
                   textColor: custom_colors.black,
                   pressedBackground: custom_colors.appButtonPressedGradient,
@@ -316,111 +297,109 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
 
   Widget _getMainContent(MainPageBloc bloc) {
     return Container(
-        decoration:
-            const BoxDecoration(gradient: custom_colors.mainPageGradient),
-        padding: const EdgeInsets.only(
-            bottom: values.mainPageOverlayHeight +
-                values.mainPageOverlayButtonHeight),
-        child: Column(
+        decoration: const BoxDecoration(color: custom_colors.transparent),
+        child: Stack(
           children: [
-            CustomAppBar(
-              title: AppLocalizations.of(context)!.app_name,
-              titleColor: Colors.white,
-              appBarLeftButtonIconColor: Colors.white,
-              background: custom_colors.appBarBackground,
-              appBarLeftButton: AppBarLeftButton.menu,
-              leftButtonPressed: () async =>
-                  {_scaffoldKey.currentState!.openDrawer()},
+            BlocBuilder<MainPageBloc, MainPageState>(
+                buildWhen: (previous, current) {
+              return _shouldUpdateQuackLocationType(previous, current);
+            }, builder: (context, state) {
+              return AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  child: Image.asset(
+                    LocalizationHelper.getInstance()
+                        .getQuackLocationTypeImagePath(
+                            state.lockedQuackLocationType == null
+                                ? state.quackLocationType!
+                                : state.lockedQuackLocationType!),
+                    fit: BoxFit.fill,
+                    height: double.infinity,
+                    width: double.infinity,
+                    key: UniqueKey(),
+                  ));
+            }),
+            Column(
+              children: [
+                Expanded(
+                    child: Container(
+                  decoration: BoxDecoration(
+                      gradient: custom_colors.transparentWhiteGradient,
+                      border: Border.all(color: Colors.transparent, width: 0)),
+                ))
+              ],
             ),
-            ClipPath(
-              clipper: RoundShape(),
-              child: Container(
-                decoration: BoxDecoration(
-                    color: custom_colors.darkBlue,
-                    border:
-                        Border.all(color: custom_colors.darkBlue, width: 0)),
-                height: 20,
-              ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            Expanded(
-                flex: 2,
-                child: Stack(
-                  children: [
-                    BlocBuilder<MainPageBloc, MainPageState>(
-                        buildWhen: (previous, current) {
-                      return _shouldUpdateQuackLocationType(previous, current);
-                    }, builder: (context, state) {
-                      return Column(
-                        children: [
-                          Container(
-                            child: AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 500),
-                                child: CustomLabel(
-                                  key: UniqueKey(),
-                                  textColor: Colors.white,
-                                  fontWeight: FontWeight.w700,
-                                  alignmentGeometry: Alignment.center,
-                                  margin: const EdgeInsets.all(0),
-                                  padding: const EdgeInsets.all(0),
-                                  title: LocalizationHelper.getInstance()
-                                      .getLocalizedQuackLocationType(
-                                          context,
-                                          state.lockedQuackLocationType == null
-                                              ? state.quackLocationType!
-                                              : state.lockedQuackLocationType!),
-                                )),
-                            height: 40,
-                            margin: const EdgeInsets.only(left: 30, right: 30),
-                            decoration: BoxDecoration(
-                                border:
-                                    Border.all(color: custom_colors.darkBlue),
-                                color: custom_colors.darkBlue,
-                                borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(27.5),
-                                    topRight: Radius.circular(27.5))),
-                          ),
-                          Expanded(
-                              child: AnimatedSwitcher(
-                                  child: Container(
-                                    key: UniqueKey(),
-                                    decoration: const BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(27.5))),
-                                    padding: const EdgeInsets.all(0),
-                                    margin: const EdgeInsets.only(
-                                        top: 0, left: 30, right: 30, bottom: 0),
-                                    child: ClipRRect(
-                                        borderRadius: const BorderRadius.only(
-                                            bottomLeft: Radius.circular(27.5),
-                                            bottomRight: Radius.circular(27.5)),
-                                        child: Image.asset(
-                                          LocalizationHelper.getInstance()
-                                              .getQuackLocationTypeImagePath(
-                                                  state.lockedQuackLocationType ==
-                                                          null
-                                                      ? state.quackLocationType!
-                                                      : state
-                                                          .lockedQuackLocationType!),
-                                          key: UniqueKey(),
-                                          height: double.infinity,
-                                          width: double.infinity,
-                                          fit: BoxFit.fill,
-                                        )),
-                                  ),
-                                  duration: const Duration(milliseconds: 500)))
-                        ],
-                      );
-                    }),
-                    BlocBuilder<MainPageBloc, MainPageState>(
-                        builder: (context, state) {
-                      return Align(
-                        alignment: Alignment.bottomRight,
+            Column(
+              children: [
+                SizedBox(
+                    height: values.actionBarHeight,
+                    child: Stack(children: [
+                      CustomAppBar(
+                        background: custom_colors.transparentGradient,
+                        appBarLeftButtonIconColor: custom_colors.darkBlue,
+                        buttonBackground: custom_colors.whiteGradient,
+                        buttonPressedBackground: custom_colors.greyGradient,
+                        appBarLeftButton: AppBarLeftButton.menu,
+                        leftButtonPressed: () async =>
+                            {_scaffoldKey.currentState!.openDrawer()},
+                      ),
+                      Align(
+                          alignment: Alignment.center,
+                          child: GestureDetector(
+                              onTapUp: (v) => bloc.add(const ButtonPressed(
+                                  buttonEvent:
+                                      MainButtonEvent.selectManualLocation)),
+                              child: Container(
+                                constraints: BoxConstraints(
+                                    maxWidth: availableWidth / 2),
+                                decoration: const BoxDecoration(
+                                    gradient: custom_colors.whiteGradient,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(22))),
+                                padding: const EdgeInsets.only(
+                                    left: 20, top: 0, right: 10),
+                                height: 44,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    BlocBuilder<MainPageBloc, MainPageState>(
+                                        builder: (context, state) {
+                                      return Text(
+                                        LocalizationHelper.getInstance()
+                                            .getLocalizedQuackLocationType(
+                                                context,
+                                                state.lockedQuackLocationType ==
+                                                        null
+                                                    ? state.quackLocationType!
+                                                    : state
+                                                        .lockedQuackLocationType!),
+                                        softWrap: true,
+                                        maxLines: 1,
+                                        style: GoogleFonts.roboto(
+                                            textStyle: const TextStyle(
+                                                color: custom_colors.darkBlue,
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 20)),
+                                      );
+                                    }),
+                                    Container(
+                                        margin: const EdgeInsets.only(left: 5),
+                                        child: const Icon(
+                                          Icons.expand_more,
+                                          size: 30,
+                                          color: custom_colors.darkBlue,
+                                        ))
+                                  ],
+                                ),
+                              )))
+                    ])),
+                SizedBox(height: availableHeight * 0.35),
+                BlocBuilder<MainPageBloc, MainPageState>(
+                    builder: (context, state) {
+                  return Container(
+                      margin: const EdgeInsets.only(bottom: 30, top: 0),
+                      child: Align(
+                        alignment: Alignment.center,
                         child: PlayButton(
-                            margin:
-                                const EdgeInsets.only(bottom: 10, right: 40),
                             width: 40,
                             height: 40,
                             foreground: Icon(
@@ -435,54 +414,90 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
                             pressedBackground:
                                 custom_colors.appButtonPressedGradient,
                             defaultBackground: custom_colors.appButtonGradient),
-                      );
-                    }),
-                  ],
-                )),
-            BlocBuilder<MainPageBloc, MainPageState>(builder: (context, state) {
-              return AnimatedBuilder(
-                animation: startStopRecommendationController,
-                builder: (context, _) {
-                  return PlayButton(
-                    margin: const EdgeInsets.only(top: 30, bottom: 30),
-                    height: values.mainPagePlayPauseButtonSize,
-                    width: values.mainPagePlayPauseButtonSize,
-                    defaultBackground: custom_colors.appButtonGradient,
-                    pressedBackground: custom_colors.appButtonPressedGradient,
-                    isPlaying: state.isRecommendationStarted!,
-                    foreground: state.isLoading!
-                        ? Container(
-                            padding: const EdgeInsets.all(35),
-                            child: const CircularProgressIndicator(
-                                color: Colors.white))
-                        : Icon(
-                            state.isRecommendationStarted!
-                                ? Icons.pause
-                                : Icons.play_arrow,
-                            color: Colors.white,
-                            size: 40),
-                    onPressed: () => bloc.add(const ButtonPressed(
-                        buttonEvent: MainButtonEvent.startStopRecommendation)),
+                      ));
+                }),
+                BlocBuilder<MainPageBloc, MainPageState>(
+                    builder: (context, state) {
+                  return SizedBox(
+                    child: Row(
+                      children: [
+                        const Expanded(child: SizedBox()),
+                        CustomButton(
+                            margin: const EdgeInsets.only(right: 30),
+                            height: values.mainPagePlayPauseButtonSize / 2,
+                            width: values.mainPagePlayPauseButtonSize / 2,
+                            borderRadius: const BorderRadius.all(
+                                Radius.circular(
+                                    values.mainPagePlayPauseButtonSize /
+                                        2 /
+                                        2)),
+                            icon: const Icon(
+                              Icons.skip_previous,
+                              color: custom_colors.darkBlue,
+                              size: values.mainPagePlayPauseButtonSize / 3,
+                            ),
+                            onPressed: () => bloc.add(const TouchEvent(
+                                touchEvent: MainTouchEvent.goToPreviousTrack)),
+                            pressedBackground: custom_colors.greyGradient,
+                            defaultBackground:
+                                custom_colors.transparentGradient),
+                        AnimatedBuilder(
+                          animation: startStopRecommendationController,
+                          builder: (context, _) {
+                            return PlayButton(
+                              margin:
+                                  const EdgeInsets.only(top: 30, bottom: 30),
+                              height: values.mainPagePlayPauseButtonSize,
+                              width: values.mainPagePlayPauseButtonSize,
+                              defaultBackground:
+                                  custom_colors.appButtonGradient,
+                              pressedBackground:
+                                  custom_colors.appButtonPressedGradient,
+                              isPlaying: state.isRecommendationStarted!,
+                              foreground: state.isLoading!
+                                  ? Container(
+                                      padding: const EdgeInsets.all(35),
+                                      child: const CircularProgressIndicator(
+                                          color: Colors.white))
+                                  : Icon(
+                                      state.isRecommendationStarted!
+                                          ? Icons.pause
+                                          : Icons.play_arrow,
+                                      color: Colors.white,
+                                      size: 40),
+                              onPressed: () => bloc.add(const ButtonPressed(
+                                  buttonEvent:
+                                      MainButtonEvent.startStopRecommendation)),
+                            );
+                          },
+                        ),
+                        CustomButton(
+                            margin: const EdgeInsets.only(left: 30),
+                            height: values.mainPagePlayPauseButtonSize / 2,
+                            width: values.mainPagePlayPauseButtonSize / 2,
+                            borderRadius: const BorderRadius.all(
+                                Radius.circular(
+                                    values.mainPagePlayPauseButtonSize /
+                                        2 /
+                                        2)),
+                            icon: const Icon(
+                              Icons.skip_next,
+                              color: custom_colors.darkBlue,
+                              size: values.mainPagePlayPauseButtonSize / 3,
+                            ),
+                            onPressed: () => bloc.add(const TouchEvent(
+                                touchEvent: MainTouchEvent.goToNextTrack)),
+                            pressedBackground: custom_colors.greyGradient,
+                            defaultBackground:
+                                custom_colors.transparentGradient),
+                        const Expanded(child: SizedBox()),
+                      ],
+                    ),
                   );
-                },
-              );
-            }),
-            BlocBuilder<MainPageBloc, MainPageState>(builder: (context, state) {
-              return CustomButton(
-                  fontWeight: FontWeight.w700,
-                  icon: const Icon(
-                    Icons.tune_outlined,
-                    color: Colors.white,
-                  ),
-                  margin: const EdgeInsets.only(left: 30, right: 30),
-                  borderRadius: const BorderRadius.all(Radius.circular(55 / 2)),
-                  text: AppLocalizations.of(context)!.preference_profile,
-                  onPressed: () {},
-                  textColor: Colors.white,
-                  pressedBackground: custom_colors.appButtonPressedGradient,
-                  defaultBackground: custom_colors.appButtonGradient);
-            }),
-            Expanded(child: Container()),
+                }),
+                Expanded(child: Container()),
+              ],
+            )
           ],
         ));
   }
@@ -580,32 +595,6 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
                           )
                         ],
                       )))),
-          Container(
-            decoration: BoxDecoration(
-                color: Colors.transparent,
-                border: Border.all(width: 0, color: custom_colors.darkBlue)),
-            width: values.mainPageOverlayHeight,
-            padding: const EdgeInsets.all(10),
-            child: Center(
-                child: CustomButton(
-                    fontWeight: FontWeight.bold,
-                    height: 50,
-                    width: 50,
-                    borderRadius: const BorderRadius.all(Radius.circular(25)),
-                    icon: Icon(
-                      state.playerState!.isPaused
-                          ? Icons.play_arrow
-                          : Icons.pause,
-                      color: Colors.white,
-                      size: values.mainPageOverlayHeight / 2,
-                    ),
-                    onPressed: () => bloc.add(const ButtonPressed(
-                        buttonEvent: MainButtonEvent.resumePausePlayer)),
-                    textColor: custom_colors.black,
-                    pressedBackground:
-                        custom_colors.backButtonGradientPressedDefault,
-                    defaultBackground: custom_colors.transparentGradient)),
-          ),
         ],
       ),
     );

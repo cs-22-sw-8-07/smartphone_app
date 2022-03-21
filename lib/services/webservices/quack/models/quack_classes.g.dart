@@ -42,7 +42,7 @@ Map<String, dynamic> _$GetPlaylistResponseToJson(
 QuackPlaylist _$QuackPlaylistFromJson(Map<String, dynamic> json) =>
     QuackPlaylist(
       id: json['id'] as String?,
-      locationType: json['location_type'] as String?,
+      locationType: json['location_type'] as int?,
       tracks: (json['tracks'] as List<dynamic>?)
           ?.map((e) => QuackTrack.fromJson(e as Map<String, dynamic>))
           .toList(),

@@ -4,9 +4,7 @@ import 'package:smartphone_app/services/quack_location_service/helpers/quack_loc
 import 'package:smartphone_app/services/webservices/foursquare/models/foursquare_classes.dart';
 import 'package:smartphone_app/services/webservices/foursquare/service/foursquare_service.dart';
 import 'package:smartphone_app/services/webservices/quack/models/quack_classes.dart';
-import 'package:darq/darq.dart';
 
-import '../../../helpers/position_helper/position_helper.dart';
 import '../interfaces/quack_location_functions.dart';
 
 class QuackLocationService implements IQuackLocationFunctions {
@@ -18,29 +16,22 @@ class QuackLocationService implements IQuackLocationFunctions {
   static int getQuackLocationTypeInt(QuackLocationType qlt) {
     switch (qlt) {
       case QuackLocationType.forest:
-        return 1;
+        return 4;
       case QuackLocationType.beach:
-        return 2;
+        return 5;
       case QuackLocationType.unknown:
-        // TODO: Handle this case.
-        break;
+        return 0;
       case QuackLocationType.nightLife:
-        // TODO: Handle this case.
-        break;
+        return 7;
       case QuackLocationType.urban:
-        // TODO: Handle this case.
-        break;
+        return 6;
       case QuackLocationType.cemetery:
-        // TODO: Handle this case.
-        break;
+        return 3;
       case QuackLocationType.education:
-        // TODO: Handle this case.
-        break;
+        return 2;
       case QuackLocationType.church:
-        // TODO: Handle this case.
-        break;
+        return 1;
     }
-    return 0;
   }
 
   static IQuackLocationFunctions? _quackLocationFunctions;

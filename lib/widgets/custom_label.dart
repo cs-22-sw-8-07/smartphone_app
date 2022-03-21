@@ -68,7 +68,8 @@ class CustomLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     if (isWrapping) {
       return Container(
-        decoration: BoxDecoration(gradient: background),
+        decoration:
+            BoxDecoration(gradient: background, borderRadius: borderRadius),
         margin: margin,
         padding: padding,
         height: height,
