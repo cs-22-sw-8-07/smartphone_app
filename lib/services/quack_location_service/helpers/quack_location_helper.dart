@@ -22,7 +22,7 @@ class QuackLocationHelper {
       } else if (cat >= 12098 &&
           cat <= 12112) // Church + Various Spirititual centers
       {
-        return QuackLocationType.church;
+        qlt = QuackLocationType.church;
       } else if (cat >= 12009 && cat <= 12063) // Various Education Centers
       {
         qlt = QuackLocationType.education;
@@ -45,23 +45,36 @@ class QuackLocationHelper {
       } else if (cat >= 16001 && cat <= 16003 || // Bathing Area, Bay, Beach
               cat == 13005 || // Beach Bar
               cat == 16006 || // Bridge
-              cat == 16029 || // Nudist Beach ;)
-              cat == 16053 || // Waterfront
               cat == 16009 || // Canal
               cat == 16013 || // Dive Spot
               cat == 16018 || // Harbor/Marina
               cat == 16021 || // Hot Spring
               cat == 16022 || // Island
               cat == 16023 || // Lake
+              cat == 16029 || // Nudist Beach ;)
               cat == 16049 || // Surf Spot
+              cat == 16053 || // Waterfront
               cat == 19005 || // Cruise
-              cat == 16021 || // Pier
+              cat == 19021 || // Pier
               cat == 19023 // Port
           ) {
         qlt = QuackLocationType.beach;
-      } else if (cat == 0) {
-        // TODO: Mark urban with categories
+      } else if (cat >= 10035 && cat <= 10043 // Arts & Entertainment
+              ||
+              cat >= 12064 && cat <= 12075 // Community & Government
+              ||
+              cat >= 14009 && cat <= 14014 // Events - Marketplaces
+              ||
+              cat >= 17023 && cat <= 17027 // Retail - Computers & Electronics
+              ||
+              cat >= 17039 && cat <= 17052 // Retail - Fashion
+              ||
+              cat >= 19030 && cat <= 19050 // Transport Hubs
+          ) {
         qlt = QuackLocationType.urban;
+      }
+      if (qlt != QuackLocationType.unknown) {
+        return qlt;
       }
     }
     return qlt;
