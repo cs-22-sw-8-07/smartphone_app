@@ -6,8 +6,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smartphone_app/pages/login/login_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:smartphone_app/pages/main/main_page.dart';
-import 'package:smartphone_app/pages/main/main_page_2.dart';
-import 'package:smartphone_app/pages/main/main_page_3.dart';
 import 'package:smartphone_app/services/quack_location_service/service/quack_location_service.dart';
 import 'package:smartphone_app/services/webservices/foursquare/service/foursquare_service.dart';
 import 'package:smartphone_app/services/webservices/quack/service/mock_quack_service.dart';
@@ -80,7 +78,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blueGrey,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: token == null ? const LoginPage() : const MainPage2());
+        home: token == null ? const LoginPage() : const MainPage());
   }
 }
 
