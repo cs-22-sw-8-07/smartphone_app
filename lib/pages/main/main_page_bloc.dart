@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
 import 'package:smartphone_app/localization/localization_helper.dart';
-import 'package:smartphone_app/pages/login/login_page.dart';
+import 'package:smartphone_app/pages/login/login_page_ui.dart';
 import 'package:smartphone_app/pages/main/main_page_events_states.dart';
 import 'package:smartphone_app/services/quack_location_service/service/quack_location_service.dart';
 import 'package:spotify_sdk/models/connection_status.dart';
@@ -19,8 +19,8 @@ import 'package:geolocator_android/src/types/foreground_settings.dart';
 import '../../helpers/position_helper/mock_position_helper.dart';
 import '../../helpers/position_helper/position_helper.dart';
 import '../../services/webservices/quack/models/quack_classes.dart';
-import '../../services/webservices/quack/service/quack_service.dart';
-import '../../services/webservices/spotify/service/spotify_service.dart';
+import '../../services/webservices/quack/services/quack_service.dart';
+import '../../services/webservices/spotify/services/spotify_service.dart';
 import '../../utilities/general_util.dart';
 
 class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {

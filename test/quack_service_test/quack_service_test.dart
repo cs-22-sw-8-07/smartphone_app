@@ -11,8 +11,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:smartphone_app/services/webservices/quack/models/quack_classes.dart';
-import 'package:smartphone_app/services/webservices/quack/service/mock_quack_service.dart';
-import 'package:smartphone_app/services/webservices/quack/service/quack_service.dart';
+import 'package:smartphone_app/services/webservices/quack/services/mock_quack_service.dart';
+import 'package:smartphone_app/services/webservices/quack/services/quack_service.dart';
 
 void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:smartphone_app/services/webservices/foursquare/interfaces/foursquare_functions.dart';
 import 'package:smartphone_app/services/webservices/foursquare/models/foursquare_classes.dart';
-import 'package:smartphone_app/services/webservices/foursquare/service/foursquare_service.dart';
+import 'package:smartphone_app/services/webservices/foursquare/services/foursquare_service.dart';
 
 class MockFoursquareService implements IFoursquareFunctions {
   ///

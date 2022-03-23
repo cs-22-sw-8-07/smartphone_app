@@ -4,7 +4,7 @@ import 'package:spotify_sdk/models/connection_status.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 
 import '../models/spotify_classes.dart';
-import '../service/spotify_service.dart';
+import '../services/spotify_service.dart';
 
 class ISpotifyFunctions {
 

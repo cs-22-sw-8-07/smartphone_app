@@ -37,14 +37,14 @@ const String appFeatureImage = "assets/feature_image.svg";
 const String appFeatureImage2 = "assets/feature_image2.svg";
 
 /// Quack Location Type Images
-const String qltBeach = "assets/cuack_locationtypes/beach.jpg";
-const String qltEducation = "assets/cuack_locationtypes/education.jpg";
-const String qltCemetery = "assets/cuack_locationtypes/cemetery.jpg";
-const String qltChurch = "assets/cuack_locationtypes/church.jpg";
-const String qltForest = "assets/cuack_locationtypes/forest.jpg";
-const String qltNightLife = "assets/cuack_locationtypes/nightLife.jpg";
-const String qltUnknown = "assets/cuack_locationtypes/unknown.jpeg";
-const String qltUrban = "assets/cuack_locationtypes/urban.jpg";
+const String qltBeach = "assets/quack_locationtypes/beach.jpg";
+const String qltEducation = "assets/quack_locationtypes/education.jpg";
+const String qltCemetery = "assets/quack_locationtypes/cemetery.jpg";
+const String qltChurch = "assets/quack_locationtypes/church.jpg";
+const String qltForest = "assets/quack_locationtypes/forest.jpg";
+const String qltNightLife = "assets/quack_locationtypes/nightLife.jpg";
+const String qltUnknown = "assets/quack_locationtypes/unknown.jpeg";
+const String qltUrban = "assets/quack_locationtypes/urban.jpg";
 
 
 

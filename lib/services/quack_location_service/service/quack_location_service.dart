@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:smartphone_app/services/quack_location_service/helpers/quack_location_helper.dart';
 import 'package:smartphone_app/services/webservices/foursquare/models/foursquare_classes.dart';
-import 'package:smartphone_app/services/webservices/foursquare/service/foursquare_service.dart';
+import 'package:smartphone_app/services/webservices/foursquare/services/foursquare_service.dart';
 import 'package:smartphone_app/services/webservices/quack/models/quack_classes.dart';
 
 import '../interfaces/quack_location_functions.dart';
