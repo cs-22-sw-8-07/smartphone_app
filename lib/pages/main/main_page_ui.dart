@@ -79,7 +79,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    LocalizationHelper.init(context: context);
     bloc = MainPageBloc(context: context);
 
     availableWidth = MediaQuery.of(context).size.width;
@@ -502,11 +501,11 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   }
 
   Widget _getCurrentlyPlayingTrack(MainPageState state) {
-    Track? track = state.playerState!.track;
-    if (track == null) {
+    if (state.playerState == null || state.playerState!.track == null) {
       // Can add design for when no track is being played
       return Container();
     }
+    Track? track = state.playerState!.track;
 
     QuackTrack quackTrack = QuackTrack.trackToQuackTrack(track)!;
 

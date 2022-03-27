@@ -8,7 +8,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:smartphone_app/pages/main/main_page_ui.dart';
 import 'package:smartphone_app/services/quack_location_service/service/quack_location_service.dart';
 import 'package:smartphone_app/services/webservices/foursquare/services/foursquare_service.dart';
-import 'package:smartphone_app/services/webservices/quack/services/mock_quack_service.dart';
+import 'package:smartphone_app/services/webservices/quack/services/quack_mock_service.dart';
 import 'package:smartphone_app/services/webservices/quack/services/quack_service.dart';
 import 'package:smartphone_app/services/webservices/spotify/services/spotify_service.dart';
 import 'package:smartphone_app/values/values.dart' as values;
@@ -22,7 +22,8 @@ void main() async {
   await AppValuesHelper.getInstance().init();
   SpotifyService.init(SpotifyService());
   QuackService.init(MockQuackService());
-  //QuackService.init(QuackService(url: "https://192.168.0.108:5001"));
+  //QuackService.init(
+  //    QuackService(url: dotenv.env['QUACK_API_URL'].toString()));
   FoursquareService.init(FoursquareService());
   QuackLocationService.init(QuackLocationService());
 

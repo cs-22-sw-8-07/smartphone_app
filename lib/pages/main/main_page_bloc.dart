@@ -45,8 +45,10 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
             hasJustPerformedAction: false,
             isPlaylistShown: false,
             isLoading: false,
-            quackLocationType: QuackLocationType.beach,
+            quackLocationType: QuackLocationType.forest,
             isRecommendationStarted: false)) {
+    LocalizationHelper.init(context: context);
+
     /// ButtonPressed
     on<ButtonPressed>((event, emit) async {
       switch (event.buttonEvent) {
