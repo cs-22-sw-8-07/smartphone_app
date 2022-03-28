@@ -52,19 +52,21 @@ class QuackLocationService implements IQuackLocationFunctions {
   //region Variables
 
   final int _inPerimeterDistance = 100;
-  Position? latestSearchPosition;
-  Position? latestPerimeterPosition;
-  List<FoursquarePlace> allPlaces = [];
-  double? updateRadius;
+  Position? _latestSearchPosition;
+  Position? _latestPerimeterPosition;
+  final List<FoursquarePlace> _allPlaces = [];
+  double? _maxDistanceRadius;
 
   //endregion
 
   ///
-  /// CONSTRUCTOR
+  /// PROPERTIES
   ///
-  //region Constructor
+  //region Properties
 
-  QuackLocationService();
+  Position? get latestSearchPosition => _latestSearchPosition;
+  Position? get latestPerimeterPosition => _latestPerimeterPosition;
+  double? get maxDistanceRadius => _maxDistanceRadius;
 
   //endregion
 
@@ -92,7 +94,7 @@ class QuackLocationService implements IQuackLocationFunctions {
   ///
   /// Returns: A list of [FoursquarePlace]
   List<FoursquarePlace> _getAllPlacesWithinPerimeter(Position position) {
-    return allPlaces.where((x) {
+    return _allPlaces.where((x) {
       double? distance = x.distanceBetween(position);
       x.distance = distance?.toInt();
       return distance != null && distance <= _inPerimeterDistance;
@@ -150,23 +152,23 @@ class QuackLocationService implements IQuackLocationFunctions {
   Future<QuackLocationType?> getQuackLocationType(Position position) async {
     double? distanceBetweenSearchPlaces;
 
-    if (latestSearchPosition != null) {
+    if (_latestSearchPosition != null) {
       // Calculate distance between the latest position where places was
       // gathered from Foursquare and the current position
       distanceBetweenSearchPlaces = Geolocator.distanceBetween(
-          latestSearchPosition!.latitude,
-          latestSearchPosition!.longitude,
+          _latestSearchPosition!.latitude,
+          _latestSearchPosition!.longitude,
           position.latitude,
           position.longitude);
     }
 
-    if (updateRadius == null ||
+    if (_maxDistanceRadius == null ||
         distanceBetweenSearchPlaces! >=
-            (updateRadius! - _inPerimeterDistance)) {
+            (_maxDistanceRadius! - _inPerimeterDistance)) {
       // Set latest search position
-      latestSearchPosition = position;
+      _latestSearchPosition = position;
       // Set latest perimeter position
-      latestPerimeterPosition = position;
+      _latestPerimeterPosition = position;
       // Get nearby places from Foursquare
       var places = await _getFoursquarePlaces(position);
       if (places == null) {
@@ -175,15 +177,15 @@ class QuackLocationService implements IQuackLocationFunctions {
 
       _sortPlacesAfterDistance(places);
       // Set update radius to largest distance in the places list
-      updateRadius = places.last.distance!.toDouble();
+      _maxDistanceRadius = places.last.distance!.toDouble();
 
       // Get all old places within perimeter
       var allPlacesInPerimeter = _getAllPlacesWithinPerimeter(position);
 
       // Add to old places list
       for (var place in places) {
-        if (!allPlaces.contains(place)) {
-          allPlaces.add(place);
+        if (!_allPlaces.contains(place)) {
+          _allPlaces.add(place);
         }
       }
 
@@ -194,16 +196,16 @@ class QuackLocationService implements IQuackLocationFunctions {
 
       // Go through all places within the perimeter
       return _getQuackLocationTypeFromPlacesInPerimeter(placesInPerimeter);
-    } else if (latestPerimeterPosition != null) {
+    } else if (_latestPerimeterPosition != null) {
       double? distanceBetween = Geolocator.distanceBetween(
-          latestPerimeterPosition!.latitude,
-          latestPerimeterPosition!.longitude,
+          _latestPerimeterPosition!.latitude,
+          _latestPerimeterPosition!.longitude,
           position.latitude,
           position.longitude);
 
       // Check if the new position is far enough away from the last position
       if (distanceBetween >= _inPerimeterDistance) {
-        latestPerimeterPosition = position;
+        _latestPerimeterPosition = position;
 
         // Get all old places within the perimeter
         var allPlacesInPerimeter = _getAllPlacesWithinPerimeter(position);
