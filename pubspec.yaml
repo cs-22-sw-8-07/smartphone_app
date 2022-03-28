@@ -99,7 +99,7 @@ flutter:
   assets:
     - assets/
     - assets/mock_data/
-    - assets/cuack_locationtypes/
+    - assets/quack_locationtypes/
     - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see

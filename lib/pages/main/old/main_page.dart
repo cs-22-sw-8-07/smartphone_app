@@ -11,12 +11,12 @@ import 'package:smartphone_app/widgets/custom_list_tile.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 import 'package:spotify_sdk/models/track.dart';
 
-import '../../services/webservices/quack/models/quack_classes.dart';
-import '../../widgets/custom_app_bar.dart';
-import '../../widgets/custom_button.dart';
-import '../../widgets/custom_drawer_tile.dart';
-import 'main_page_bloc.dart';
-import 'main_page_events_states.dart';
+import '../../../services/webservices/quack/models/quack_classes.dart';
+import '../../../widgets/custom_app_bar.dart';
+import '../../../widgets/custom_button.dart';
+import '../../../widgets/custom_drawer_tile.dart';
+import '../main_page_bloc.dart';
+import '../main_page_events_states.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);

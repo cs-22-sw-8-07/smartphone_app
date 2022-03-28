@@ -6,7 +6,6 @@ const Color darkBlue = Color(0xFF3B3D4D);
 const Color orange_1 = Color(0xFFF58220);
 const Color orange_2 = Color(0xFFFFA500);
 const Color orange3 = Color(0xFFEB9800);
-const Color transparent = Color(0x00000000);
 const Color transparentWhite = Color(0x20FFFFFF);
 const Color black = Color(0xFF202020);
 const Color black2 = Color(0xFF252525);
@@ -14,6 +13,8 @@ const Color darkGrey = Color(0xFFD0D0D0);
 const Color lightGrey = Color(0xFFF0F0F0);
 
 const Color sand = Color(0xFFc2b280);
+
+const Color transparent = Color(0x00FFFFFF);
 
 const Color appBarColor = Color(0xFF202020);
 const Color borderColor = Color(0xFFFFFFFF);
@@ -45,10 +46,21 @@ const LinearGradient appBarBackground = LinearGradient(
     begin: Alignment(0.0, -1.0),
     end: Alignment(0.0, 1.0));
 
+const Color white1 = Color(0xA0FFFFFF);
+
 const Gradient whiteGradient = LinearGradient(
     colors: <Color>[Colors.white, Colors.white],
     begin: Alignment(0.0, -1.0),
     end: Alignment(0.0, 1.0));
+const Gradient transparentWhiteGradient = LinearGradient(colors: <Color>[
+  transparent,
+  transparent,
+  white1,
+  Colors.white,
+  Colors.white,
+  Colors.white
+], begin: Alignment(0.0, -1.0), end: Alignment(0.0, 1.0));
+
 const Gradient greyGradient = LinearGradient(
     colors: <Color>[grey1, grey1],
     begin: Alignment(0.0, -1.0),
@@ -103,7 +115,6 @@ const Gradient blackPressedGradient = LinearGradient(
     begin: Alignment(0.0, -1.0),
     end: Alignment(0.0, 1.0));
 
-
 const Gradient appButtonGradient = LinearGradient(
     colors: <Color>[darkBlue, darkBlue],
     begin: Alignment(0.0, -1.0),
@@ -113,9 +124,8 @@ const Gradient appButtonPressedGradient = LinearGradient(
     begin: Alignment(0.0, -1.0),
     end: Alignment(0.0, 1.0));
 
-
 const Gradient mainPageGradient = LinearGradient(
-    colors: <Color>[lightGrey, lightGrey],
+    colors: <Color>[Colors.white, Colors.white],
     begin: Alignment(0.0, -1.0),
     end: Alignment(0.0, 1.0));
 

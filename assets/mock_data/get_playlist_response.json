@@ -1,7 +1,7 @@
 {
   "result": {
     "id": "1",
-    "location_type": "Beach",
+    "location_type": 1,
     "tracks": [
       {
         "id": "2GNEJcmdJuQK97mWea637Y",

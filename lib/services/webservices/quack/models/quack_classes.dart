@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:smartphone_app/services/quack_location_service/service/quack_location_service.dart';
 import 'package:spotify_sdk/models/track.dart';
 
 import '../../../../localization/localization_helper.dart';
@@ -74,7 +75,7 @@ class QuackPlaylist {
   @JsonKey(name: "id")
   String? id;
   @JsonKey(name: "location_type")
-  String? locationType;
+  int? locationType;
   @JsonKey(name: "tracks")
   List<QuackTrack>? tracks;
 
@@ -91,7 +92,7 @@ class QuackPlaylist {
     }
 
     for (var qlt in QuackLocationType.values) {
-      if (qlt.name.toLowerCase() == locationType!.toLowerCase()) {
+      if (QuackLocationService.getQuackLocationTypeInt(qlt) == locationType) {
         return qlt;
       }
     }

@@ -17,7 +17,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   final String title;
   final Color titleColor;
-  final LinearGradient background;
+  final Color appBarLeftButtonIconColor;
+  final Gradient background;
+  final Gradient buttonBackground;
+  final Gradient buttonPressedBackground;
   final VoidCallback? leftButtonPressed;
 
   final AssetImage? button1Image;
@@ -31,7 +34,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final AppBarLeftButton appBarLeftButton;
 
   @override
-  final Size preferredSize = const Size.fromHeight(56.0);
+  final Size preferredSize = const Size.fromHeight(values.actionBarHeight);
 
   //endregion
 
@@ -42,15 +45,19 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   const CustomAppBar(
       {Key? key,
-      required this.title,
-      required this.titleColor,
       required this.background,
+      this.title = "",
+      this.titleColor = Colors.white,
       this.button1Image,
       this.button1Icon,
       this.onButton1Pressed,
       this.button2Image,
+      this.buttonBackground = custom_colors.transparentGradient,
+      this.buttonPressedBackground =
+          custom_colors.backButtonGradientPressedDefault,
       this.button2Icon,
       this.onButton2Pressed,
+      this.appBarLeftButtonIconColor = Colors.black,
       this.appBarLeftButton = AppBarLeftButton.back,
       this.leftButtonPressed})
       : assert((button1Icon == null && button1Image == null) ||
@@ -95,9 +102,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   imagePadding: const EdgeInsets.all(10),
                   showBorder: false,
                   borderRadius: const BorderRadius.all(Radius.circular(22)),
-                  defaultBackground: custom_colors.transparentGradient,
-                  pressedBackground:
-                      custom_colors.backButtonGradientPressedDefault,
+                  defaultBackground: buttonBackground,
+                  pressedBackground: buttonPressedBackground,
                   icon: _getLeftButtonIcon(appBarLeftButton),
                   onPressed: leftButtonPressed!),
               Expanded(child: Container()),
@@ -109,9 +115,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     imagePadding: const EdgeInsets.all(6),
                     showBorder: false,
                     borderRadius: const BorderRadius.all(Radius.circular(22)),
-                    defaultBackground: custom_colors.transparentGradient,
-                    pressedBackground:
-                        custom_colors.backButtonGradientPressedDefault,
+                    defaultBackground: buttonBackground,
+                    pressedBackground: buttonPressedBackground,
                     image: button2Image,
                     icon: button2Icon,
                     onPressed: onButton2Pressed!),
@@ -123,9 +128,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     imagePadding: const EdgeInsets.all(6),
                     showBorder: false,
                     borderRadius: const BorderRadius.all(Radius.circular(22)),
-                    defaultBackground: custom_colors.transparentGradient,
-                    pressedBackground:
-                        custom_colors.backButtonGradientPressedDefault,
+                    defaultBackground: buttonBackground,
+                    pressedBackground: buttonPressedBackground,
                     image: button1Image,
                     icon: button1Icon,
                     onPressed: onButton1Pressed!),
@@ -135,18 +139,18 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       decoration: BoxDecoration(
           gradient: background,
-          border: Border.all(color: custom_colors.darkBlue, width: 0)),
+          border: Border.all(color: background.colors.first, width: 0)),
     );
   }
 
   Icon _getLeftButtonIcon(AppBarLeftButton appBarLeftButton) {
     switch (appBarLeftButton) {
       case AppBarLeftButton.menu:
-        return const Icon(Icons.menu, color: Colors.white);
+        return Icon(Icons.menu, color: appBarLeftButtonIconColor);
       case AppBarLeftButton.back:
-        return const Icon(Icons.arrow_back, color: Colors.black);
+        return Icon(Icons.arrow_back, color: appBarLeftButtonIconColor);
       case AppBarLeftButton.close:
-        return const Icon(Icons.clear, color: Colors.black);
+        return Icon(Icons.clear, color: appBarLeftButtonIconColor);
     }
   }
 

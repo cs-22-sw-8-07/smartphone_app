@@ -6,13 +6,12 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
 import 'package:smartphone_app/pages/login/login_page_events_states.dart';
-import 'package:smartphone_app/pages/main/main_page.dart';
 
 import '../../helpers/permission_helper.dart';
 import '../../services/webservices/spotify/models/spotify_classes.dart';
-import '../../services/webservices/spotify/service/spotify_service.dart';
+import '../../services/webservices/spotify/services/spotify_service.dart';
 import '../../utilities/general_util.dart';
-import '../main/main_page_2.dart';
+import '../main/old/main_page_2.dart';
 
 class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
   ///

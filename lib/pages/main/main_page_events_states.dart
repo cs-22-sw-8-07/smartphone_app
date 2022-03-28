@@ -10,13 +10,13 @@ import '../../services/webservices/quack/models/quack_classes.dart';
 
 enum MainButtonEvent {
   startStopRecommendation,
-  selectPreferenceProfile,
   seeRecommendations,
   goToSettings,
   logOff,
   resizePlaylist,
   resumePausePlayer,
-  lockUnlockQuackLocationType
+  lockUnlockQuackLocationType,
+  selectManualLocation
 }
 
 enum MainTouchEvent { goToNextTrack, goToPreviousTrack }

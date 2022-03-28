@@ -10,13 +10,13 @@ import 'package:smartphone_app/widgets/custom_list_tile.dart';
 import 'package:spotify_sdk/models/track.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-import '../../services/webservices/quack/models/quack_classes.dart';
-import '../../widgets/custom_app_bar.dart';
-import '../../widgets/custom_button.dart';
-import '../../widgets/custom_drawer_tile.dart';
-import '../../widgets/custom_play_button.dart';
-import 'main_page_bloc.dart';
-import 'main_page_events_states.dart';
+import '../../../services/webservices/quack/models/quack_classes.dart';
+import '../../../widgets/custom_app_bar.dart';
+import '../../../widgets/custom_button.dart';
+import '../../../widgets/custom_drawer_tile.dart';
+import '../../../widgets/custom_play_button.dart';
+import '../main_page_bloc.dart';
+import '../main_page_events_states.dart';
 
 class MainPage2 extends StatefulWidget {
   const MainPage2({Key? key}) : super(key: key);
@@ -326,6 +326,7 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
             CustomAppBar(
               title: AppLocalizations.of(context)!.app_name,
               titleColor: Colors.white,
+              appBarLeftButtonIconColor: Colors.white,
               background: custom_colors.appBarBackground,
               appBarLeftButton: AppBarLeftButton.menu,
               leftButtonPressed: () async =>

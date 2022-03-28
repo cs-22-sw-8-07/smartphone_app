@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:smartphone_app/services/webservices/quack/service/quack_service.dart';
+import 'package:smartphone_app/services/webservices/quack/services/quack_service.dart';
 
 import '../interfaces/quack_functions.dart';
 import '../models/quack_classes.dart';
