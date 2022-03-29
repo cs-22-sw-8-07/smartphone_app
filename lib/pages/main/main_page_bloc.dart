@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // ignore: unnecessary_import, implementation_imports
 import 'package:geolocator_android/src/types/foreground_settings.dart';
 
-import '../../helpers/position_helper/mock_position_helper.dart';
+import '../../helpers/position_helper/udp_position_helper.dart';
 import '../../helpers/position_helper/position_helper.dart';
 import '../../services/webservices/quack/models/quack_classes.dart';
 import '../../services/webservices/quack/services/quack_service.dart';
@@ -30,7 +31,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
   //region Variables
 
   late BuildContext context;
-  PositionHelper? positionHelper;
+  PositionHelper positionHelper;
   late StreamSubscription<Position?> positionStreamSubscription;
 
   //endregion
@@ -40,12 +41,12 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
   ///
   //region Constructor
 
-  MainPageBloc({required this.context})
+  MainPageBloc({required this.context, required this.positionHelper})
       : super(MainPageState(
             hasJustPerformedAction: false,
             isPlaylistShown: false,
             isLoading: false,
-            quackLocationType: QuackLocationType.forest,
+            quackLocationType: QuackLocationType.unknown,
             isRecommendationStarted: false)) {
     LocalizationHelper.init(context: context);
 
@@ -252,22 +253,6 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       emit(state.copyWith(hasJustPerformedAction: true));
     });
 
-    /// IsLoadingChanged
-    on<IsLoadingChanged>((event, emit) {
-      emit(state.copyWith(isLoading: event.isLoading));
-    });
-
-    /// IsRecommendationStartedChanged
-    on<IsRecommendationStartedChanged>((event, emit) {
-      emit(state.copyWith(
-          isRecommendationStarted: event.isRecommendationStarted));
-    });
-
-    /// QuackLocationTypeChanged
-    on<QuackLocationTypeChanged>((event, emit) {
-      emit(state.copyWith(quackLocationType: event.quackLocationType));
-    });
-
     /// MainPageValueChanged
     on<MainPageValueChanged>((event, emit) {
       if (kDebugMode) {
@@ -305,9 +290,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
   Future<void> close() async {
     try {
       positionStreamSubscription.cancel();
-      if (positionHelper != null) {
-        positionHelper!.dispose();
-      }
+      positionHelper.dispose();
       await _disconnectFromSpotifyRemote();
       // ignore: empty_catches
     } on Exception {}
@@ -326,35 +309,10 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
   /// Subscribe to a stream providing GPS positions
   /// Called once in the constructor of the Bloc
   void _subscribeToPosition() async {
-    positionHelper = MockPositionHelper(
-        androidSettings: AndroidSettings(
-            accuracy: LocationAccuracy.high,
-            distanceFilter: 0,
-            forceLocationManager: true,
-            intervalDuration: const Duration(seconds: 10),
-            //(Optional) Set foreground notification config to keep the app alive
-            //when going to the background
-            foregroundNotificationConfig: ForegroundNotificationConfig(
-              notificationIcon: const AndroidResource(
-                  name: "notification_icon", defType: "drawable"),
-              notificationText:
-                  AppLocalizations.of(context)!.getting_location_in_background,
-              notificationTitle: AppLocalizations.of(context)!.app_name,
-              enableWakeLock: true,
-            )),
-        appleSettings: AppleSettings(
-          accuracy: LocationAccuracy.high,
-          activityType: ActivityType.fitness,
-          distanceFilter: 100,
-          pauseLocationUpdatesAutomatically: true,
-          // Only set to true if our app will be started up in the background.
-          showBackgroundLocationIndicator: false,
-        ));
-
     bool gettingLocationType = false;
 
     positionStreamSubscription =
-        positionHelper!.getPositionStream().listen((position) async {
+        positionHelper.getPositionStream().listen((position) async {
       if (kDebugMode) {
         print(position != null
             ? (position.latitude.toString().replaceAll(",", ".") +
@@ -386,7 +344,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
             }
             add(PlaylistReceived(playList: response.quackResponse!.result!));
           }
-          add(QuackLocationTypeChanged(quackLocationType: qlt));
+          add(MainPageValueChanged(quackLocationType: qlt));
         }
 
         gettingLocationType = false;
@@ -550,7 +508,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
   /// Start recommendation
   Future<void> _startRecommendation() async {
     // Show loading animation
-    add(const IsLoadingChanged(isLoading: true));
+    add(MainPageValueChanged(isLoading: true));
 
     // Test delay when using mock service
     //await Future.delayed(const Duration(seconds: 2));
@@ -562,7 +520,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     if (!getPlaylistResponse.isSuccess) {
       GeneralUtil.showSnackBar(
           context: context, message: "Could not get a playlist");
-      add(const IsLoadingChanged(isLoading: false));
+      add(MainPageValueChanged(isLoading: false));
       return;
     }
 
@@ -570,10 +528,8 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     await _playTrack(getPlaylistResponse.quackResponse!.result!.tracks!.first);
     // Show playlist
     add(PlaylistReceived(playList: getPlaylistResponse.quackResponse!.result!));
-    // Remove loading animation
-    add(const IsLoadingChanged(isLoading: false));
-    // Start recommendation animation
-    add(const IsRecommendationStartedChanged(isRecommendationStarted: true));
+    // Remove loading animation and start recommendation animation
+    add(MainPageValueChanged(isLoading: false, isRecommendationStarted: true));
   }
 
   //endregion

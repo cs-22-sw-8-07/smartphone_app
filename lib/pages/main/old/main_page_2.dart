@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
 import 'package:smartphone_app/localization/localization_helper.dart';
 import 'package:smartphone_app/values/values.dart' as values;
@@ -9,7 +10,9 @@ import 'package:smartphone_app/widgets/custom_label.dart';
 import 'package:smartphone_app/widgets/custom_list_tile.dart';
 import 'package:spotify_sdk/models/track.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'package:geolocator_android/src/types/foreground_settings.dart';
 
+import '../../../helpers/position_helper/udp_position_helper.dart';
 import '../../../services/webservices/quack/models/quack_classes.dart';
 import '../../../widgets/custom_app_bar.dart';
 import '../../../widgets/custom_button.dart';
@@ -99,7 +102,30 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     LocalizationHelper.init(context: context);
-    bloc = MainPageBloc(context: context);
+    bloc = MainPageBloc(context: context, positionHelper: UdpPositionHelper(
+        androidSettings: AndroidSettings(
+            accuracy: LocationAccuracy.high,
+            distanceFilter: 0,
+            forceLocationManager: true,
+            intervalDuration: const Duration(seconds: 10),
+            //(Optional) Set foreground notification config to keep the app alive
+            //when going to the background
+            foregroundNotificationConfig: ForegroundNotificationConfig(
+              notificationIcon: const AndroidResource(
+                  name: "notification_icon", defType: "drawable"),
+              notificationText:
+              AppLocalizations.of(context)!.getting_location_in_background,
+              notificationTitle: AppLocalizations.of(context)!.app_name,
+              enableWakeLock: true,
+            )),
+        appleSettings: AppleSettings(
+          accuracy: LocationAccuracy.high,
+          activityType: ActivityType.fitness,
+          distanceFilter: 100,
+          pauseLocationUpdatesAutomatically: true,
+          // Only set to true if our app will be started up in the background.
+          showBackgroundLocationIndicator: false,
+        )));
 
     var availableHeight = MediaQuery.of(context).size.height -
         values.actionBarHeight -
