@@ -18,6 +18,10 @@ class AppValuesHelper {
   static AppValuesHelper? _appValuesHelper;
   static late SharedPreferences _sharedPreferences;
 
+  static void init(AppValuesHelper appValuesHelper) {
+    _appValuesHelper = appValuesHelper;
+  }
+
   static AppValuesHelper getInstance() {
     _appValuesHelper ??= AppValuesHelper._();
     return _appValuesHelper!;
@@ -60,7 +64,7 @@ class AppValuesHelper {
   ///
   //region Methods
 
-  init() async {
+  setup() async {
     _sharedPreferences = await SharedPreferences.getInstance();
   }
 

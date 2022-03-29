@@ -19,7 +19,7 @@ void main() async {
   await dotenv.load();
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  await AppValuesHelper.getInstance().init();
+  await AppValuesHelper.getInstance().setup();
   SpotifyService.init(SpotifyService());
   QuackService.init(MockQuackService());
   //QuackService.init(

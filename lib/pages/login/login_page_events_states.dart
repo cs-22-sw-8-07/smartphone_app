@@ -35,7 +35,9 @@ class ButtonPressed extends LoginPageEvent {
   List<Object?> get props => [buttonEvent];
 }
 
-class Resumed extends LoginPageEvent {}
+class Resumed extends LoginPageEvent {
+  const Resumed();
+}
 
 class PermissionStateChanged extends LoginPageEvent {
   final PermissionState permissionState;

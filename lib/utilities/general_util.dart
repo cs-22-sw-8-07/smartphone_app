@@ -34,6 +34,7 @@ class GeneralUtil {
   /// [goBack] is a flag deciding how the navigation animation is done
   static goToPage(BuildContext context, Widget page,
       {bool goBack = false}) async {
+    if (Platform.environment.containsKey('FLUTTER_TEST')) return;
     await Navigator.pushReplacement(
         context,
         PageRouteBuilder(
@@ -59,6 +60,7 @@ class GeneralUtil {
   /// [page] is the page being navigated to
   /// [goBack] is a flag deciding how the navigation animation is done
   static showPopup(BuildContext context, Widget page) async {
+    if (Platform.environment.containsKey('FLUTTER_TEST')) return;
     await Navigator.push(
       context,
       PageRouteBuilder(
@@ -79,6 +81,7 @@ class GeneralUtil {
   }
 
   static showPageAsDialog<T>(BuildContext context, Widget page) async {
+    if (Platform.environment.containsKey('FLUTTER_TEST')) return;
     return await showGeneralDialog<T>(
         context: context,
         barrierDismissible: false,
