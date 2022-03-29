@@ -10,9 +10,9 @@ class PositionHelper {
   ///
   //region Variables
 
-  final AndroidSettings androidSettings;
-  final AppleSettings appleSettings;
-  late final LocationSettings locationSettings;
+  final AndroidSettings? androidSettings;
+  final AppleSettings? appleSettings;
+  LocationSettings? locationSettings;
   StreamController<Position?> positionStreamController =
       StreamController.broadcast();
 

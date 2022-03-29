@@ -97,33 +97,6 @@ class TrackSelected extends MainPageEvent {
   List<Object?> get props => [quackTrack];
 }
 
-class QuackLocationTypeChanged extends MainPageEvent {
-  final QuackLocationType? quackLocationType;
-
-  const QuackLocationTypeChanged({this.quackLocationType});
-
-  @override
-  List<Object?> get props => [quackLocationType];
-}
-
-class IsLoadingChanged extends MainPageEvent {
-  final bool isLoading;
-
-  const IsLoadingChanged({required this.isLoading});
-
-  @override
-  List<Object?> get props => [isLoading];
-}
-
-class IsRecommendationStartedChanged extends MainPageEvent {
-  final bool isRecommendationStarted;
-
-  const IsRecommendationStartedChanged({required this.isRecommendationStarted});
-
-  @override
-  List<Object?> get props => [isRecommendationStarted];
-}
-
 // ignore: must_be_immutable
 class MainPageValueChanged extends MainPageEvent {
   QuackTrack? currentTrack;
@@ -138,7 +111,8 @@ class MainPageValueChanged extends MainPageEvent {
       this.isLoading});
 
   @override
-  List<Object?> get props => [currentTrack];
+  List<Object?> get props =>
+      [currentTrack, isRecommendationStarted, isLoading, quackLocationType];
 }
 
 class HasPerformedSpotifyPlayerAction extends MainPageEvent {

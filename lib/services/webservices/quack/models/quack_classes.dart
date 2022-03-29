@@ -71,7 +71,8 @@ class GetPlaylistResponse extends QuackResponse {
 }
 
 @JsonSerializable()
-class QuackPlaylist {
+// ignore: must_be_immutable
+class QuackPlaylist extends Equatable {
   @JsonKey(name: "id")
   String? id;
   @JsonKey(name: "location_type")
@@ -98,6 +99,9 @@ class QuackPlaylist {
     }
     return null;
   }
+
+  @override
+  List<Object?> get props => [id, locationType];
 }
 
 @JsonSerializable()
