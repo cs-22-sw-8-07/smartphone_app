@@ -54,6 +54,7 @@ dependencies:
   geolocator: ^8.2.0
   json_serializable: ^6.1.5
   flutter_native_splash: ^2.1.1
+  mockito: ^5.1.0
   spotify_sdk:
     git:
       url: git://github.com/brim-borium/spotify_sdk.git
@@ -63,6 +64,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  mocktail: ^0.3.0
   bloc_test: ^9.0.3
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
