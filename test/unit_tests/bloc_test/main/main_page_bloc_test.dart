@@ -1,16 +1,14 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:smartphone_app/helpers/position_helper/mock_position_helper.dart';
 import 'package:smartphone_app/pages/main/main_page_bloc.dart';
 import 'package:smartphone_app/pages/main/main_page_events_states.dart';
 import 'package:smartphone_app/services/webservices/quack/models/quack_classes.dart';
-import 'package:smartphone_app/services/webservices/spotify/services/spotify_mock_service.dart';
 import 'package:smartphone_app/services/webservices/spotify/services/spotify_service.dart';
 
-class MockBuildContext extends Mock implements BuildContext {}
+import '../../../mocks/build_context.dart';
+import '../../../mocks/spotify_service.dart';
 
 Future<void> main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -114,8 +112,7 @@ Future<void> main() async {
         });
 
     var playerState = MockSpotifyService.getMockPlayerState();
-    blocTest<MainPageBloc, MainPageState>(
-        "SpotifyPlayerStateChanged",
+    blocTest<MainPageBloc, MainPageState>("SpotifyPlayerStateChanged",
         build: () => bloc,
         act: (bloc) =>
             bloc.add(SpotifyPlayerStateChanged(playerState: playerState)),
@@ -127,8 +124,7 @@ Future<void> main() async {
         id: "test",
         locationType: 1,
         tracks: [QuackTrack(id: "1"), QuackTrack(id: "2")]);
-    blocTest<MainPageBloc, MainPageState>(
-        "PlaylistReceived",
+    blocTest<MainPageBloc, MainPageState>("PlaylistReceived",
         build: () => bloc,
         act: (bloc) => bloc.add(PlaylistReceived(playList: playList)),
         expect: () {

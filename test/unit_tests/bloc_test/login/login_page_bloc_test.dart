@@ -3,37 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
-import 'package:smartphone_app/helpers/permission_helper.dart';
 import 'package:smartphone_app/pages/login/login_page_bloc.dart';
 import 'package:smartphone_app/pages/login/login_page_events_states.dart';
-import 'package:smartphone_app/services/webservices/spotify/services/spotify_mock_service.dart';
 import 'package:smartphone_app/services/webservices/spotify/services/spotify_service.dart';
 import 'package:smartphone_app/utilities/general_util.dart';
 
-class MockBuildContext extends Mock implements BuildContext {}
-
-class MockGrantedPermissionHelper extends Mock implements PermissionHelper {
-  @override
-  Future<PermissionStatus> getStatus(Permission permission) async {
-    return PermissionStatus.granted;
-  }
-}
-
-class MockDeniedPermissionHelper extends Mock implements PermissionHelper {
-  @override
-  Future<PermissionStatus> getStatus(Permission permission) async {
-    return PermissionStatus.denied;
-  }
-}
-
-class MockAppValuesHelper extends Mock implements AppValuesHelper {
-  @override
-  Future<bool> saveString(AppValuesKey appValuesKey, String? value) async {
-    return true;
-  }
-}
+import '../../../mocks/app_values_helper.dart';
+import '../../../mocks/build_context.dart';
+import '../../../mocks/permissions_helper.dart';
+import '../../../mocks/spotify_service.dart';
 
 Future<void> main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
