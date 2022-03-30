@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:location/location.dart' as location;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
 import 'package:smartphone_app/pages/login/login_page_events_states.dart';
@@ -11,7 +12,7 @@ import '../../helpers/permission_helper.dart';
 import '../../services/webservices/spotify/models/spotify_classes.dart';
 import '../../services/webservices/spotify/services/spotify_service.dart';
 import '../../utilities/general_util.dart';
-import '../main/old/main_page_2.dart';
+import '../main/main_page_ui.dart';
 
 class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
   ///
@@ -21,10 +22,7 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
 
   late BuildContext context;
   late PermissionHelper permissionHelper;
-  static const List<PermissionWithService> permissions = [
-    Permission.locationWhenInUse,
-    Permission.locationAlways,
-  ];
+  static const List<PermissionWithService> permissions = [Permission.location];
 
   //endregion
 
@@ -35,7 +33,7 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
 
   LoginPageBloc({required this.context, required this.permissionHelper})
       : super(LoginPageState(permissionState: PermissionState.denied)) {
-    // ButtonPressed
+    /// ButtonPressed
     on<ButtonPressed>((event, emit) async {
       switch (event.buttonEvent) {
         case LoginButtonEvent.continueWithSpotify:
@@ -63,13 +61,15 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
               getCurrentUsersProfileResponse.spotifyResponse!.displayName);
           AppValuesHelper.getInstance().saveString(AppValuesKey.userImageUrl,
               getCurrentUsersProfileResponse.spotifyResponse!.images![0].url);
-          GeneralUtil.goToPage(context, const MainPage2());
+          GeneralUtil.goToPage(context, const MainPage());
           break;
         case LoginButtonEvent.goToSettings:
           await permissionHelper.openAppSettings();
           break;
       }
     });
+
+    /// Resumed
     on<Resumed>((event, emit) async {
       for (var permission in permissions) {
         var status = await permissionHelper.getStatus(permission);
@@ -82,6 +82,8 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
       add(const PermissionStateChanged(
           permissionState: PermissionState.granted));
     });
+
+    /// PermissionStateChanged
     on<PermissionStateChanged>((event, emit) {
       emit(state.copyWith(permissionState: event.permissionState));
     });
@@ -106,6 +108,20 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
         statuses.values.any((element) => !element.isGranted)
             ? PermissionState.denied
             : PermissionState.granted;
+
+    /*location.Location loc = location.Location();
+
+    var _permissionGranted = await loc.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await loc.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return PermissionState.denied;
+      }
+    }
+    var enabledBackgroundMode = await loc.enableBackgroundMode(enable: true);
+    if (!enabledBackgroundMode) {
+      return PermissionState.denied;
+    }*/
 
     add(PermissionStateChanged(permissionState: permissionState));
     return permissionState;
