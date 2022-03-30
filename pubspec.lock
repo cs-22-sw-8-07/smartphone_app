@@ -865,7 +865,7 @@ packages:
       path: "."
       ref: main
       resolved-ref: e653ddda69c199d99145a309e89cb2fc84a73755
-      url: "git://github.com/brim-borium/spotify_sdk.git"
+      url: "https://github.com/brim-borium/spotify_sdk.git"
     source: git
     version: "2.2.0"
   stack_trace:
