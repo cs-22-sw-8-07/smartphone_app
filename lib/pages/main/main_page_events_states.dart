@@ -99,12 +99,12 @@ class TrackSelected extends MainPageEvent {
 
 // ignore: must_be_immutable
 class MainPageValueChanged extends MainPageEvent {
-  QuackTrack? currentTrack;
-  bool? isRecommendationStarted;
-  bool? isLoading;
-  QuackLocationType? quackLocationType;
+  final QuackTrack? currentTrack;
+  final bool? isRecommendationStarted;
+  final bool? isLoading;
+  final QuackLocationType? quackLocationType;
 
-  MainPageValueChanged(
+  const MainPageValueChanged(
       {this.currentTrack,
       this.isRecommendationStarted,
       this.quackLocationType,

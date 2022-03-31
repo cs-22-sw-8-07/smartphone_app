@@ -119,7 +119,7 @@ class QuackTrack extends Equatable {
   @JsonKey(ignore: true)
   Key? key;
 
-  QuackTrack({this.id, this.name, this.artist, this.imageUrl});
+  QuackTrack({this.id, this.name, this.artist, this.imageUrl, this.key});
 
   factory QuackTrack.fromJson(Map<String, dynamic> json) =>
       _$QuackTrackFromJson(json);
