@@ -1,19 +1,14 @@
 import 'dart:collection';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
 import 'package:smartphone_app/utilities/general_util.dart';
 import 'package:smartphone_app/services/webservices/quack/services/quack_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:smartphone_app/values/values.dart' as values;
-import 'package:smartphone_app/services/webservices/quack/models/quack_classes.dart';
-import 'package:smartphone_app/widgets/custom_label.dart';
-import 'package:smartphone_app/widgets/custom_list_tile.dart';
-import 'package:darq/darq.dart';
 import 'package:smartphone_app/widgets/question_dialog.dart';
 import 'package:smartphone_app/pages/settings/settings_page_events_states.dart';
-
 
 enum SettingsCallBackType { deleteAccount, settingsChanged }
 
@@ -32,56 +27,49 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   ///
   //region Constructor
 
-  SettingsBloc({required this.context})
-      : super(SettingsState()) {
-
-  on<ButtonPressed>((emit, event) async {
-    if (event is ButtonPressed) {
+  SettingsBloc({required this.context}) : super(SettingsState()) {
+    on<ButtonPressed>((event, emit) async {
       switch (event.buttonEvent) {
-      /// Back
+
+        /// Back
         case SettingsButtonEvent.back:
-          List<String> names = state.getNamesOfChangedProperties(
-              hashCodeMap!);
+          List<String> names = state.getNamesOfChangedProperties(hashCodeMap!);
           if (names.isNotEmpty) {
-            DialogQuestionResponse questionResponse = await QuestionDialog
-                .show(context: context,
-                question: AppLocalizations.of(context)!
-                    .do_you_want_to_save_changes);
+            DialogQuestionResponse questionResponse = await QuestionDialog.show(
+                context: context,
+                question:
+                    AppLocalizations.of(context)!.do_you_want_to_save_changes);
             if (questionResponse == DialogQuestionResponse.yes) {
-              await _saveChanges();
+              if (kDebugMode) {
+                print("Test");
+                Navigator.of(context).pop(null);
+              }
+              break;
             } else {
-              Navigator.of(context).pop(null);
+              if (kDebugMode) {
+                print("you exited!");
+                Navigator.of(context).pop(null);
+              }
             }
           } else {
-            Navigator.of(context).pop(null);
+            if (kDebugMode) {
+              print("you exited! 2");
+              Navigator.of(context).pop(null);
+            }
           }
           break;
 
-      /// Save
+        /// Save
         case SettingsButtonEvent.save:
           await _saveChanges();
           break;
 
-      /// Delete account
+        /// Delete account
         case SettingsButtonEvent.deleteAccount:
           await _deleteAccount();
           break;
-
       }
-    } else if (event is ValuesRetrieved) {
-      SettingsState newState = state.copyWith(
-          name: event.name);
-      hashCodeMap = state.getCurrentHashCodes(state: newState);
-      yield newState;
-    } else if (event is TextChanged) {
-      switch (event.textChangedEvent) {
-      /// Name
-        case SettingsTextChangedEvent.name:
-          yield state.copyWith(name: event.text);
-          break;
-      }
-    }
-  }
+    });
   }
 
   //endregion
@@ -93,15 +81,14 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
 
   Future<void> _saveChanges() async {
     //TODO: Give functionality
-    }
+  }
 
   Future<void> _deleteAccount() async {
     DialogQuestionResponse questionResponse = await QuestionDialog.show(
         context: context,
-        question: AppLocalizations.of(context)!
-            .delete_account_confirmation);
+        question: AppLocalizations.of(context)!.delete_account_confirmation);
     if (questionResponse != DialogQuestionResponse.yes) return;
 
     //TODO: Something to delete account
-  } 
   }
+}

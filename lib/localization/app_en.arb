@@ -23,7 +23,7 @@
   "@go_to_settings": {
     "description": "Button text"
   },
-  "do_you_want_to_save_changes": "Do you want to save the current changes?",
+  "do_you_want_to_save_changes": "You have unsaved changes\nDo you want to save the current changes?",
   "@do_you_want_to_save_changes" :  {
     "description": "Dialog text"
   },
