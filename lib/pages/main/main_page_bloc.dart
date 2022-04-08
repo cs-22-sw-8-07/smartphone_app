@@ -10,6 +10,7 @@ import 'package:smartphone_app/localization/localization_helper.dart';
 import 'package:smartphone_app/pages/login/login_page_ui.dart';
 import 'package:smartphone_app/pages/main/main_page_events_states.dart';
 import 'package:smartphone_app/services/quack_location_service/service/quack_location_service.dart';
+import 'package:smartphone_app/widgets/question_dialog.dart';
 import 'package:spotify_sdk/models/connection_status.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -77,7 +78,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
           GeneralUtil.goToPage(context, const LoginPage());
           break;
-        case MainButtonEvent.resizePlaylist:
+        case MainButtonEvent.viewPlaylist:
           emit(state.copyWith(isPlaylistShown: !state.isPlaylistShown!));
           break;
         case MainButtonEvent.resumePausePlayer:
@@ -110,6 +111,14 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
             print("Test");
           }
           break;
+        case MainButtonEvent.refreshPlaylist:
+          var reply = await QuestionDialog.show(context: context, question: "Are you sure you want to refresh the playlist?");
+          if ( reply != DialogQuestionResponse.yes){
+            return;
+          }
+          await _resumePausePlayer();
+          await _startRecommendation();
+
       }
     });
 

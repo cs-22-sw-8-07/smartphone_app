@@ -289,7 +289,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             color: Colors.white,
             size: 30,
           ),
-          onPressed: () {},
+          onPressed: () {
+            bloc.add(const ButtonPressed(buttonEvent: MainButtonEvent.refreshPlaylist));
+          },
           borderRadius: const BorderRadius.all(
             Radius.circular(0),
           ),
@@ -322,7 +324,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       ),
                       onPressed: () {
                         bloc.add(const ButtonPressed(
-                            buttonEvent: MainButtonEvent.resizePlaylist));
+                            buttonEvent: MainButtonEvent.viewPlaylist));
                         bloc.state.isPlaylistShown!
                             ? playlistAnimationController.reverse()
                             : playlistAnimationController.forward();
@@ -792,9 +794,11 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
     return ListView.builder(
       itemCount: tracks!.length,
+      //child: Container(),
       itemBuilder: (context, index) {
         return _getTrack(state, tracks[index]);
       },
+      //state.isLoading!
     );
   }
 

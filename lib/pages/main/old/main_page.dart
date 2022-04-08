@@ -271,7 +271,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             ),
             onPressed: () {
               bloc.add(const ButtonPressed(
-                  buttonEvent: MainButtonEvent.resizePlaylist));
+                  buttonEvent: MainButtonEvent.viewPlaylist));
               bloc.state.isPlaylistShown!
                   ? playlistAnimationController.reverse()
                   : playlistAnimationController.forward();
