@@ -30,7 +30,7 @@ const double mainPagePlayPauseButtonSize = 100;
 //region Images
 
 const String loginBackground = "assets/login_background.jpg";
-const String createIssueBackground = "assets/login_background.jpg";
+const String settingsBackground = "assets/quack_locationtypes/unknown.jpeg";
 
 const String locationShadowImage = "assets/locations_shadow.png";
 const String appFeatureImage = "assets/feature_image.svg";
