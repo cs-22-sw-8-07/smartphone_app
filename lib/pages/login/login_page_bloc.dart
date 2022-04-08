@@ -60,6 +60,7 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
           AppValuesHelper.getInstance().saveString(AppValuesKey.displayName,
               getCurrentUsersProfileResponse.spotifyResponse!.displayName);
           AppValuesHelper.getInstance().saveString(AppValuesKey.userImageUrl,
+              getCurrentUsersProfileResponse.spotifyResponse!.images!.isEmpty ? "" :
               getCurrentUsersProfileResponse.spotifyResponse!.images![0].url);
           GeneralUtil.goToPage(context, const MainPage());
           break;
