@@ -64,13 +64,13 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     if (url.isEmpty) {
       userImage = Container(
         height: 60,
-        decoration: BoxDecoration(color: custom_colors.darkBlue,
-        borderRadius: const BorderRadius.all(Radius.circular(40)),
+        decoration: BoxDecoration(color: Colors.white,
+        borderRadius: const BorderRadius.all(Radius.circular(30)),
         border: Border.all(color: Colors.white, width: 2)),
         child: const Icon(
           Icons.person_outline_outlined,
-          size:30,
-          color: Colors.white));
+          size:35,
+          color: custom_colors.darkBlue));
     } else {
       userImage = Image.network(
         AppValuesHelper.getInstance().getString(AppValuesKey.userImageUrl) ??
