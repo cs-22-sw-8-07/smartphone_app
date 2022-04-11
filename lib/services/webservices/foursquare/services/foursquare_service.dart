@@ -86,8 +86,7 @@ class FoursquareService implements IFoursquareFunctions {
         "ll": latitude.toString().replaceAll(",", ".") +
             "," +
             longitude.toString().replaceAll(",", "."),
-        "limit": "50",
-        "radius": "10000"
+        "limit": "50"
       }, headers: {
         "Authorization": _apiKey!
       });
