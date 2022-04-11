@@ -13,29 +13,61 @@ class QuestionDialog extends StatelessWidget {
   ///
   //region Statics
 
-  static Future<DialogQuestionResponse> show(
+  static QuestionDialog? _questionDialog;
+  
+  static QuestionDialog getInstance() {
+    _questionDialog = QuestionDialog._();
+    return _questionDialog!;
+  }
+  
+  Future<DialogQuestionResponse> show(
       {required BuildContext context,
       required String question,
       Color? textColor}) async {
+        this.question = question;
+        color = textColor;
     return await Future.delayed(Duration.zero, () async {
       // Show dialog
       return await showDialog(
           context: context,
-          builder: (context) =>
-              QuestionDialog._(question: question, color: textColor),
+          builder: (context) => this,
           barrierDismissible: false);
     });
   }
 
+// Future<DialogQuestionResponse> testShow({required BuildContext context,
+//       required String question,
+//       Color? textColor}) async {
+//         return DialogQuestionResponse.yes;
+// }
   //endregion
 
   ///
   /// VARIABLES
   ///
   //region Variables
+  
+  String? _question;
+  Color? _color;
 
-  String question;
-  Color? color;
+  //endregion
+
+  ///
+  /// PROPERTIES
+  ///
+  //region Properties
+
+  set question(String? question) {
+    _question = question;
+  }
+
+  String? get question => _question;
+
+  set color(Color? color) {
+    _color = color;
+  }
+
+  Color? get color => _color;
 
   //endregion
 
@@ -45,7 +77,7 @@ class QuestionDialog extends StatelessWidget {
   //region Constructor
 
   // ignore: prefer_const_constructors_in_immutables
-  QuestionDialog._({Key? key, required this.question, this.color})
+  QuestionDialog._({Key? key})
       : super(key: key);
 
   //endregion
@@ -78,7 +110,7 @@ class QuestionDialog extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.center,
                       child: Text(
-                        question,
+                        question!,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: color ?? custom_colors.darkBlue,
