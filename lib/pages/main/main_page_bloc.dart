@@ -116,9 +116,10 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
           if ( reply != DialogQuestionResponse.yes){
             return;
           }
-          await _resumePausePlayer();
+          if ( state.playerState!.isPaused ){
+            await _resumePausePlayer();
+          }
           await _startRecommendation();
-
       }
     });
 
