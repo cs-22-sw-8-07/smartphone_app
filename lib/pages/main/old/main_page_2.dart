@@ -103,29 +103,7 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     LocalizationHelper.init(context: context);
     bloc = MainPageBloc(context: context, positionHelper: UdpPositionHelper(
-        androidSettings: AndroidSettings(
-            accuracy: LocationAccuracy.high,
-            distanceFilter: 0,
-            forceLocationManager: true,
-            intervalDuration: const Duration(seconds: 10),
-            //(Optional) Set foreground notification config to keep the app alive
-            //when going to the background
-            foregroundNotificationConfig: ForegroundNotificationConfig(
-              notificationIcon: const AndroidResource(
-                  name: "notification_icon", defType: "drawable"),
-              notificationText:
-              AppLocalizations.of(context)!.getting_location_in_background,
-              notificationTitle: AppLocalizations.of(context)!.app_name,
-              enableWakeLock: true,
-            )),
-        appleSettings: AppleSettings(
-          accuracy: LocationAccuracy.high,
-          activityType: ActivityType.fitness,
-          distanceFilter: 100,
-          pauseLocationUpdatesAutomatically: true,
-          // Only set to true if our app will be started up in the background.
-          showBackgroundLocationIndicator: false,
-        )));
+       ));
 
     var availableHeight = MediaQuery.of(context).size.height -
         values.actionBarHeight -

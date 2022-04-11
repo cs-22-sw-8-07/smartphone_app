@@ -25,10 +25,8 @@ class UdpPositionHelper extends PositionHelper {
   ///
   //region Constructor
 
-  UdpPositionHelper(
-      {required AndroidSettings androidSettings,
-      required AppleSettings appleSettings})
-      : super(androidSettings: androidSettings, appleSettings: appleSettings);
+  UdpPositionHelper()
+      : super(androidSettings: null, appleSettings: null);
 
   //endregion
 
