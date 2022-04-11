@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smartphone_app/widgets/custom_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:smartphone_app/values/values.dart' as values;
+import 'package:smartphone_app/values/colors.dart' as custom_colors;
 
 enum DialogQuestionResponse { yes, no }
 
@@ -13,12 +14,15 @@ class QuestionDialog extends StatelessWidget {
   //region Statics
 
   static Future<DialogQuestionResponse> show(
-      {required BuildContext context, required String question}) async {
+      {required BuildContext context,
+      required String question,
+      Color? textColor}) async {
     return await Future.delayed(Duration.zero, () async {
       // Show dialog
       return await showDialog(
           context: context,
-          builder: (context) => QuestionDialog._(question: question),
+          builder: (context) =>
+              QuestionDialog._(question: question, color: textColor),
           barrierDismissible: false);
     });
   }
@@ -31,6 +35,7 @@ class QuestionDialog extends StatelessWidget {
   //region Variables
 
   String question;
+  Color? color;
 
   //endregion
 
@@ -40,7 +45,8 @@ class QuestionDialog extends StatelessWidget {
   //region Constructor
 
   // ignore: prefer_const_constructors_in_immutables
-  QuestionDialog._({Key? key, required this.question}) : super(key: key);
+  QuestionDialog._({Key? key, required this.question, this.color})
+      : super(key: key);
 
   //endregion
 
@@ -74,8 +80,10 @@ class QuestionDialog extends StatelessWidget {
                       child: Text(
                         question,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18),
+                        style: TextStyle(
+                            color: color ?? custom_colors.darkBlue,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18),
                       ),
                     )),
                 Container(
