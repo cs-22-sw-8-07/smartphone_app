@@ -17,7 +17,7 @@ import 'package:geolocator_android/src/types/foreground_settings.dart';
 
 import '../../helpers/position_helper/udp_position_helper.dart';
 import '../../helpers/position_helper/position_helper.dart';
-import '../../helpers/position_helper/models/position_helper_classes.dart'
+import '../../helpers/position_helper/models/position_helper_classes.dart';
 import '../../services/webservices/quack/models/quack_classes.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_button.dart';
