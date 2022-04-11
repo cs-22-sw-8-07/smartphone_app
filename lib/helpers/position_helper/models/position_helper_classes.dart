@@ -7,6 +7,7 @@ part 'position_helper_classes.g.dart';
 enum PositionType{
   mock,
   udp, //default
+  device
 }
 
 @JsonSerializable()

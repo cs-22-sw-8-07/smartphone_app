@@ -77,6 +77,8 @@ class PositionHelper {
       pt = PositionType.mock;
     } else if (envString == 'udp') {
       pt = PositionType.udp;
+    } else if (envString == 'device') {
+      pt = PositionType.device;
     }
 
     return pt;
