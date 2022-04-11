@@ -432,15 +432,27 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 SizedBox(
                     height: values.actionBarHeight,
                     child: Stack(children: [
-                      CustomAppBar(
-                        background: custom_colors.transparentGradient,
-                        appBarLeftButtonIconColor: custom_colors.darkBlue,
-                        buttonBackground: custom_colors.whiteGradient,
-                        buttonPressedBackground: custom_colors.greyGradient,
-                        appBarLeftButton: AppBarLeftButton.menu,
-                        leftButtonPressed: () async =>
-                            {_scaffoldKey.currentState!.openDrawer()},
-                      ),
+                      BlocBuilder<MainPageBloc, MainPageState>(
+                          builder: (context, state) {
+                        return CustomAppBar(
+                          background: custom_colors.transparentGradient,
+                          appBarLeftButtonIconColor: custom_colors.darkBlue,
+                          buttonBackground: custom_colors.whiteGradient,
+                          buttonPressedBackground: custom_colors.greyGradient,
+                          appBarLeftButton: AppBarLeftButton.menu,
+                          leftButtonPressed: () async =>
+                              {_scaffoldKey.currentState!.openDrawer()},
+                          button1Icon: Icon(
+                            state.lockedQuackLocationType == null
+                                ? Icons.lock_open_outlined
+                                : Icons.lock_outlined,
+                            color: Colors.black,
+                          ),
+                          onButton1Pressed: () => bloc.add(const ButtonPressed(
+                              buttonEvent:
+                                  MainButtonEvent.lockUnlockQuackLocationType)),
+                        );
+                      }),
                       Align(
                           alignment: Alignment.center,
                           child: GestureDetector(
@@ -494,51 +506,30 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 SizedBox(height: availableHeight * 0.35),
                 BlocBuilder<MainPageBloc, MainPageState>(
                     builder: (context, state) {
-                  return Container(
-                      margin: const EdgeInsets.only(bottom: 30, top: 0),
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: PlayButton(
-                            width: 40,
-                            height: 40,
-                            foreground: Icon(
-                              state.lockedQuackLocationType == null
-                                  ? Icons.lock_outline
-                                  : Icons.lock_open_outlined,
-                              color: Colors.white,
-                            ),
-                            onPressed: () => bloc.add(const ButtonPressed(
-                                buttonEvent: MainButtonEvent
-                                    .lockUnlockQuackLocationType)),
-                            pressedBackground:
-                                custom_colors.appButtonPressedGradient,
-                            defaultBackground: custom_colors.appButtonGradient),
-                      ));
-                }),
-                BlocBuilder<MainPageBloc, MainPageState>(
-                    builder: (context, state) {
-                  return SizedBox(
-                    child: Row(
-                      children: [
-                        const Expanded(child: SizedBox()),
-                        CustomButton(
-                            margin: const EdgeInsets.only(right: 30),
-                            height: values.mainPagePlayPauseButtonSize / 2,
-                            width: values.mainPagePlayPauseButtonSize / 2,
-                            borderRadius: const BorderRadius.all(
-                                Radius.circular(
-                                    values.mainPagePlayPauseButtonSize /
-                                        2 /
-                                        2)),
-                            icon: const Icon(
-                              Icons.skip_previous,
-                              color: custom_colors.darkBlue,
-                              size: values.mainPagePlayPauseButtonSize / 3,
-                            ),
-                            onPressed: () => bloc.add(const TouchEvent(
-                                touchEvent: MainTouchEvent.goToPreviousTrack)),
-                            pressedBackground: custom_colors.greyGradient,
-                            defaultBackground:
+                      return SizedBox(
+                        child: Row(
+                          children: [
+                            const Expanded(child: SizedBox()),
+                            CustomButton(
+                                margin: const EdgeInsets.only(right: 30),
+                                height: values.mainPagePlayPauseButtonSize / 2,
+                                width: values.mainPagePlayPauseButtonSize / 2,
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(
+                                        values.mainPagePlayPauseButtonSize /
+                                            2 /
+                                            2)),
+                                icon: const Icon(
+                                  Icons.skip_previous,
+                                  color: custom_colors.darkBlue,
+                                  size: values.mainPagePlayPauseButtonSize / 3,
+                                ),
+                                onPressed: () =>
+                                    bloc.add(const TouchEvent(
+                                        touchEvent: MainTouchEvent
+                                            .goToPreviousTrack)),
+                                pressedBackground: custom_colors.greyGradient,
+                                defaultBackground:
                                 custom_colors.transparentGradient),
                         AnimatedBuilder(
                           animation: startStopRecommendationController,
