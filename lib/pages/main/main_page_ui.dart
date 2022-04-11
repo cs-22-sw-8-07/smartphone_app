@@ -45,7 +45,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   late AnimationController startStopRecommendationController;
   Animation<double>? playlistSizeAnimation;
   late double playlistHeight;
-  Widget? userImage;
+  Image? userImage;
+  Widget? userImageWidget;
 
   late double availableHeight;
   late double availableWidth;
@@ -66,7 +67,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             "";
 
     if (url.isEmpty) {
-      userImage = Container(
+      userImageWidget = Container(
           height: 60,
           decoration: BoxDecoration(
               color: Colors.white,
@@ -78,6 +79,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       userImage = Image.network(
           AppValuesHelper.getInstance().getString(AppValuesKey.userImageUrl) ??
               "");
+      userImageWidget = userImage;
     }
 
     playlistAnimationController = AnimationController(
@@ -90,7 +92,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    //precacheImage(userImage!.image, context);
+    if (userImage != null) precacheImage(userImage!.image, context);
   }
 
   @override
@@ -241,7 +243,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                           child: ClipRRect(
                               borderRadius:
                                   const BorderRadius.all(Radius.circular(30)),
-                              child: userImage))
+                              child: userImageWidget))
                     ]),
                     Container(
                         padding: const EdgeInsets.only(
