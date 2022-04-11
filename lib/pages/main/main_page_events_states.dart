@@ -13,10 +13,11 @@ enum MainButtonEvent {
   seeRecommendations,
   goToSettings,
   logOff,
-  resizePlaylist,
+  viewPlaylist,
   resumePausePlayer,
   lockUnlockQuackLocationType,
-  selectManualLocation
+  selectManualLocation,
+  refreshPlaylist
 }
 
 enum MainTouchEvent { goToNextTrack, goToPreviousTrack }

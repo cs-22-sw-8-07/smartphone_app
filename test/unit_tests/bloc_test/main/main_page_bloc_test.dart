@@ -37,7 +37,7 @@ Future<void> main() async {
     blocTest<MainPageBloc, MainPageState>("ButtonPressed -> Resize playlist",
         build: () => bloc,
         act: (bloc) => bloc.add(
-            const ButtonPressed(buttonEvent: MainButtonEvent.resizePlaylist)),
+            const ButtonPressed(buttonEvent: MainButtonEvent.viewPlaylist)),
         expect: () => [bloc.state.copyWith(isPlaylistShown: true)]);
 
     blocTest<MainPageBloc, MainPageState>("TouchEvent -> Go to next track",

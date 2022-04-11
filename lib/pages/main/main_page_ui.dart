@@ -320,7 +320,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 color: Colors.white,
                 size: 30,
               ),
-              onPressed: () {},
+              onPressed: () {
+                bloc.add(const ButtonPressed(
+                    buttonEvent: MainButtonEvent.refreshPlaylist));
+              },
               borderRadius: const BorderRadius.all(
                 Radius.circular(0),
               ),
@@ -353,7 +356,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       ),
                       onPressed: () {
                         bloc.add(const ButtonPressed(
-                            buttonEvent: MainButtonEvent.resizePlaylist));
+                            buttonEvent: MainButtonEvent.viewPlaylist));
                         bloc.state.isPlaylistShown!
                             ? playlistAnimationController.reverse()
                             : playlistAnimationController.forward();
@@ -793,14 +796,22 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   }
 
   Widget _getPlaylist(MainPageState state) {
-    List<QuackTrack>? tracks = state.playlist!.tracks;
-
-    return ListView.builder(
-      itemCount: tracks!.length,
-      itemBuilder: (context, index) {
-        return _getTrack(state, tracks[index]);
-      },
-    );
+    if (state.isLoading!) {
+      return const Center(
+          child: SizedBox(
+        child: CircularProgressIndicator(color: Colors.white),
+        height: 60,
+        width: 60,
+      ));
+    } else {
+      List<QuackTrack>? tracks = state.playlist!.tracks;
+      return ListView.builder(
+        itemCount: tracks!.length,
+        itemBuilder: (context, index) {
+          return _getTrack(state, tracks[index]);
+        },
+      );
+    }
   }
 
 //endregion
