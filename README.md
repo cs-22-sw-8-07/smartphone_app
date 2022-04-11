@@ -28,11 +28,14 @@ FOURSQUARE_API=<API_KEY_FROM_FOURSQUARE>
 REDIRECT_URL=myappdemo://callback
 MOCK_POSITION_SERVER_IP=192.168.0.255
 QUACK_API_URL=https://192.168.0.108:5001
+WHICH_POSITION_HELPER=<mock||udp>
 ```
 
-The value API_KEY_FROM_GOOGLE_CLOUD_CONSOLE is no longer needed
-The value SPOTIFY_CLIENT_ID is pinned in #smartphone-app
-The value API_KEY_FROM_FOURSQUARE is pinned in #location-based-system
+The value API_KEY_FROM_GOOGLE_CLOUD_CONSOLE is no longer needed  
+The value SPOTIFY_CLIENT_ID is pinned in #smartphone-app  
+The value API_KEY_FROM_FOURSQUARE is pinned in #location-based-system  
+The value of WHICH_POSITION_HELPER is only needed if using an emulator.
+In that case use the value 'mock'. If not either do not include the line or use value 'udp'.
 
 ### Setup
 
