@@ -19,6 +19,10 @@
   "@please_go_to_settings_and_give_the_app_all_the_necessary_permissions": {
     "description": "Dialog text"
   },
+  "are_you_sure_you_want_to_refresh_the_playlist": "Are you sure you want to refresh the playlist?",
+  "@are_you_sure_you_want_to_refresh_the_playlist": {
+    "description": "Dialog text"
+  },
   "go_to_settings": "Go to settings",
   "@go_to_settings": {
     "description": "Button text"

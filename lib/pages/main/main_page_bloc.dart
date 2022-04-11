@@ -112,11 +112,14 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
           }
           break;
         case MainButtonEvent.refreshPlaylist:
-          var reply = await QuestionDialog.show(context: context, question: "Are you sure you want to refresh the playlist?");
-          if ( reply != DialogQuestionResponse.yes){
+          var reply = await QuestionDialog.show(
+              context: context,
+              question: AppLocalizations.of(context)!
+                  .are_you_sure_you_want_to_refresh_the_playlist);
+          if (reply != DialogQuestionResponse.yes) {
             return;
           }
-          if ( state.playerState!.isPaused ){
+          if (state.playerState!.isPaused) {
             await _resumePausePlayer();
           }
           await _startRecommendation();
