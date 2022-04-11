@@ -92,13 +92,13 @@ const Gradient spotifyPressedGradient = LinearGradient(
 );
 
 const Gradient buttonDefaultGradient = LinearGradient(
-    colors: <Color>[yellow1, orange3],
+    colors: <Color>[darkBlue, darkBlue],
     begin: Alignment(0.0, -1.0),
     end: Alignment(0.0, 1.0));
 const Gradient buttonPressedGradient = LinearGradient(
   begin: Alignment(0.0, -1.0),
   end: Alignment(0.0, 1.0),
-  colors: <Color>[orange_2, orange_2],
+  colors: <Color>[black2, black2],
 );
 const Gradient backButtonGradientPressedDefault = LinearGradient(
   begin: Alignment(0.0, -1.0),

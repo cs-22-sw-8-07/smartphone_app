@@ -38,25 +38,24 @@ class SettingsPage extends StatelessWidget {
                 child: SafeArea(
                     child: Container(
                         constraints: const BoxConstraints.expand(),
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: ExactAssetImage(
-                                values.settingsBackground,
-                              )),
-                        ),
+                        decoration: const BoxDecoration(),
                         child: BlocBuilder<SettingsBloc, SettingsState>(
                           builder: (context, state) {
                             return Scaffold(
-                              backgroundColor: Colors.transparent,
+                              backgroundColor: Colors.white,
                               appBar: CustomAppBar(
                                 title: AppLocalizations.of(context)!.settings,
-                                titleColor: Colors.white,
-                                background: custom_colors.appBarBackground,
-                                appBarLeftButton: AppBarLeftButton.close,
-                                leftButtonPressed: () => bloc.add(
+                                titleColor: custom_colors.darkBlue,
+                                background: custom_colors.transparentGradient,
+                                button1Icon: const Icon(
+                                  Icons.clear_outlined,
+                                  color: custom_colors.darkBlue,
+                                  size: 30,
+                                ),
+                                onButton1Pressed: () => bloc.add(
                                     const ButtonPressed(
                                         buttonEvent: SettingsButtonEvent.back)),
+                                appBarLeftButton: AppBarLeftButton.none,
                               ),
                               body: _getContent(context, bloc, state),
                             );
@@ -83,18 +82,14 @@ Widget _getContent(
                                 children: [
                                   Card(
                                       margin: const EdgeInsets.only(
-                                          top: values.padding,
                                           left: values.padding,
                                           right: values.padding),
                                       child: Column()),
-                                  Card(
-                                      margin: const EdgeInsets.only(
-                                          top: values.padding,
-                                          left: values.padding,
-                                          right: values.padding),
-                                      child: Column(
-                                        children: [],
-                                      )),
+                                  const Card(
+                                    margin: EdgeInsets.only(
+                                        left: values.padding,
+                                        right: values.padding),
+                                  ),
                                   CustomButton(
                                     onPressed: () => bloc.add(
                                         const ButtonPressed(
@@ -102,23 +97,17 @@ Widget _getContent(
                                                 .deleteAccount)),
                                     text: AppLocalizations.of(context)!
                                         .delete_account,
+                                    icon: const Icon(Icons.delete,
+                                        color: Colors.white, size: 35),
                                     fontWeight: FontWeight.bold,
+                                    borderRadius: const BorderRadius.all(Radius.circular(27.5)),
                                     fontSize: 20,
                                     margin:
-                                        const EdgeInsets.all(values.padding),
+                                        const EdgeInsets.only(left:values.padding, right: values.padding),
                                   )
                                 ],
                               ))),
                       // 'Save' button
-                      CustomButton(
-                        onPressed: () => bloc.add(const ButtonPressed(
-                            buttonEvent: SettingsButtonEvent.save)),
-                        text:
-                            AppLocalizations.of(context)!.app_name, // TEMP NAME
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        margin: const EdgeInsets.all(values.padding),
-                      )
                     ],
                   )))));
 }

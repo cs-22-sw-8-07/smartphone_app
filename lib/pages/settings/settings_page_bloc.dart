@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
 import 'package:smartphone_app/utilities/general_util.dart';
 import 'package:smartphone_app/services/webservices/quack/services/quack_service.dart';
@@ -28,12 +29,18 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   //region Constructor
 
   SettingsBloc({required this.context}) : super(SettingsState()) {
+    hashCodeMap = HashMap();
     on<ButtonPressed>((event, emit) async {
       switch (event.buttonEvent) {
 
         /// Back
         case SettingsButtonEvent.back:
-          List<String> names = state.getNamesOfChangedProperties(hashCodeMap!);
+          Navigator.of(context).pop(null);
+          break;
+
+        //To be used for checking temporary changes, if/when settings are expanded
+
+        /*List<String> names = state.getNamesOfChangedProperties(hashCodeMap!); 
           if (names.isNotEmpty) {
             DialogQuestionResponse questionResponse = await QuestionDialog.show(
                 context: context,
@@ -41,7 +48,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
                     AppLocalizations.of(context)!.do_you_want_to_save_changes);
             if (questionResponse == DialogQuestionResponse.yes) {
               if (kDebugMode) {
-                print("Test");
+                await _saveChanges();
                 Navigator.of(context).pop(null);
               }
               break;
@@ -58,6 +65,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
             }
           }
           break;
+          */
 
         /// Save
         case SettingsButtonEvent.save:
@@ -87,7 +95,12 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     DialogQuestionResponse questionResponse = await QuestionDialog.show(
         context: context,
         question: AppLocalizations.of(context)!.delete_account_confirmation);
-    if (questionResponse != DialogQuestionResponse.yes) return;
+    if (questionResponse != DialogQuestionResponse.yes) {
+      return;
+    } else {
+      GeneralUtil.showSnackBar(
+          context: context, message: "Not yet implemented 🙂"); //Replace with feature
+    }
 
     //TODO: Something to delete account
   }
