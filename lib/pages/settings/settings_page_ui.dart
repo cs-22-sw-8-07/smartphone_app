@@ -92,21 +92,6 @@ Widget _getContent(
                                     right: values.padding,
                                     bottom: values.buttonPadding),
                               ),
-                              CustomButton(
-                                onPressed: () => bloc.add(const ButtonPressed(
-                                    buttonEvent: SettingsButtonEvent.save)),
-                                text: "PLACEHOLDER",
-                                icon: const Icon(Icons.broken_image,
-                                    color: Colors.white, size: 35),
-                                fontWeight: FontWeight.bold,
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(27.5)),
-                                fontSize: 20,
-                                margin: const EdgeInsets.only(
-                                    left: values.padding,
-                                    right: values.padding,
-                                    bottom: values.buttonPadding),
-                              ),
                             ],
                           ))),
                 ],

@@ -67,11 +67,11 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
                 AppLocalizations.of(context)!.delete_account_confirmation);
     if (questionResponse != DialogQuestionResponse.yes) {
       return;
-    } else {
-      GeneralUtil.showSnackBar(
-          context: context,
-          message: "Not yet implemented 🙂"); //Replace with feature
     }
+
+    GeneralUtil.showSnackBar(
+        context: context,
+        message: "Not yet implemented 🙂"); //Replace with feature
 
     //TODO: Something to delete account
   }
