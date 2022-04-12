@@ -48,7 +48,7 @@ class CustomButton extends StatefulWidget {
     this.text,
     this.fontSize = 20,
     this.fontWeight = FontWeight.normal,
-    this.textColor = Colors.black,
+    this.textColor = Colors.white,
     this.width,
     this.boxShadow,
     this.height = 55.0,

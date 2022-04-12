@@ -27,6 +27,10 @@
   "@go_to_settings": {
     "description": "Button text"
   },
+  "do_you_want_to_save_changes": "You have unsaved changes\nDo you want to save the current changes?",
+  "@do_you_want_to_save_changes" :  {
+    "description": "Dialog text"
+  },
   "continue_with_spotify": "Continue with Spotify",
   "@continue_with_spotify": {
     "description": "Button text"
@@ -38,6 +42,14 @@
   "settings": "Settings",
   "@settings": {
     "description": "Button text"
+  },
+  "delete_account": "Delete your account",
+  "@delete_account": {
+    "description": "Button text"
+  },
+  "delete_account_confirmation": "Are you sure you want to delete your account?\nThis cannot be undone.",
+  "@delete_account_confirmation": {
+    "description": "Dialog text"
   },
   "log_off": "Log off",
   "@log_off": {

@@ -6,7 +6,7 @@ import 'package:smartphone_app/values/values.dart' as values;
 
 import 'custom_button.dart';
 
-enum AppBarLeftButton { menu, back, close }
+enum AppBarLeftButton { menu, back, close, none }
 
 // ignore: must_be_immutable
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -95,17 +95,18 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           )),
           Row(
             children: [
-              CustomButton(
-                  height: preferredSize.height - 12,
-                  width: preferredSize.height - 12,
-                  margin: const EdgeInsets.only(left: 8),
-                  imagePadding: const EdgeInsets.all(10),
-                  showBorder: false,
-                  borderRadius: const BorderRadius.all(Radius.circular(22)),
-                  defaultBackground: buttonBackground,
-                  pressedBackground: buttonPressedBackground,
-                  icon: _getLeftButtonIcon(appBarLeftButton),
-                  onPressed: leftButtonPressed!),
+              if (appBarLeftButton != AppBarLeftButton.none)
+                CustomButton(
+                    height: preferredSize.height - 12,
+                    width: preferredSize.height - 12,
+                    margin: const EdgeInsets.only(left: 8),
+                    imagePadding: const EdgeInsets.all(10),
+                    showBorder: false,
+                    borderRadius: const BorderRadius.all(Radius.circular(22)),
+                    defaultBackground: buttonBackground,
+                    pressedBackground: buttonPressedBackground,
+                    icon: _getLeftButtonIcon(appBarLeftButton),
+                    onPressed: leftButtonPressed!),
               Expanded(child: Container()),
               if (onButton2Pressed != null)
                 CustomButton(
@@ -151,6 +152,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         return Icon(Icons.arrow_back, color: appBarLeftButtonIconColor);
       case AppBarLeftButton.close:
         return Icon(Icons.clear, color: appBarLeftButtonIconColor);
+      default:
+        return const Icon(Icons.error_outline);
     }
   }
 

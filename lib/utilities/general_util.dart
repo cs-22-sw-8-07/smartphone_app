@@ -110,6 +110,7 @@ class GeneralUtil {
   /// Show a snackbar to the user (A message popup in the bottom of the screen)
   /// [message] is the string shown to the user
   static showSnackBar({required BuildContext context, required String message}) {
+    if (Platform.environment.containsKey('FLUTTER_TEST')) return;
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         backgroundColor: Colors.white,

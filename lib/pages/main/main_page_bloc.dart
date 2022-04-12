@@ -24,6 +24,8 @@ import '../../services/webservices/quack/models/quack_classes.dart';
 import '../../services/webservices/quack/services/quack_service.dart';
 import '../../services/webservices/spotify/services/spotify_service.dart';
 import '../../utilities/general_util.dart';
+import '../settings/settings_page_ui.dart';
+import '../settings/settings_page_bloc.dart';
 
 class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
   ///
@@ -70,7 +72,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
           // TODO: Handle this case.
           break;
         case MainButtonEvent.goToSettings:
-          // TODO: Handle this case.
+          GeneralUtil.showPageAsDialog(context, SettingsPage());
           break;
         case MainButtonEvent.logOff:
           AppValuesHelper.getInstance()

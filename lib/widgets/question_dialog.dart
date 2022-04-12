@@ -119,10 +119,10 @@ class QuestionDialog extends StatelessWidget {
                     )),
                 Container(
                   height: 1,
-                  color: Colors.black,
+                  color: Colors.white,
                 ),
                 Container(
-                    color: Colors.black,
+                    color: Colors.transparent,
                     child: Row(
                       children: [
                         Expanded(
@@ -130,9 +130,9 @@ class QuestionDialog extends StatelessWidget {
                               text: AppLocalizations.of(context)!.no,
                               icon: const Icon(
                                 Icons.clear,
-                                color: Colors.black,
+                                color: Colors.white,
                               ),
-                              textColor: Colors.black,
+                              textColor: Colors.white,
                               fontWeight: FontWeight.bold,
                               borderRadius: const BorderRadius.only(
                                   bottomLeft:
@@ -144,7 +144,7 @@ class QuestionDialog extends StatelessWidget {
                               }),
                         ),
                         Container(
-                          width: 1,
+                          width: 2,
                           color: Colors.transparent,
                         ),
                         Expanded(
@@ -152,9 +152,9 @@ class QuestionDialog extends StatelessWidget {
                               text: AppLocalizations.of(context)!.yes,
                               icon: const Icon(
                                 Icons.check,
-                                color: Colors.black,
+                                color: Colors.white,
                               ),
-                              textColor: Colors.black,
+                              textColor: Colors.white,
                               fontWeight: FontWeight.bold,
                               borderRadius: const BorderRadius.only(
                                   bottomRight:
