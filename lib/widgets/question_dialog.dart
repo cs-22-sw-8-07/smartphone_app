@@ -14,10 +14,16 @@ class QuestionDialog extends StatelessWidget {
   //region Statics
 
   static QuestionDialog? _questionDialog;
-  
+
+  static void setInstance(QuestionDialog questionDialog) {
+    _questionDialog = questionDialog;
+  }
+
   static QuestionDialog getInstance() {
-    _questionDialog = QuestionDialog._();
-    return _questionDialog!;
+    if (_questionDialog != null) {
+      return _questionDialog!;
+    }
+    return QuestionDialog._();
   }
   
   Future<DialogQuestionResponse> show(
@@ -34,13 +40,6 @@ class QuestionDialog extends StatelessWidget {
           barrierDismissible: false);
     });
   }
-
-// Future<DialogQuestionResponse> testShow({required BuildContext context,
-//       required String question,
-//       Color? textColor}) async {
-//         return DialogQuestionResponse.yes;
-// }
-  //endregion
 
   ///
   /// VARIABLES
