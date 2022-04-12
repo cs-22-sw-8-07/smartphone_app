@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
+import 'package:smartphone_app/helpers/position_helper/mock_position_helper.dart';
 import 'package:smartphone_app/localization/localization_helper.dart';
 import 'package:smartphone_app/values/values.dart' as values;
 import 'package:smartphone_app/values/colors.dart' as custom_colors;
@@ -13,6 +16,8 @@ import 'package:spotify_sdk/models/track.dart';
 import 'package:geolocator_android/src/types/foreground_settings.dart';
 
 import '../../helpers/position_helper/udp_position_helper.dart';
+import '../../helpers/position_helper/position_helper.dart';
+import '../../helpers/position_helper/models/position_helper_classes.dart';
 import '../../services/webservices/quack/models/quack_classes.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_button.dart';
@@ -41,6 +46,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   Animation<double>? playlistSizeAnimation;
   late double playlistHeight;
   Image? userImage;
+  Widget? userImageWidget;
 
   late double availableHeight;
   late double availableWidth;
@@ -56,9 +62,25 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    userImage = Image.network(
+    var url =
         AppValuesHelper.getInstance().getString(AppValuesKey.userImageUrl) ??
-            "");
+            "";
+
+    if (url.isEmpty) {
+      userImageWidget = Container(
+          height: 60,
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: const BorderRadius.all(Radius.circular(30)),
+              border: Border.all(color: Colors.white, width: 2)),
+          child: const Icon(Icons.person_outline_outlined,
+              size: 35, color: custom_colors.darkBlue));
+    } else {
+      userImage = Image.network(
+          AppValuesHelper.getInstance().getString(AppValuesKey.userImageUrl) ??
+              "");
+      userImageWidget = userImage;
+    }
 
     playlistAnimationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 200));
@@ -70,7 +92,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    precacheImage(userImage!.image, context);
+    if (userImage != null) precacheImage(userImage!.image, context);
   }
 
   @override
@@ -82,48 +104,57 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    bloc = MainPageBloc(context: context, positionHelper: UdpPositionHelper(
-        androidSettings: AndroidSettings(
-            accuracy: LocationAccuracy.high,
-            distanceFilter: 0,
-            forceLocationManager: true,
-            intervalDuration: const Duration(seconds: 10),
-            //(Optional) Set foreground notification config to keep the app alive
-            //when going to the background
-            foregroundNotificationConfig: ForegroundNotificationConfig(
-              notificationIcon: const AndroidResource(
-                  name: "notification_icon", defType: "drawable"),
-              notificationText:
-              AppLocalizations.of(context)!.getting_location_in_background,
-              notificationTitle: AppLocalizations.of(context)!.app_name,
-              enableWakeLock: true,
-            )),
-        appleSettings: AppleSettings(
-          accuracy: LocationAccuracy.high,
-          activityType: ActivityType.fitness,
-          distanceFilter: 100,
-          pauseLocationUpdatesAutomatically: true,
-          // Only set to true if our app will be started up in the background.
-          showBackgroundLocationIndicator: false,
-        )));
+    PositionType pt = PositionHelper.getPositionType();
+    PositionHelper? positionHelper;
 
-    availableWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
+    switch (pt) {
+      case PositionType.mock:
+        {
+          positionHelper = MockPositionHelper();
+        }
+        break;
+      case PositionType.udp:
+        {
+          positionHelper = UdpPositionHelper();
+        }
+        break;
+      case PositionType.device:
+        {
+          positionHelper = PositionHelper(
+              androidSettings: AndroidSettings(
+                  accuracy: LocationAccuracy.high,
+                  distanceFilter: 0,
+                  forceLocationManager: true,
+                  intervalDuration: const Duration(seconds: 10),
+                  //(Optional) Set foreground notification config to keep the app alive
+                  //when going to the background
+                  foregroundNotificationConfig: ForegroundNotificationConfig(
+                    notificationIcon: const AndroidResource(
+                        name: "notification_icon", defType: "drawable"),
+                    notificationText: AppLocalizations.of(context)!
+                        .getting_location_in_background,
+                    notificationTitle: AppLocalizations.of(context)!.app_name,
+                    enableWakeLock: true,
+                  )),
+              appleSettings: AppleSettings(
+                accuracy: LocationAccuracy.high,
+                activityType: ActivityType.fitness,
+                distanceFilter: 100,
+                pauseLocationUpdatesAutomatically: true,
+                // Only set to true if our app will be started up in the background.
+                showBackgroundLocationIndicator: false,
+              ));
+        }
+        break;
+    }
 
-    availableHeight = MediaQuery
-        .of(context)
-        .size
-        .height -
-        MediaQuery
-            .of(context)
-            .padding
-            .top -
-        MediaQuery
-            .of(context)
-            .padding
-            .bottom;
+    bloc = MainPageBloc(context: context, positionHelper: positionHelper);
+
+    availableWidth = MediaQuery.of(context).size.width;
+
+    availableHeight = MediaQuery.of(context).size.height -
+        MediaQuery.of(context).padding.top -
+        MediaQuery.of(context).padding.bottom;
 
     playlistHeight = availableHeight - values.actionBarHeight;
 
@@ -161,8 +192,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   ///
   //region Methods
 
-  bool _shouldUpdateQuackLocationType(MainPageState previous,
-      MainPageState current) {
+  bool _shouldUpdateQuackLocationType(
+      MainPageState previous, MainPageState current) {
     if (previous.quackLocationType == current.quackLocationType &&
         previous.lockedQuackLocationType == null &&
         current.lockedQuackLocationType == null) {
@@ -211,8 +242,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                           width: 60,
                           child: ClipRRect(
                               borderRadius:
-                              const BorderRadius.all(Radius.circular(30)),
-                              child: userImage))
+                                  const BorderRadius.all(Radius.circular(30)),
+                              child: userImageWidget))
                     ]),
                     Container(
                         padding: const EdgeInsets.only(
@@ -281,23 +312,23 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
       var refreshButton = state.isPlaylistShown!
           ? CustomButton(
-          fontWeight: FontWeight.bold,
-          height: 30,
-          width: 30,
-          icon: const Icon(
-            Icons.refresh_outlined,
-            color: Colors.white,
-            size: 30,
-          ),
-          onPressed: () {},
-          borderRadius: const BorderRadius.all(
-            Radius.circular(0),
-          ),
-          margin: const EdgeInsets.only(
-              right: (values.actionBarHeight - 30) / 2),
-          textColor: custom_colors.black,
-          pressedBackground: custom_colors.backButtonGradientPressedDefault,
-          defaultBackground: custom_colors.transparentGradient)
+              fontWeight: FontWeight.bold,
+              height: 30,
+              width: 30,
+              icon: const Icon(
+                Icons.refresh_outlined,
+                color: Colors.white,
+                size: 30,
+              ),
+              onPressed: () {},
+              borderRadius: const BorderRadius.all(
+                Radius.circular(0),
+              ),
+              margin: const EdgeInsets.only(
+                  right: (values.actionBarHeight - 30) / 2),
+              textColor: custom_colors.black,
+              pressedBackground: custom_colors.backButtonGradientPressedDefault,
+              defaultBackground: custom_colors.transparentGradient)
           : Container();
 
       return Column(
@@ -350,7 +381,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   decoration: BoxDecoration(
                       color: custom_colors.darkBlue,
                       border:
-                      Border.all(color: custom_colors.darkBlue, width: 0)),
+                          Border.all(color: custom_colors.darkBlue, width: 0)),
                   height: playlistSizeAnimation!.value,
                   child: AnimatedSwitcher(
                     child: overlayContent,
@@ -370,16 +401,16 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           children: [
             BlocBuilder<MainPageBloc, MainPageState>(
                 buildWhen: (previous, current) {
-                  return _shouldUpdateQuackLocationType(previous, current);
-                }, builder: (context, state) {
+              return _shouldUpdateQuackLocationType(previous, current);
+            }, builder: (context, state) {
               return AnimatedSwitcher(
                   duration: const Duration(milliseconds: 200),
                   child: Image.asset(
                     LocalizationHelper.getInstance()
                         .getQuackLocationTypeImagePath(
-                        state.lockedQuackLocationType == null
-                            ? state.quackLocationType!
-                            : state.lockedQuackLocationType!),
+                            state.lockedQuackLocationType == null
+                                ? state.quackLocationType!
+                                : state.lockedQuackLocationType!),
                     fit: BoxFit.fill,
                     height: double.infinity,
                     width: double.infinity,
@@ -390,11 +421,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               children: [
                 Expanded(
                     child: Container(
-                      decoration: BoxDecoration(
-                          gradient: custom_colors.transparentWhiteGradient,
-                          border: Border.all(
-                              color: Colors.transparent, width: 0)),
-                    ))
+                  decoration: BoxDecoration(
+                      gradient: custom_colors.transparentWhiteGradient,
+                      border: Border.all(color: Colors.transparent, width: 0)),
+                ))
               ],
             ),
             Column(
@@ -402,21 +432,32 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 SizedBox(
                     height: values.actionBarHeight,
                     child: Stack(children: [
-                      CustomAppBar(
-                        background: custom_colors.transparentGradient,
-                        appBarLeftButtonIconColor: custom_colors.darkBlue,
-                        buttonBackground: custom_colors.whiteGradient,
-                        buttonPressedBackground: custom_colors.greyGradient,
-                        appBarLeftButton: AppBarLeftButton.menu,
-                        leftButtonPressed: () async =>
-                        {_scaffoldKey.currentState!.openDrawer()},
-                      ),
+                      BlocBuilder<MainPageBloc, MainPageState>(
+                          builder: (context, state) {
+                        return CustomAppBar(
+                          background: custom_colors.transparentGradient,
+                          appBarLeftButtonIconColor: custom_colors.darkBlue,
+                          buttonBackground: custom_colors.whiteGradient,
+                          buttonPressedBackground: custom_colors.greyGradient,
+                          appBarLeftButton: AppBarLeftButton.menu,
+                          leftButtonPressed: () async =>
+                              {_scaffoldKey.currentState!.openDrawer()},
+                          button1Icon: Icon(
+                            state.lockedQuackLocationType == null
+                                ? Icons.lock_open_outlined
+                                : Icons.lock_outlined,
+                            color: Colors.black,
+                          ),
+                          onButton1Pressed: () => bloc.add(const ButtonPressed(
+                              buttonEvent:
+                                  MainButtonEvent.lockUnlockQuackLocationType)),
+                        );
+                      }),
                       Align(
                           alignment: Alignment.center,
                           child: GestureDetector(
-                              onTapUp: (v) =>
-                                  bloc.add(const ButtonPressed(
-                                      buttonEvent:
+                              onTapUp: (v) => bloc.add(const ButtonPressed(
+                                  buttonEvent:
                                       MainButtonEvent.selectManualLocation)),
                               child: Container(
                                 constraints: BoxConstraints(
@@ -424,7 +465,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                 decoration: const BoxDecoration(
                                     gradient: custom_colors.whiteGradient,
                                     borderRadius:
-                                    BorderRadius.all(Radius.circular(22))),
+                                        BorderRadius.all(Radius.circular(22))),
                                 padding: const EdgeInsets.only(
                                     left: 20, top: 0, right: 10),
                                 height: 44,
@@ -433,25 +474,24 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                   children: [
                                     BlocBuilder<MainPageBloc, MainPageState>(
                                         builder: (context, state) {
-                                          return Text(
-                                            LocalizationHelper.getInstance()
-                                                .getLocalizedQuackLocationType(
+                                      return Text(
+                                        LocalizationHelper.getInstance()
+                                            .getLocalizedQuackLocationType(
                                                 context,
                                                 state.lockedQuackLocationType ==
-                                                    null
+                                                        null
                                                     ? state.quackLocationType!
                                                     : state
-                                                    .lockedQuackLocationType!),
-                                            softWrap: true,
-                                            maxLines: 1,
-                                            style: GoogleFonts.roboto(
-                                                textStyle: const TextStyle(
-                                                    color: custom_colors
-                                                        .darkBlue,
-                                                    fontWeight: FontWeight.w700,
-                                                    fontSize: 20)),
-                                          );
-                                        }),
+                                                        .lockedQuackLocationType!),
+                                        softWrap: true,
+                                        maxLines: 1,
+                                        style: GoogleFonts.roboto(
+                                            textStyle: const TextStyle(
+                                                color: custom_colors.darkBlue,
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 20)),
+                                      );
+                                    }),
                                     Container(
                                         margin: const EdgeInsets.only(left: 5),
                                         child: const Icon(
@@ -464,31 +504,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                               )))
                     ])),
                 SizedBox(height: availableHeight * 0.35),
-                BlocBuilder<MainPageBloc, MainPageState>(
-                    builder: (context, state) {
-                      return Container(
-                          margin: const EdgeInsets.only(bottom: 30, top: 0),
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: PlayButton(
-                                width: 40,
-                                height: 40,
-                                foreground: Icon(
-                                  state.lockedQuackLocationType == null
-                                      ? Icons.lock_outline
-                                      : Icons.lock_open_outlined,
-                                  color: Colors.white,
-                                ),
-                                onPressed: () =>
-                                    bloc.add(const ButtonPressed(
-                                        buttonEvent: MainButtonEvent
-                                            .lockUnlockQuackLocationType)),
-                                pressedBackground:
-                                custom_colors.appButtonPressedGradient,
-                                defaultBackground: custom_colors
-                                    .appButtonGradient),
-                          ));
-                    }),
                 BlocBuilder<MainPageBloc, MainPageState>(
                     builder: (context, state) {
                       return SizedBox(
@@ -516,64 +531,60 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                 pressedBackground: custom_colors.greyGradient,
                                 defaultBackground:
                                 custom_colors.transparentGradient),
-                            AnimatedBuilder(
-                              animation: startStopRecommendationController,
-                              builder: (context, _) {
-                                return PlayButton(
-                                  margin:
+                        AnimatedBuilder(
+                          animation: startStopRecommendationController,
+                          builder: (context, _) {
+                            return PlayButton(
+                              margin:
                                   const EdgeInsets.only(top: 30, bottom: 30),
-                                  height: values.mainPagePlayPauseButtonSize,
-                                  width: values.mainPagePlayPauseButtonSize,
-                                  defaultBackground:
+                              height: values.mainPagePlayPauseButtonSize,
+                              width: values.mainPagePlayPauseButtonSize,
+                              defaultBackground:
                                   custom_colors.appButtonGradient,
-                                  pressedBackground:
+                              pressedBackground:
                                   custom_colors.appButtonPressedGradient,
-                                  isPlaying: state.isRecommendationStarted!,
-                                  foreground: state.isLoading!
-                                      ? Container(
+                              isPlaying: state.isRecommendationStarted!,
+                              foreground: state.isLoading!
+                                  ? Container(
                                       padding: const EdgeInsets.all(35),
                                       child: const CircularProgressIndicator(
                                           color: Colors.white))
-                                      : Icon(
+                                  : Icon(
                                       state.isRecommendationStarted!
                                           ? Icons.pause
                                           : Icons.play_arrow,
                                       color: Colors.white,
                                       size: 40),
-                                  onPressed: () =>
-                                      bloc.add(const ButtonPressed(
-                                          buttonEvent:
-                                          MainButtonEvent
-                                              .startStopRecommendation)),
-                                );
-                              },
-                            ),
-                            CustomButton(
-                                margin: const EdgeInsets.only(left: 30),
-                                height: values.mainPagePlayPauseButtonSize / 2,
-                                width: values.mainPagePlayPauseButtonSize / 2,
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(
-                                        values.mainPagePlayPauseButtonSize /
-                                            2 /
-                                            2)),
-                                icon: const Icon(
-                                  Icons.skip_next,
-                                  color: custom_colors.darkBlue,
-                                  size: values.mainPagePlayPauseButtonSize / 3,
-                                ),
-                                onPressed: () =>
-                                    bloc.add(const TouchEvent(
-                                        touchEvent: MainTouchEvent
-                                            .goToNextTrack)),
-                                pressedBackground: custom_colors.greyGradient,
-                                defaultBackground:
-                                custom_colors.transparentGradient),
-                            const Expanded(child: SizedBox()),
-                          ],
+                              onPressed: () => bloc.add(const ButtonPressed(
+                                  buttonEvent:
+                                      MainButtonEvent.startStopRecommendation)),
+                            );
+                          },
                         ),
-                      );
-                    }),
+                        CustomButton(
+                            margin: const EdgeInsets.only(left: 30),
+                            height: values.mainPagePlayPauseButtonSize / 2,
+                            width: values.mainPagePlayPauseButtonSize / 2,
+                            borderRadius: const BorderRadius.all(
+                                Radius.circular(
+                                    values.mainPagePlayPauseButtonSize /
+                                        2 /
+                                        2)),
+                            icon: const Icon(
+                              Icons.skip_next,
+                              color: custom_colors.darkBlue,
+                              size: values.mainPagePlayPauseButtonSize / 3,
+                            ),
+                            onPressed: () => bloc.add(const TouchEvent(
+                                touchEvent: MainTouchEvent.goToNextTrack)),
+                            pressedBackground: custom_colors.greyGradient,
+                            defaultBackground:
+                                custom_colors.transparentGradient),
+                        const Expanded(child: SizedBox()),
+                      ],
+                    ),
+                  );
+                }),
                 Expanded(child: Container()),
               ],
             )
@@ -612,9 +623,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               child: ClipRect(
                   child: Dismissible(
                       dismissThresholds: const {
-                        DismissDirection.startToEnd: 0.2,
-                        DismissDirection.endToStart: 0.2,
-                      },
+                DismissDirection.startToEnd: 0.2,
+                DismissDirection.endToStart: 0.2,
+              },
                       background: const Icon(
                         Icons.skip_previous,
                         color: Colors.white,
@@ -628,12 +639,12 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       onDismissed: (direction) {
                         // ignore: missing_enum_constant_in_switch
                         switch (direction) {
-                        // Left -> Next
+                          // Left -> Next
                           case DismissDirection.endToStart:
                             bloc.add(const TouchEvent(
                                 touchEvent: MainTouchEvent.goToNextTrack));
                             break;
-                        // Right -> Previous
+                          // Right -> Previous
                           case DismissDirection.startToEnd:
                             bloc.add(const TouchEvent(
                                 touchEvent: MainTouchEvent.goToPreviousTrack));
@@ -694,7 +705,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 decoration: BoxDecoration(
                     color: Colors.transparent,
                     border:
-                    Border.all(width: 0, color: custom_colors.darkBlue)),
+                        Border.all(width: 0, color: custom_colors.darkBlue)),
                 margin: const EdgeInsets.all(0),
                 width: values.mainPageOverlayHeight,
                 padding: const EdgeInsets.all(10),
@@ -705,56 +716,52 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               Expanded(
                   child: ClipRect(
                       child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          CustomLabel(
-                            height: values.mainPageOverlayHeight / 2,
-                            fontSize: 14,
-                            maxLines: 1,
-                            softWrap: false,
-                            useOverflowReplacement: true,
-                            fontWeight: FontWeight.w900,
-                            title: quackTrack.name,
-                            textColor: state.currentTrack == quackTrack
-                                ? custom_colors.orange_1
-                                : Colors.white,
-                            alignmentGeometry: Alignment.centerLeft,
-                            padding: EdgeInsets.only(
-                                left: 0,
-                                top: 10,
-                                bottom: 5,
-                                right: state.currentTrack == quackTrack
-                                    ? 0
-                                    : 10),
-                            margin: const EdgeInsets.all(0),
-                          ),
-                          CustomLabel(
-                            alignmentGeometry: Alignment.centerLeft,
-                            height: values.mainPageOverlayHeight / 2,
-                            fontSize: 14,
-                            maxLines: 1,
-                            softWrap: false,
-                            useOverflowReplacement: true,
-                            margin: const EdgeInsets.all(0),
-                            padding: EdgeInsets.only(
-                                left: 0,
-                                top: 5,
-                                bottom: 10,
-                                right: state.currentTrack == quackTrack
-                                    ? 0
-                                    : 10),
-                            title: quackTrack.artist,
-                            textColor: custom_colors.darkGrey,
-                          )
-                        ],
-                      ))),
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  CustomLabel(
+                    height: values.mainPageOverlayHeight / 2,
+                    fontSize: 14,
+                    maxLines: 1,
+                    softWrap: false,
+                    useOverflowReplacement: true,
+                    fontWeight: FontWeight.w900,
+                    title: quackTrack.name,
+                    textColor: state.currentTrack == quackTrack
+                        ? custom_colors.orange_1
+                        : Colors.white,
+                    alignmentGeometry: Alignment.centerLeft,
+                    padding: EdgeInsets.only(
+                        left: 0,
+                        top: 10,
+                        bottom: 5,
+                        right: state.currentTrack == quackTrack ? 0 : 10),
+                    margin: const EdgeInsets.all(0),
+                  ),
+                  CustomLabel(
+                    alignmentGeometry: Alignment.centerLeft,
+                    height: values.mainPageOverlayHeight / 2,
+                    fontSize: 14,
+                    maxLines: 1,
+                    softWrap: false,
+                    useOverflowReplacement: true,
+                    margin: const EdgeInsets.all(0),
+                    padding: EdgeInsets.only(
+                        left: 0,
+                        top: 5,
+                        bottom: 10,
+                        right: state.currentTrack == quackTrack ? 0 : 10),
+                    title: quackTrack.artist,
+                    textColor: custom_colors.darkGrey,
+                  )
+                ],
+              ))),
               if (state.currentTrack == quackTrack)
                 Container(
                   decoration: BoxDecoration(
                       color: Colors.transparent,
                       border:
-                      Border.all(width: 0, color: custom_colors.darkBlue)),
+                          Border.all(width: 0, color: custom_colors.darkBlue)),
                   width: values.mainPageOverlayHeight,
                   padding: const EdgeInsets.all(10),
                   child: Center(
@@ -763,7 +770,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                           height: 50,
                           width: 50,
                           borderRadius:
-                          const BorderRadius.all(Radius.circular(25)),
+                              const BorderRadius.all(Radius.circular(25)),
                           icon: Icon(
                             state.playerState!.isPaused
                                 ? Icons.play_arrow
@@ -771,15 +778,13 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                             color: Colors.white,
                             size: values.mainPageOverlayHeight / 2,
                           ),
-                          onPressed: () =>
-                              bloc.add(const ButtonPressed(
-                                  buttonEvent: MainButtonEvent
-                                      .resumePausePlayer)),
+                          onPressed: () => bloc.add(const ButtonPressed(
+                              buttonEvent: MainButtonEvent.resumePausePlayer)),
                           textColor: custom_colors.black,
                           pressedBackground:
-                          custom_colors.backButtonGradientPressedDefault,
+                              custom_colors.backButtonGradientPressedDefault,
                           defaultBackground:
-                          custom_colors.transparentGradient)),
+                              custom_colors.transparentGradient)),
                 )
             ],
           ),

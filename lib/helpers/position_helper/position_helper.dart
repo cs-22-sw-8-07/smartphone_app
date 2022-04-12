@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:smartphone_app/helpers/position_helper/models/position_helper_classes.dart';
 
 class PositionHelper {
   ///
@@ -40,9 +42,7 @@ class PositionHelper {
   ///
   //region Methods
 
-  void dispose() {
-
-  }
+  void dispose() {}
 
   Future<Position?> getCurrentLocation() {
     return Geolocator.getCurrentPosition(forceAndroidLocationManager: true);
@@ -69,6 +69,21 @@ class PositionHelper {
     return positionStreamController.stream;
   }
 
-  //endregion
+  static PositionType getPositionType() {
+    String envString = dotenv.env['WHICH_POSITION_HELPER'].toString();
+    PositionType pt = PositionType.udp; //default
+
+    if (envString == 'mock') {
+      pt = PositionType.mock;
+    } else if (envString == 'udp') {
+      pt = PositionType.udp;
+    } else if (envString == 'device') {
+      pt = PositionType.device;
+    }
+
+    return pt;
+  }
+
+//endregion
 
 }

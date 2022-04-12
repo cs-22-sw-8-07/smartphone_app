@@ -3,6 +3,13 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'position_helper_classes.g.dart';
 
+
+enum PositionType{
+  mock,
+  udp, //default
+  device
+}
+
 @JsonSerializable()
 class MockLatLng {
   @JsonKey(name: "Latitude")
