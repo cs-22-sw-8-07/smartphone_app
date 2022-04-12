@@ -144,6 +144,17 @@ Future<void> main() async {
           ];
         });
 
+    //todo: få den her test til at virke.
+    blocTest<MainPageBloc, MainPageState>("ButtonPressed -> QuestionDialog",
+        build: () {
+          bloc.state
+              .copyWith(playerState: MockSpotifyService.getMockPlayerState());
+          return bloc;
+        },
+        act: (bloc) => bloc.add(
+            const ButtonPressed(buttonEvent: MainButtonEvent.refreshPlaylist)),
+        expect: () => []);
+
     blocTest<MainPageBloc, MainPageState>("HasPerformedAction",
         build: () => bloc,
         act: (bloc) => bloc.add(const HasPerformedSpotifyPlayerAction()),
