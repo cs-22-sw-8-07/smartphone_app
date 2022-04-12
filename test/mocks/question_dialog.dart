@@ -14,6 +14,7 @@ abstract class MockWithExpandedToString extends Mock {
   }
 }
 
+//todo: lav en der også retunerer no
 class MockQuestionDialog extends MockWithExpandedToString
     implements QuestionDialog {
   @override
