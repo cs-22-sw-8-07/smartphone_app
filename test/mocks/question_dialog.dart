@@ -1,19 +1,10 @@
-import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:smartphone_app/helpers/position_helper/mock_position_helper.dart';
-import 'package:smartphone_app/pages/main/main_page_bloc.dart';
-import 'package:smartphone_app/pages/main/main_page_events_states.dart';
-import 'package:smartphone_app/services/webservices/quack/services/quack_service.dart';
-import 'package:smartphone_app/services/webservices/spotify/services/spotify_service.dart';
 import 'package:smartphone_app/widgets/question_dialog.dart';
 
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'mocks/build_context.dart';
-import 'mocks/quack_service.dart';
-import 'mocks/spotify_service.dart';
+
 
 abstract class MockWithExpandedToString extends Mock {
   @override
@@ -34,6 +25,8 @@ class MockQuestionDialog extends MockWithExpandedToString
   }
 }
 
+/*
+
 void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
@@ -49,14 +42,16 @@ void main() async {
           context: MockBuildContext(), positionHelper: MockPositionHelper());
     });
 
-    blocTest<MainPageBloc, MainPageState>("ButtonPressed -> QuestionDialog",
-        build: () {
-          bloc.state
-              .copyWith(playerState: MockSpotifyService.getMockPlayerState());
-          return bloc;
-        },
-        act: (bloc) => bloc.add(
-            const ButtonPressed(buttonEvent: MainButtonEvent.refreshPlaylist)),
-        expect: () => []);
+    // blocTest<MainPageBloc, MainPageState>("ButtonPressed -> QuestionDialog",
+    //     build: () {
+    //       bloc.state
+    //           .copyWith(playerState: MockSpotifyService.getMockPlayerState());
+    //       return bloc;
+    //     },
+    //     act: (bloc) => bloc.add(
+    //         const ButtonPressed(buttonEvent: MainButtonEvent.refreshPlaylist)),
+    //     expect: () => []);
   });
 }
+
+*/
