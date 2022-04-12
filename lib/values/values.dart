@@ -1,4 +1,5 @@
 const double padding = 8;
+const double buttonPadding = 15;
 const double smallPadding = 5;
 const double borderRadius = 20;
 

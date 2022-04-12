@@ -92,14 +92,17 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   }
 
   Future<void> _deleteAccount() async {
-    DialogQuestionResponse questionResponse = await QuestionDialog.getInstance().show(
-        context: context,
-        question: AppLocalizations.of(context)!.delete_account_confirmation);
+    DialogQuestionResponse questionResponse = await QuestionDialog.getInstance()
+        .show(
+            context: context,
+            question:
+                AppLocalizations.of(context)!.delete_account_confirmation);
     if (questionResponse != DialogQuestionResponse.yes) {
       return;
     } else {
       GeneralUtil.showSnackBar(
-          context: context, message: "Not yet implemented 🙂"); //Replace with feature
+          context: context,
+          message: "Not yet implemented 🙂"); //Replace with feature
     }
 
     //TODO: Something to delete account

@@ -69,45 +69,49 @@ Widget _getContent(
   return ClipRect(
       child: Container(
           constraints: const BoxConstraints.expand(),
-          child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-              child: Container(
-                  color: Colors.transparent,
-                  child: Column(
-                    children: [
-                      Expanded(
-                          child: SingleChildScrollView(
-                              physics: const ClampingScrollPhysics(),
-                              child: Column(
-                                children: [
-                                  Card(
-                                      margin: const EdgeInsets.only(
-                                          left: values.padding,
-                                          right: values.padding),
-                                      child: Column()),
-                                  const Card(
-                                    margin: EdgeInsets.only(
-                                        left: values.padding,
-                                        right: values.padding),
-                                  ),
-                                  CustomButton(
-                                    onPressed: () => bloc.add(
-                                        const ButtonPressed(
-                                            buttonEvent: SettingsButtonEvent
-                                                .deleteAccount)),
-                                    text: AppLocalizations.of(context)!
-                                        .delete_account,
-                                    icon: const Icon(Icons.delete,
-                                        color: Colors.white, size: 35),
-                                    fontWeight: FontWeight.bold,
-                                    borderRadius: const BorderRadius.all(Radius.circular(27.5)),
-                                    fontSize: 20,
-                                    margin:
-                                        const EdgeInsets.only(left:values.padding, right: values.padding),
-                                  )
-                                ],
-                              ))),
-                      // 'Save' button
-                    ],
-                  )))));
+          child: Container(
+              color: Colors.transparent,
+              child: Column(
+                children: [
+                  Expanded(
+                      child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          child: Column(
+                            children: [
+                              CustomButton(
+                                onPressed: () => bloc.add(const ButtonPressed(
+                                    buttonEvent:
+                                        SettingsButtonEvent.deleteAccount)),
+                                text: AppLocalizations.of(context)!
+                                    .delete_account,
+                                icon: const Icon(Icons.delete,
+                                    color: Colors.white, size: 35),
+                                fontWeight: FontWeight.bold,
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(27.5)),
+                                fontSize: 20,
+                                margin: const EdgeInsets.only(
+                                    left: values.padding,
+                                    right: values.padding,
+                                    bottom: values.buttonPadding),
+                              ),
+                              CustomButton(
+                                onPressed: () => bloc.add(const ButtonPressed(
+                                    buttonEvent: SettingsButtonEvent.save)),
+                                text: "PLACEHOLDER",
+                                icon: const Icon(Icons.broken_image,
+                                    color: Colors.white, size: 35),
+                                fontWeight: FontWeight.bold,
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(27.5)),
+                                fontSize: 20,
+                                margin: const EdgeInsets.only(
+                                    left: values.padding,
+                                    right: values.padding,
+                                    bottom: values.buttonPadding),
+                              ),
+                            ],
+                          ))),
+                ],
+              ))));
 }
