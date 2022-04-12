@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smartphone_app/widgets/custom_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:smartphone_app/values/values.dart' as values;
+import 'package:smartphone_app/values/colors.dart' as custom_colors;
 
 enum DialogQuestionResponse { yes, no }
 
@@ -12,25 +13,60 @@ class QuestionDialog extends StatelessWidget {
   ///
   //region Statics
 
-  static Future<DialogQuestionResponse> show(
-      {required BuildContext context, required String question}) async {
+  static QuestionDialog? _questionDialog;
+
+  static void setInstance(QuestionDialog questionDialog) {
+    _questionDialog = questionDialog;
+  }
+
+  static QuestionDialog getInstance() {
+    if (_questionDialog != null) {
+      return _questionDialog!;
+    }
+    return QuestionDialog._();
+  }
+  
+  Future<DialogQuestionResponse> show(
+      {required BuildContext context,
+      required String question,
+      Color? textColor}) async {
+        this.question = question;
+        color = textColor;
     return await Future.delayed(Duration.zero, () async {
       // Show dialog
       return await showDialog(
           context: context,
-          builder: (context) => QuestionDialog._(question: question),
+          builder: (context) => this,
           barrierDismissible: false);
     });
   }
-
-  //endregion
 
   ///
   /// VARIABLES
   ///
   //region Variables
+  
+  String? _question;
+  Color? _color;
 
-  String question;
+  //endregion
+
+  ///
+  /// PROPERTIES
+  ///
+  //region Properties
+
+  set question(String? question) {
+    _question = question;
+  }
+
+  String? get question => _question;
+
+  set color(Color? color) {
+    _color = color;
+  }
+
+  Color? get color => _color;
 
   //endregion
 
@@ -40,7 +76,8 @@ class QuestionDialog extends StatelessWidget {
   //region Constructor
 
   // ignore: prefer_const_constructors_in_immutables
-  QuestionDialog._({Key? key, required this.question}) : super(key: key);
+  QuestionDialog._({Key? key})
+      : super(key: key);
 
   //endregion
 
@@ -72,10 +109,12 @@ class QuestionDialog extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.center,
                       child: Text(
-                        question,
+                        question!,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18),
+                        style: TextStyle(
+                            color: color ?? custom_colors.darkBlue,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18),
                       ),
                     )),
                 Container(

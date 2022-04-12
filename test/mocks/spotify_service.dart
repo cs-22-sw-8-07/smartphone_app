@@ -37,7 +37,7 @@ class MockSpotifyService implements ISpotifyFunctions {
     } on Exception {}
   }
 
-  static PlayerState getMockPlayerState() {
+  static PlayerState getMockPlayerState({bool isPaused = false}) {
     var album = Album("test", "http://test");
     var artist = Artist("test", "http://test");
     var track = Track(
@@ -58,7 +58,7 @@ class MockSpotifyService implements ISpotifyFunctions {
             canRepeatTrack: true,
             canSeek: true,
             canSkipPrevious: true,
-            canToggleShuffle: true), isPaused: false);
+            canToggleShuffle: true), isPaused: isPaused);
     return playerState;
   }
 
