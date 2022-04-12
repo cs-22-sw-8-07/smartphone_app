@@ -92,7 +92,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   }
 
   Future<void> _deleteAccount() async {
-    DialogQuestionResponse questionResponse = await QuestionDialog.show(
+    DialogQuestionResponse questionResponse = await QuestionDialog.getInstance().show(
         context: context,
         question: AppLocalizations.of(context)!.delete_account_confirmation);
     if (questionResponse != DialogQuestionResponse.yes) {

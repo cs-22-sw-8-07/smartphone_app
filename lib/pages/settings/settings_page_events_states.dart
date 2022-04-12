@@ -1,16 +1,12 @@
 import 'dart:collection';
 
 import 'package:equatable/equatable.dart';
-import 'package:smartphone_app/services/webservices/quack/models/quack_classes.dart';
-
 ///
 /// ENUMS
 ///
 //region Enums
 
 enum SettingsButtonEvent { back, save, deleteAccount}
-enum SettingsTextChangedEvent { name }
-
 //endregion
 
 ///
@@ -34,15 +30,6 @@ class ButtonPressed extends SettingsEvent {
   List<Object?> get props => [buttonEvent];
 }
 
-class TextChanged extends SettingsEvent {
-  final SettingsTextChangedEvent textChangedEvent;
-  final String? text;
-
-  const TextChanged({required this.textChangedEvent, required this.text});
-
-  @override
-  List<Object?> get props => [textChangedEvent, text];
-}
 
 class ValuesRetrieved extends SettingsEvent {
   final String? name;
@@ -60,14 +47,12 @@ class ValuesRetrieved extends SettingsEvent {
 //region State
 
 // ignore: must_be_immutable
-class SettingsState extends Equatable {
-  String? name;
+class SettingsState extends Equatable { 
 
-  SettingsState({this.name});
+  const SettingsState();
 
-  SettingsState copyWith({String? name}) {
-    return SettingsState(
-        name: name ?? this.name);
+  SettingsState copyWith() {
+    return const SettingsState();
   }
 
   List<String> getNamesOfChangedProperties(
@@ -85,12 +70,11 @@ class SettingsState extends Equatable {
   HashMap<String, int> getCurrentHashCodes({SettingsState? state}) {
     state ??= this;
     HashMap<String, int> hashMap = HashMap();
-    hashMap["Name"] = state.name.hashCode;
     return hashMap;
   }
 
   @override
-  List<Object?> get props => [name];
+  List<Object?> get props => [];
 }
 
 //endregion
