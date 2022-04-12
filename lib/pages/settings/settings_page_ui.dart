@@ -1,15 +1,12 @@
 // ignore: must_be_immutable
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'package:smartphone_app/values/colors.dart' as custom_colors;
 import 'package:smartphone_app/values/values.dart' as values;
 import 'package:smartphone_app/widgets/custom_app_bar.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:smartphone_app/widgets/custom_button.dart';
-import 'package:smartphone_app/widgets/custom_label.dart';
-import 'package:smartphone_app/widgets/custom_text_field.dart';
 
 import 'settings_page_bloc.dart';
 import 'settings_page_events_states.dart';

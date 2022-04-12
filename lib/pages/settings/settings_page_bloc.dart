@@ -1,13 +1,10 @@
 import 'dart:collection';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:smartphone_app/helpers/app_values_helper.dart';
-import 'package:smartphone_app/utilities/general_util.dart';
-import 'package:smartphone_app/services/webservices/quack/services/quack_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'package:smartphone_app/utilities/general_util.dart';
 import 'package:smartphone_app/widgets/question_dialog.dart';
 import 'package:smartphone_app/pages/settings/settings_page_events_states.dart';
 
@@ -28,7 +25,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   ///
   //region Constructor
 
-  SettingsBloc({required this.context}) : super(SettingsState()) {
+  SettingsBloc({required this.context}) : super(const SettingsState()) {
     hashCodeMap = HashMap();
     on<ButtonPressed>((event, emit) async {
       switch (event.buttonEvent) {
@@ -37,35 +34,6 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         case SettingsButtonEvent.back:
           Navigator.of(context).pop(null);
           break;
-
-        //To be used for checking temporary changes, if/when settings are expanded
-
-        /*List<String> names = state.getNamesOfChangedProperties(hashCodeMap!); 
-          if (names.isNotEmpty) {
-            DialogQuestionResponse questionResponse = await QuestionDialog.show(
-                context: context,
-                question:
-                    AppLocalizations.of(context)!.do_you_want_to_save_changes);
-            if (questionResponse == DialogQuestionResponse.yes) {
-              if (kDebugMode) {
-                await _saveChanges();
-                Navigator.of(context).pop(null);
-              }
-              break;
-            } else {
-              if (kDebugMode) {
-                print("you exited!");
-                Navigator.of(context).pop(null);
-              }
-            }
-          } else {
-            if (kDebugMode) {
-              print("you exited! 2");
-              Navigator.of(context).pop(null);
-            }
-          }
-          break;
-          */
 
         /// Save
         case SettingsButtonEvent.save:
