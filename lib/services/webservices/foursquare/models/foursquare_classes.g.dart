@@ -12,6 +12,18 @@ FoursquareResponse _$FoursquareResponseFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$FoursquareResponseToJson(FoursquareResponse instance) =>
     <String, dynamic>{};
 
+GetPlacesResponse _$GetPlacesResponseFromJson(Map<String, dynamic> json) =>
+    GetPlacesResponse(
+      results: (json['results'] as List<dynamic>?)
+          ?.map((e) => FoursquarePlace.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$GetPlacesResponseToJson(GetPlacesResponse instance) =>
+    <String, dynamic>{
+      'results': instance.results,
+    };
+
 GetNearbyPlacesResponse _$GetNearbyPlacesResponseFromJson(
         Map<String, dynamic> json) =>
     GetNearbyPlacesResponse(

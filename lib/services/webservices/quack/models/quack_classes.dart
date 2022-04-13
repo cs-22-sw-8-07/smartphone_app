@@ -93,7 +93,7 @@ class QuackPlaylist extends Equatable {
     }
 
     for (var qlt in QuackLocationType.values) {
-      if (QuackLocationService.getQuackLocationTypeInt(qlt) == locationType) {
+      if (getQuackLocationTypeInt(qlt) == locationType) {
         return qlt;
       }
     }

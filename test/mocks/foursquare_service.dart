@@ -13,7 +13,7 @@ class MockFoursquareService implements IFoursquareFunctions {
 
   Future<dynamic> getJsonData(String assetName) async {
     String jsonStr =
-    await rootBundle.loadString('assets/mock_data/' + assetName);
+        await rootBundle.loadString('assets/mock_data/' + assetName);
     return await json.decode(jsonStr);
   }
 
@@ -25,8 +25,19 @@ class MockFoursquareService implements IFoursquareFunctions {
 //region Override methods
 
   @override
-  Future<FoursquareServiceResponse<GetNearbyPlacesResponse>> getNearbyPlaces({required double latitude, required double longitude}) async {
+  Future<FoursquareServiceResponse<GetNearbyPlacesResponse>> getNearbyPlaces(
+      {required double latitude, required double longitude}) async {
     return FoursquareServiceResponse.success(GetNearbyPlacesResponse.fromJson(
+        await getJsonData("foursquare_get_nearby_places_response.json")));
+  }
+
+  @override
+  Future<FoursquareServiceResponse<GetPlacesResponse>> getPlaces(
+      {required double latitude,
+      required double longitude,
+      required int radiusInMeters,
+      required List<int> categories}) async {
+    return FoursquareServiceResponse.success(GetPlacesResponse.fromJson(
         await getJsonData("foursquare_get_nearby_places_response.json")));
   }
 
