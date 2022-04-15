@@ -7,11 +7,11 @@ import 'package:smartphone_app/services/webservices/quack/models/quack_classes.d
 
 import '../interfaces/quack_location_functions.dart';
 
-class MaxDistancePerimeter {
+class HighestDistancePerimeter {
   final Position center;
   final double radius;
 
-  MaxDistancePerimeter({required this.center, required this.radius});
+  HighestDistancePerimeter({required this.center, required this.radius});
 }
 
 int getQuackLocationTypeInt(QuackLocationType qlt) {
@@ -58,11 +58,10 @@ class QuackLocationService implements IQuackLocationFunctions {
   ///
   //region Variables
 
-  final int _inPerimeterDistance = 100;
-  Position? _latestPerimeterPosition;
+  final int _locationTypeUpdatePerimeterRadius = 100;
+  Position? _locationTypeUpdatePerimeterCenterPosition;
   final List<FoursquarePlace> _allPlaces = [];
-  final List<MaxDistancePerimeter> _maxDistancePerimeters = [];
-  MaxDistancePerimeter? _currentMaxDistancePerimeter;
+  final List<HighestDistancePerimeter> _highestDistancePerimeters = [];
   QuackLocationType _locationType = QuackLocationType.unknown;
 
   //endregion
@@ -72,10 +71,8 @@ class QuackLocationService implements IQuackLocationFunctions {
   ///
   //region Properties
 
-  Position? get latestPerimeterPosition => _latestPerimeterPosition;
-
-  MaxDistancePerimeter? get currentMaxDistancePerimeter =>
-      _currentMaxDistancePerimeter;
+  Position? get locationTypeUpdatePerimeterCenterPosition =>
+      _locationTypeUpdatePerimeterCenterPosition;
 
   QuackLocationType get locationType => _locationType;
 
@@ -97,8 +94,7 @@ class QuackLocationService implements IQuackLocationFunctions {
 
     FoursquareServiceResponse<GetNearbyPlacesResponse> response =
         await FoursquareService.getInstance().getNearbyPlaces(
-            latitude: position.latitude,
-            longitude: position.longitude);
+            latitude: position.latitude, longitude: position.longitude);
 
     if (!response.isSuccess) {
       return null;
@@ -130,7 +126,7 @@ class QuackLocationService implements IQuackLocationFunctions {
     // Check places within the perimeter
     for (var place in places) {
       QuackLocationType locationType =
-      QuackLocationHelper.getQuackLocationType(place);
+          QuackLocationHelper.getQuackLocationType(place);
       if (locationType != QuackLocationType.unknown) {
         return locationType;
       }
@@ -147,9 +143,9 @@ class QuackLocationService implements IQuackLocationFunctions {
 
   @override
   Future<QuackLocationType?> getQuackLocationType(Position position) async {
-    if (!_isWithinMaxPerimeterRadii(position)) {
+    if (!_isWithinUpdatePlacesPerimeters(position)) {
       // Set latest perimeter position
-      _latestPerimeterPosition = position;
+      _locationTypeUpdatePerimeterCenterPosition = position;
       // Get nearby places from Foursquare
       var places = await _getFoursquarePlaces(position);
       if (places == null) {
@@ -158,16 +154,14 @@ class QuackLocationService implements IQuackLocationFunctions {
       if (kDebugMode) {
         print("Number of places retrieved: " + places.length.toString());
       }
+      double? highestDistancePerimeterRadius;
+
       if (places.isNotEmpty) {
         // Get distance to furthest place
-        var maxDistanceRadius = places.last.distance!.toDouble();
+        highestDistancePerimeterRadius = places.last.distance!.toDouble();
         if (kDebugMode) {
-          print("MD: " + maxDistanceRadius.toString());
+          print("HP radius: " + highestDistancePerimeterRadius.toString());
         }
-        // Add max distance perimeter first in the list. This is done because the
-        // user is most likely to be in this perimeter and it is checked first
-        _maxDistancePerimeters.insert(0,
-            MaxDistancePerimeter(center: position, radius: maxDistanceRadius));
         // Add to all places list
         for (var place in places) {
           if (!_allPlaces.contains(place)) {
@@ -175,18 +169,32 @@ class QuackLocationService implements IQuackLocationFunctions {
           }
         }
       }
+
+      if (places.isEmpty ||
+          highestDistancePerimeterRadius! <
+              _locationTypeUpdatePerimeterRadius.toDouble()) {
+        highestDistancePerimeterRadius =
+            _locationTypeUpdatePerimeterRadius.toDouble();
+      }
+
+      // Add highest distance perimeter first in the list. This is done because the
+      // user is most likely to be in this perimeter and it is checked first
+      _highestDistancePerimeters.insert(
+          0,
+          HighestDistancePerimeter(
+              center: position, radius: highestDistancePerimeterRadius));
       // Go through all places to get a QuackLocationType
       return getQuackLocationTypeFromAllPlaces(position);
-    } else if (_latestPerimeterPosition != null) {
+    } else if (_locationTypeUpdatePerimeterCenterPosition != null) {
       double? distanceBetween = Geolocator.distanceBetween(
-          _latestPerimeterPosition!.latitude,
-          _latestPerimeterPosition!.longitude,
+          _locationTypeUpdatePerimeterCenterPosition!.latitude,
+          _locationTypeUpdatePerimeterCenterPosition!.longitude,
           position.latitude,
           position.longitude);
 
       // Check if the new position is out of the perimeter
-      if (distanceBetween >= _inPerimeterDistance) {
-        _latestPerimeterPosition = position;
+      if (distanceBetween >= _locationTypeUpdatePerimeterRadius) {
+        _locationTypeUpdatePerimeterCenterPosition = position;
 
         // Go through all places to get a QuackLocationType
         return getQuackLocationTypeFromAllPlaces(position);
@@ -196,15 +204,16 @@ class QuackLocationService implements IQuackLocationFunctions {
     return null;
   }
 
-  bool _isWithinMaxPerimeterRadii(Position position) {
-    for (var perimeter in _maxDistancePerimeters) {
+  bool _isWithinUpdatePlacesPerimeters(Position position) {
+    for (var perimeter in _highestDistancePerimeters) {
       var distanceBetween = Geolocator.distanceBetween(
           perimeter.center.latitude,
           perimeter.center.longitude,
           position.latitude,
           position.longitude);
 
-      if (distanceBetween < (perimeter.radius - _inPerimeterDistance)) {
+      if (distanceBetween <
+          (perimeter.radius - _locationTypeUpdatePerimeterRadius)) {
         if (kDebugMode) {
           print("Is within perimeter: true");
         }
