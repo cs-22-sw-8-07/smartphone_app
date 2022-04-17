@@ -275,11 +275,11 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           ? _getPlaylist(state)
           : _getCurrentlyPlayingTrack(state);
 
-      var refreshButton = state.isPlaylistShown!
+      var refreshButton = state.isPlaylistShown! && !state.isLoading!
           ? CustomButton(
               fontWeight: FontWeight.bold,
-              height: 30,
-              width: 30,
+              height: 40,
+              width: 40,
               icon: const Icon(
                 Icons.refresh_outlined,
                 color: Colors.white,
@@ -290,7 +290,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     buttonEvent: MainButtonEvent.refreshPlaylist));
               },
               borderRadius: const BorderRadius.all(
-                Radius.circular(0),
+                Radius.circular(20),
               ),
               margin: const EdgeInsets.only(
                   right: (values.actionBarHeight - 30) / 2),
@@ -567,9 +567,13 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
     QuackTrack quackTrack = QuackTrack.trackToQuackTrack(track)!;
 
+    Color backgroundColor = state.isPlaylistShown!
+        ? custom_colors.darkerBlue
+        : custom_colors.darkBlue;
+
     return Container(
       decoration: BoxDecoration(
-          color: custom_colors.darkBlue,
+          color: backgroundColor,
           border: Border.all(width: 0, color: custom_colors.darkBlue)),
       height: values.mainPageOverlayHeight,
       child: Row(
@@ -577,7 +581,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           Container(
             decoration: BoxDecoration(
                 color: Colors.transparent,
-                border: Border.all(width: 0, color: custom_colors.darkBlue)),
+                border: Border.all(width: 0, color: backgroundColor)),
             margin: const EdgeInsets.all(0),
             width: values.mainPageOverlayHeight,
             padding: const EdgeInsets.all(10),
@@ -651,6 +655,33 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                           )
                         ],
                       )))),
+          if (state.isPlaylistShown!)
+            Container(
+              decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  border: Border.all(width: 0, color: backgroundColor)),
+              width: values.mainPageOverlayHeight,
+              padding: const EdgeInsets.all(10),
+              child: Center(
+                  child: CustomButton(
+                      fontWeight: FontWeight.bold,
+                      height: 50,
+                      width: 50,
+                      borderRadius: const BorderRadius.all(Radius.circular(25)),
+                      icon: Icon(
+                        state.playerState!.isPaused
+                            ? Icons.play_arrow
+                            : Icons.pause,
+                        color: Colors.white,
+                        size: values.mainPageOverlayHeight / 2,
+                      ),
+                      onPressed: () => bloc.add(const ButtonPressed(
+                          buttonEvent: MainButtonEvent.resumePausePlayer)),
+                      textColor: custom_colors.black,
+                      pressedBackground:
+                          custom_colors.backButtonGradientPressedDefault,
+                      defaultBackground: custom_colors.transparentGradient)),
+            )
         ],
       ),
     );
@@ -722,36 +753,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   )
                 ],
               ))),
-              if (state.currentTrack == quackTrack)
-                Container(
-                  decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      border:
-                          Border.all(width: 0, color: custom_colors.darkBlue)),
-                  width: values.mainPageOverlayHeight,
-                  padding: const EdgeInsets.all(10),
-                  child: Center(
-                      child: CustomButton(
-                          fontWeight: FontWeight.bold,
-                          height: 50,
-                          width: 50,
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(25)),
-                          icon: Icon(
-                            state.playerState!.isPaused
-                                ? Icons.play_arrow
-                                : Icons.pause,
-                            color: Colors.white,
-                            size: values.mainPageOverlayHeight / 2,
-                          ),
-                          onPressed: () => bloc.add(const ButtonPressed(
-                              buttonEvent: MainButtonEvent.resumePausePlayer)),
-                          textColor: custom_colors.black,
-                          pressedBackground:
-                              custom_colors.backButtonGradientPressedDefault,
-                          defaultBackground:
-                              custom_colors.transparentGradient)),
-                )
             ],
           ),
         ),
@@ -768,11 +769,42 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       ));
     } else {
       List<QuackTrack>? tracks = state.playlist!.tracks;
-      return ListView.builder(
-        itemCount: tracks!.length,
-        itemBuilder: (context, index) {
-          return _getTrack(state, tracks[index]);
-        },
+      if (tracks == null) {
+        return Container();
+      }
+      List<Widget> children = [];
+
+      for (var track in tracks) {
+        children.add(_getTrack(state, track));
+      }
+
+      children.add(CustomButton(
+        onPressed: () => bloc.add(
+            const ButtonPressed(buttonEvent: MainButtonEvent.appendToPlaylist)),
+        text: AppLocalizations.of(context)!.retrieve,
+        fontWeight: FontWeight.bold,
+        borderRadius: const BorderRadius.all(Radius.circular(27.5)),
+        fontSize: 20,
+        textColor: Colors.black,
+        defaultBackground: custom_colors.whiteGradient,
+        pressedBackground: custom_colors.greyGradient,
+        margin: const EdgeInsets.only(
+            left: values.padding,
+            right: values.padding,
+            bottom: values.padding),
+      ));
+
+      return Column(
+        children: [
+          Expanded(
+              child: RawScrollbar(
+                  isAlwaysShown: true,
+                  thickness: 4,
+                  thumbColor: Colors.white,
+                  child: ListView(
+                      padding: const EdgeInsets.all(0), children: children))),
+          _getCurrentlyPlayingTrack(state)
+        ],
       );
     }
   }

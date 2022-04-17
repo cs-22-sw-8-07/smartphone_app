@@ -122,6 +122,10 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
             await _resumePausePlayer();
           }
           await _startRecommendation();
+          break;
+        case MainButtonEvent.appendToPlaylist:
+          await _appendToExistingPlaylist();
+          break;
       }
     });
 
@@ -252,7 +256,9 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
     /// PlaylistReceived
     on<PlaylistReceived>((event, emit) {
-      emit(state.copyWith(playlist: event.playList));
+      emit(state.copyWith(
+          playlist: event.playList,
+          updatedItemHashCode: event.playList.hashCode));
     });
 
     /// TrackSelected
@@ -491,7 +497,16 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
   /// Get playlist from Quack API
   ///
   /// Returns: The response from the Quack API
-  Future<QuackServiceResponse<GetPlaylistResponse>> _getPlaylist() async {
+  Future<QuackServiceResponse<GetPlaylistResponse>> _getPlaylist(
+      {bool showLoadingBefore = false, bool removeLoadingAfter = false}) async {
+    if (showLoadingBefore) {
+      // Show loading animation
+      add(const MainPageValueChanged(isLoading: true));
+    }
+
+    // Test delay when using mock service
+    //await Future.delayed(const Duration(seconds: 2));
+
     // Get playlist from Quack API
     QuackServiceResponse<GetPlaylistResponse> getPlaylistResponse =
         await QuackService.getInstance().getPlaylist(
@@ -513,21 +528,45 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       }
     }
 
+    if (removeLoadingAfter) {
+      // Remove loading animation
+      add(const MainPageValueChanged(isLoading: false));
+    }
+
     // Return response
     return getPlaylistResponse;
   }
 
-  /// Start recommendation
-  Future<void> _startRecommendation() async {
-    // Show loading animation
-    add(const MainPageValueChanged(isLoading: true));
-
-    // Test delay when using mock service
-    //await Future.delayed(const Duration(seconds: 2));
-
+  /// Append to existing playlist
+  Future<void> _appendToExistingPlaylist() async {
     // Get playlist from Quack API
     QuackServiceResponse<GetPlaylistResponse> getPlaylistResponse =
-        await _getPlaylist();
+        await _getPlaylist(showLoadingBefore: true);
+    // If not success
+    if (!getPlaylistResponse.isSuccess) {
+      GeneralUtil.showSnackBar(
+          context: context, message: "Could not get a playlist");
+      add(const MainPageValueChanged(isLoading: false));
+      return;
+    }
+
+    // Add to existing playlist
+    var newPlaylist = state.playlist!;
+    newPlaylist.tracks!
+        .addAll(getPlaylistResponse.quackResponse!.result!.tracks!);
+
+    // Show new playlist
+    add(PlaylistReceived(playList: newPlaylist));
+    // Remove loading animation and start recommendation animation
+    add(const MainPageValueChanged(
+        isLoading: false, isRecommendationStarted: true));
+  }
+
+  /// Start recommendation
+  Future<void> _startRecommendation() async {
+    // Get playlist from Quack API
+    QuackServiceResponse<GetPlaylistResponse> getPlaylistResponse =
+        await _getPlaylist(showLoadingBefore: true);
     // If not success
     if (!getPlaylistResponse.isSuccess) {
       GeneralUtil.showSnackBar(

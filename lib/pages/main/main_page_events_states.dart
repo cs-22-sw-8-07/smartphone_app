@@ -17,7 +17,8 @@ enum MainButtonEvent {
   resumePausePlayer,
   lockUnlockQuackLocationType,
   selectManualLocation,
-  refreshPlaylist
+  refreshPlaylist,
+  appendToPlaylist
 }
 
 enum MainTouchEvent { goToNextTrack, goToPreviousTrack }
@@ -139,11 +140,14 @@ class MainPageState extends Equatable {
   bool? isLoading;
   QuackTrack? currentTrack;
 
+  int? updatedItemHashCode;
+
   MainPageState(
       {this.isPlaylistShown,
       this.playlist,
       this.currentTrack,
       this.isLoading,
+      this.updatedItemHashCode,
       this.lockedQuackLocationType,
       this.quackLocationType,
       this.hasJustPerformedAction,
@@ -154,6 +158,7 @@ class MainPageState extends Equatable {
       {bool? isPlaylistShown,
       QuackPlaylist? playlist,
       QuackTrack? currentTrack,
+      int? updatedItemHashCode,
       QuackLocationType? lockedQuackLocationType,
       QuackLocationType? quackLocationType,
       bool? hasJustPerformedAction,
@@ -168,6 +173,7 @@ class MainPageState extends Equatable {
             lockedQuackLocationType ?? this.lockedQuackLocationType,
         hasJustPerformedAction:
             hasJustPerformedAction ?? this.hasJustPerformedAction,
+        updatedItemHashCode: updatedItemHashCode ?? this.updatedItemHashCode,
         quackLocationType: quackLocationType ?? this.quackLocationType,
         isPlaylistShown: isPlaylistShown ?? this.isPlaylistShown,
         playerState: playerState ?? this.playerState,
@@ -185,7 +191,8 @@ class MainPageState extends Equatable {
         playlist,
         playerState,
         hasJustPerformedAction,
-        quackLocationType
+        quackLocationType,
+        updatedItemHashCode
       ];
 }
 

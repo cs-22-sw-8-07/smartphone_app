@@ -27,6 +27,8 @@ Future<void> main() async {
   group("MainPage", () {
     late MainPageBloc bloc;
     late MainPage mainPage;
+    QuackService.init(MockQuackService());
+    SpotifyService.init(MockSpotifyService());
 
     setUp(() {
       GoogleFonts.config.allowRuntimeFetching = false;
@@ -34,8 +36,6 @@ Future<void> main() async {
       PositionHelper.setInstance(MockPositionHelper());
       SharedPreferences.setMockInitialValues({});
       AppValuesHelper.getInstance().setup();
-      SpotifyService.init(MockSpotifyService());
-      QuackService.init(MockQuackService());
       bloc = MainPageBloc(
           context: MockBuildContext(), positionHelper: MockPositionHelper());
     });
@@ -161,11 +161,11 @@ Future<void> main() async {
           ];
         });
 
-    QuackPlaylist? playlist;
+    QuackPlaylist? playlistFromQuack;
     blocTestWidget<MainPage, MainPageBloc, MainPageState>(
         "ButtonPressed -> Refresh playlist -> Picked yes",
         setUp: () async {
-          playlist = (await QuackService.getInstance()
+          playlistFromQuack = (await QuackService.getInstance()
                   .getPlaylist(QuackLocationType.beach))
               .quackResponse!
               .result;
@@ -173,9 +173,9 @@ Future<void> main() async {
         },
         buildWidget: () => mainPage,
         build: (w) async {
-          mainPage.bloc.state.playerState =
+          w.bloc.state.playerState =
               MockSpotifyService.getMockPlayerState(isPaused: false);
-          mainPage.bloc.state.quackLocationType = QuackLocationType.beach;
+          w.bloc.state.quackLocationType = QuackLocationType.beach;
           return w.bloc;
         },
         act: (bloc) => bloc.add(
@@ -185,6 +185,7 @@ Future<void> main() async {
               isRecommendationStarted: false, hasJustPerformedAction: false);
           newState.currentTrack = null;
           newState.playlist = null;
+          newState.updatedItemHashCode = null;
 
           return [
             newState.copyWith(isLoading: true),
@@ -192,18 +193,20 @@ Future<void> main() async {
             newState.copyWith(
                 isLoading: true,
                 hasJustPerformedAction: true,
-                currentTrack: playlist!.tracks!.first),
+                currentTrack: playlistFromQuack!.tracks!.first),
             newState.copyWith(
-                playlist: playlist,
+                playlist: playlistFromQuack,
                 isLoading: true,
                 hasJustPerformedAction: true,
-                currentTrack: playlist!.tracks!.first),
+                updatedItemHashCode: playlistFromQuack.hashCode,
+                currentTrack: playlistFromQuack!.tracks!.first),
             newState.copyWith(
-                playlist: playlist,
+                playlist: playlistFromQuack,
                 isLoading: false,
+                updatedItemHashCode: playlistFromQuack.hashCode,
                 isRecommendationStarted: true,
                 hasJustPerformedAction: true,
-                currentTrack: playlist!.tracks!.first)
+                currentTrack: playlistFromQuack!.tracks!.first)
           ];
         });
 
@@ -223,6 +226,45 @@ Future<void> main() async {
         act: (bloc) => bloc.add(const HasPerformedSpotifyPlayerAction()),
         expect: () {
           return [bloc.state.copyWith(hasJustPerformedAction: true)];
+        });
+
+    QuackPlaylist? expandedPlaylist;
+    blocTestWidget<MainPage, MainPageBloc, MainPageState>(
+        "ButtonPressed -> Append to playlist",
+        setUp: () async {
+          expandedPlaylist = QuackPlaylist(tracks: List.of([], growable: true));
+          var playlistFromQuackAppend = (await QuackService.getInstance()
+                  .getPlaylist(QuackLocationType.beach))
+              .quackResponse!
+              .result;
+          expandedPlaylist!.id = playlistFromQuackAppend!.id;
+          expandedPlaylist!.locationType = playlistFromQuackAppend.locationType;
+          expandedPlaylist!.tracks!.addAll(playlistFromQuackAppend.tracks!);
+          expandedPlaylist!.tracks!.addAll(playlistFromQuackAppend.tracks!);
+        },
+        buildWidget: () => MainPage(),
+        build: (w) async {
+          w.bloc.state.playlist = expandedPlaylist;
+          w.bloc.state.quackLocationType = QuackLocationType.beach;
+          return w.bloc;
+        },
+        act: (bloc) => bloc.add(
+            const ButtonPressed(buttonEvent: MainButtonEvent.appendToPlaylist)),
+        expect: (bloc) {
+          var newState = bloc.state
+              .copyWith(isLoading: true, isRecommendationStarted: false);
+          newState.updatedItemHashCode = null;
+          return [
+            newState,
+            newState.copyWith(
+                playlist: expandedPlaylist,
+                updatedItemHashCode: expandedPlaylist.hashCode),
+            newState.copyWith(
+                playlist: expandedPlaylist,
+                isLoading: false,
+                updatedItemHashCode: expandedPlaylist.hashCode,
+                isRecommendationStarted: true)
+          ];
         });
   });
 }

@@ -7,6 +7,16 @@ import 'package:smartphone_app/services/webservices/quack/services/quack_service
 
 class MockQuackService implements IQuackFunctions {
   ///
+  /// VARIABLES
+  ///
+  //region Variables
+
+  dynamic jsonData1;
+  dynamic jsonData2;
+
+  //endregion
+
+  ///
   /// METHODS
   ///
   //region Methods
@@ -28,11 +38,15 @@ class MockQuackService implements IQuackFunctions {
   Future<QuackServiceResponse<GetPlaylistResponse>> getPlaylist(
       QuackLocationType qlt) async {
     if (qlt == QuackLocationType.beach) {
-      return QuackServiceResponse.success(GetPlaylistResponse.fromJson(
-          await getJsonData("get_playlist_response.json")));
+      jsonData1 ??= await getJsonData("get_playlist_response.json");
+
+      return QuackServiceResponse.success(
+          GetPlaylistResponse.fromJson(jsonData1));
     } else {
-      return QuackServiceResponse.success(GetPlaylistResponse.fromJson(
-          await getJsonData("get_playlist_response2.json")));
+      jsonData2 ??= await getJsonData("get_playlist_response2.json");
+
+      return QuackServiceResponse.success(
+          GetPlaylistResponse.fromJson(jsonData2));
     }
   }
 
