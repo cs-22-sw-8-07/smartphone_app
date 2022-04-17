@@ -78,7 +78,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blueGrey,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: token == null ? const LoginPage() : const MainPage());
+        home: token == null ? const LoginPage() : MainPage());
   }
 }
 

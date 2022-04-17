@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
@@ -13,7 +11,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:smartphone_app/widgets/custom_label.dart';
 import 'package:smartphone_app/widgets/custom_list_tile.dart';
 import 'package:spotify_sdk/models/track.dart';
-import 'package:geolocator_android/src/types/foreground_settings.dart';
 
 import '../../helpers/position_helper/udp_position_helper.dart';
 import '../../helpers/position_helper/position_helper.dart';
@@ -26,11 +23,20 @@ import '../../widgets/custom_play_button.dart';
 import 'main_page_bloc.dart';
 import 'main_page_events_states.dart';
 
+// ignore: must_be_immutable
 class MainPage extends StatefulWidget {
-  const MainPage({Key? key}) : super(key: key);
+  _MainPageState? state;
+
+  MainPage({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _MainPageState();
+  // ignore: no_logic_in_create_state
+  State<StatefulWidget> createState() {
+    state = _MainPageState();
+    return state!;
+  }
+
+  MainPageBloc get bloc => state!.bloc;
 }
 
 class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
@@ -104,51 +110,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    PositionType pt = PositionHelper.getPositionType();
-    PositionHelper? positionHelper;
-
-    switch (pt) {
-      case PositionType.mock:
-        {
-          positionHelper = MockPositionHelper();
-        }
-        break;
-      case PositionType.udp:
-        {
-          positionHelper = UdpPositionHelper();
-        }
-        break;
-      case PositionType.device:
-        {
-          positionHelper = PositionHelper(
-              androidSettings: AndroidSettings(
-                  accuracy: LocationAccuracy.high,
-                  distanceFilter: 0,
-                  forceLocationManager: true,
-                  intervalDuration: const Duration(seconds: 10),
-                  //(Optional) Set foreground notification config to keep the app alive
-                  //when going to the background
-                  foregroundNotificationConfig: ForegroundNotificationConfig(
-                    notificationIcon: const AndroidResource(
-                        name: "notification_icon", defType: "drawable"),
-                    notificationText: AppLocalizations.of(context)!
-                        .getting_location_in_background,
-                    notificationTitle: AppLocalizations.of(context)!.app_name,
-                    enableWakeLock: true,
-                  )),
-              appleSettings: AppleSettings(
-                accuracy: LocationAccuracy.high,
-                activityType: ActivityType.fitness,
-                distanceFilter: 100,
-                pauseLocationUpdatesAutomatically: true,
-                // Only set to true if our app will be started up in the background.
-                showBackgroundLocationIndicator: false,
-              ));
-        }
-        break;
-    }
-
-    bloc = MainPageBloc(context: context, positionHelper: positionHelper);
+    bloc = MainPageBloc(
+        context: context,
+        positionHelper:
+            PositionHelper.getInstanceWithContext(context: context));
 
     availableWidth = MediaQuery.of(context).size.width;
 
@@ -509,30 +474,28 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 SizedBox(height: availableHeight * 0.35),
                 BlocBuilder<MainPageBloc, MainPageState>(
                     builder: (context, state) {
-                      return SizedBox(
-                        child: Row(
-                          children: [
-                            const Expanded(child: SizedBox()),
-                            CustomButton(
-                                margin: const EdgeInsets.only(right: 30),
-                                height: values.mainPagePlayPauseButtonSize / 2,
-                                width: values.mainPagePlayPauseButtonSize / 2,
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(
-                                        values.mainPagePlayPauseButtonSize /
-                                            2 /
-                                            2)),
-                                icon: const Icon(
-                                  Icons.skip_previous,
-                                  color: custom_colors.darkBlue,
-                                  size: values.mainPagePlayPauseButtonSize / 3,
-                                ),
-                                onPressed: () =>
-                                    bloc.add(const TouchEvent(
-                                        touchEvent: MainTouchEvent
-                                            .goToPreviousTrack)),
-                                pressedBackground: custom_colors.greyGradient,
-                                defaultBackground:
+                  return SizedBox(
+                    child: Row(
+                      children: [
+                        const Expanded(child: SizedBox()),
+                        CustomButton(
+                            margin: const EdgeInsets.only(right: 30),
+                            height: values.mainPagePlayPauseButtonSize / 2,
+                            width: values.mainPagePlayPauseButtonSize / 2,
+                            borderRadius: const BorderRadius.all(
+                                Radius.circular(
+                                    values.mainPagePlayPauseButtonSize /
+                                        2 /
+                                        2)),
+                            icon: const Icon(
+                              Icons.skip_previous,
+                              color: custom_colors.darkBlue,
+                              size: values.mainPagePlayPauseButtonSize / 3,
+                            ),
+                            onPressed: () => bloc.add(const TouchEvent(
+                                touchEvent: MainTouchEvent.goToPreviousTrack)),
+                            pressedBackground: custom_colors.greyGradient,
+                            defaultBackground:
                                 custom_colors.transparentGradient),
                         AnimatedBuilder(
                           animation: startStopRecommendationController,

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -16,16 +15,14 @@ import 'package:spotify_sdk/models/player_state.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // ignore: unnecessary_import, implementation_imports
-import 'package:geolocator_android/src/types/foreground_settings.dart';
 
-import '../../helpers/position_helper/udp_position_helper.dart';
+import '../../helpers/key_helper.dart';
 import '../../helpers/position_helper/position_helper.dart';
 import '../../services/webservices/quack/models/quack_classes.dart';
 import '../../services/webservices/quack/services/quack_service.dart';
 import '../../services/webservices/spotify/services/spotify_service.dart';
 import '../../utilities/general_util.dart';
 import '../settings/settings_page_ui.dart';
-import '../settings/settings_page_bloc.dart';
 
 class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
   ///
@@ -508,7 +505,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       }
 
       for (var track in getPlaylistResponse.quackResponse!.result!.tracks!) {
-        track.key = UniqueKey();
+        track.key = KeyHelper.uniqueKey;
       }
     } else {
       if (kDebugMode) {
@@ -523,7 +520,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
   /// Start recommendation
   Future<void> _startRecommendation() async {
     // Show loading animation
-    add(MainPageValueChanged(isLoading: true));
+    add(const MainPageValueChanged(isLoading: true));
 
     // Test delay when using mock service
     //await Future.delayed(const Duration(seconds: 2));
@@ -535,7 +532,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     if (!getPlaylistResponse.isSuccess) {
       GeneralUtil.showSnackBar(
           context: context, message: "Could not get a playlist");
-      add(MainPageValueChanged(isLoading: false));
+      add(const MainPageValueChanged(isLoading: false));
       return;
     }
 
@@ -544,7 +541,8 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     // Show playlist
     add(PlaylistReceived(playList: getPlaylistResponse.quackResponse!.result!));
     // Remove loading animation and start recommendation animation
-    add(MainPageValueChanged(isLoading: false, isRecommendationStarted: true));
+    add(const MainPageValueChanged(
+        isLoading: false, isRecommendationStarted: true));
   }
 
   //endregion
@@ -556,8 +554,6 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     if (!(await _connectToSpotifyRemote())) {
       return false;
     }
-
-    //await _getPlaylist();
 
     return true;
   }

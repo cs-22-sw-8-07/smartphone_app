@@ -14,14 +14,24 @@ abstract class MockWithExpandedToString extends Mock {
   }
 }
 
-//todo: lav en der også retunerer no
-class MockQuestionDialog extends MockWithExpandedToString
+class MockQuestionDialogNo extends MockWithExpandedToString
     implements QuestionDialog {
   @override
   Future<DialogQuestionResponse> show(
       {required BuildContext context,
       required String question,
       Color? textColor}) async {
+    return DialogQuestionResponse.no;
+  }
+}
+
+class MockQuestionDialogYes extends MockWithExpandedToString
+    implements QuestionDialog {
+  @override
+  Future<DialogQuestionResponse> show(
+      {required BuildContext context,
+        required String question,
+        Color? textColor}) async {
     return DialogQuestionResponse.yes;
   }
 }

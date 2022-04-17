@@ -20,7 +20,6 @@ Future<void> main() async {
 
     setUp(() async {
       GoogleFonts.config.allowRuntimeFetching = false;
-      QuestionDialog.setInstance(MockQuestionDialog());
       bloc = SettingsBloc(context: MockBuildContext());
     });
 
@@ -29,7 +28,22 @@ Future<void> main() async {
     });
 
     blocTestWidget<SettingsPage, SettingsBloc, SettingsState>(
-      "ButtonPressed -> Delete account",
+      "ButtonPressed -> Delete account -> Picked yes",
+        setUp: () {
+          QuestionDialog.setInstance(MockQuestionDialogYes());
+        },
+        buildWidget: () => SettingsPage(),
+        build: (w) => w.bloc,
+        act: (bloc) => bloc.add(
+            const ButtonPressed(
+                buttonEvent: SettingsButtonEvent.deleteAccount)),
+        expect: (bloc) => []);
+
+    blocTestWidget<SettingsPage, SettingsBloc, SettingsState>(
+        "ButtonPressed -> Delete account -> Picked no",
+        setUp: () {
+          QuestionDialog.setInstance(MockQuestionDialogNo());
+        },
         buildWidget: () => SettingsPage(),
         build: (w) => w.bloc,
         act: (bloc) => bloc.add(

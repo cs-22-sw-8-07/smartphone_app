@@ -1,13 +1,23 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smartphone_app/helpers/app_values_helper.dart';
 import 'package:smartphone_app/helpers/position_helper/mock_position_helper.dart';
+import 'package:smartphone_app/helpers/position_helper/position_helper.dart';
 import 'package:smartphone_app/pages/main/main_page_bloc.dart';
 import 'package:smartphone_app/pages/main/main_page_events_states.dart';
+import 'package:smartphone_app/pages/main/main_page_ui.dart';
 import 'package:smartphone_app/services/webservices/quack/models/quack_classes.dart';
+import 'package:smartphone_app/services/webservices/quack/services/quack_service.dart';
 import 'package:smartphone_app/services/webservices/spotify/services/spotify_service.dart';
+import 'package:smartphone_app/widgets/question_dialog.dart';
 
+import '../../../helpers/bloc_test_widget.dart';
 import '../../../mocks/build_context.dart';
+import '../../../mocks/quack_service.dart';
+import '../../../mocks/question_dialog.dart';
 import '../../../mocks/spotify_service.dart';
 
 Future<void> main() async {
@@ -16,9 +26,16 @@ Future<void> main() async {
 
   group("MainPage", () {
     late MainPageBloc bloc;
+    late MainPage mainPage;
 
     setUp(() {
+      GoogleFonts.config.allowRuntimeFetching = false;
+      mainPage = MainPage();
+      PositionHelper.setInstance(MockPositionHelper());
+      SharedPreferences.setMockInitialValues({});
+      AppValuesHelper.getInstance().setup();
       SpotifyService.init(MockSpotifyService());
+      QuackService.init(MockQuackService());
       bloc = MainPageBloc(
           context: MockBuildContext(), positionHelper: MockPositionHelper());
     });
@@ -103,7 +120,7 @@ Future<void> main() async {
     blocTest<MainPageBloc, MainPageState>(
         "MainPageValueChanged -> Booleans changed",
         build: () => bloc,
-        act: (bloc) => bloc.add(MainPageValueChanged(
+        act: (bloc) => bloc.add(const MainPageValueChanged(
             isRecommendationStarted: true, isLoading: false)),
         expect: () {
           return [
@@ -144,16 +161,62 @@ Future<void> main() async {
           ];
         });
 
-    //todo: få den her test til at virke.
-    blocTest<MainPageBloc, MainPageState>("ButtonPressed -> QuestionDialog",
-        build: () {
-          bloc.state
-              .copyWith(playerState: MockSpotifyService.getMockPlayerState());
-          return bloc;
+    QuackPlaylist? playlist;
+    blocTestWidget<MainPage, MainPageBloc, MainPageState>(
+        "ButtonPressed -> Refresh playlist -> Picked yes",
+        setUp: () async {
+          playlist = (await QuackService.getInstance()
+                  .getPlaylist(QuackLocationType.beach))
+              .quackResponse!
+              .result;
+          QuestionDialog.setInstance(MockQuestionDialogYes());
+        },
+        buildWidget: () => mainPage,
+        build: (w) async {
+          mainPage.bloc.state.playerState =
+              MockSpotifyService.getMockPlayerState(isPaused: false);
+          mainPage.bloc.state.quackLocationType = QuackLocationType.beach;
+          return w.bloc;
         },
         act: (bloc) => bloc.add(
             const ButtonPressed(buttonEvent: MainButtonEvent.refreshPlaylist)),
-        expect: () => []);
+        expect: (bloc) async {
+          var newState = bloc.state.copyWith(
+              isRecommendationStarted: false, hasJustPerformedAction: false);
+          newState.currentTrack = null;
+          newState.playlist = null;
+
+          return [
+            newState.copyWith(isLoading: true),
+            newState.copyWith(isLoading: true, hasJustPerformedAction: true),
+            newState.copyWith(
+                isLoading: true,
+                hasJustPerformedAction: true,
+                currentTrack: playlist!.tracks!.first),
+            newState.copyWith(
+                playlist: playlist,
+                isLoading: true,
+                hasJustPerformedAction: true,
+                currentTrack: playlist!.tracks!.first),
+            newState.copyWith(
+                playlist: playlist,
+                isLoading: false,
+                isRecommendationStarted: true,
+                hasJustPerformedAction: true,
+                currentTrack: playlist!.tracks!.first)
+          ];
+        });
+
+    blocTestWidget<MainPage, MainPageBloc, MainPageState>(
+        "ButtonPressed -> Refresh playlist -> Picked no",
+        setUp: () async {
+          QuestionDialog.setInstance(MockQuestionDialogNo());
+        },
+        buildWidget: () => mainPage,
+        build: (w) => w.bloc,
+        act: (bloc) => bloc.add(
+            const ButtonPressed(buttonEvent: MainButtonEvent.refreshPlaylist)),
+        expect: (bloc) => []);
 
     blocTest<MainPageBloc, MainPageState>("HasPerformedAction",
         build: () => bloc,

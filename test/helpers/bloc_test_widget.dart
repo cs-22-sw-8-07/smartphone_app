@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:network_image_mock/network_image_mock.dart';
 import 'package:test/test.dart' as test;
 import 'package:diff_match_patch/diff_match_patch.dart';
 import 'package:meta/meta.dart';
@@ -49,12 +52,13 @@ String _diff({required dynamic expected, required dynamic actual}) {
 Future<void> blocTestWidget<W extends Widget, B extends BlocBase<State>, State>(
     String description,
     {required W Function() buildWidget,
-    required B Function(W) build,
+    required FutureOr<B> Function(W) build,
     required Function(B) act,
-    required List<State> Function(B) expect,
-    Function()? setUp}) async {
+    required FutureOr<List<State>> Function(B) expect,
+    FutureOr<void> Function()? setUp}) async {
   // Create test
   testWidgets(description, (WidgetTester tester) async {
+    await setUp!();
     var shallowEquality = false;
     final states = <State>[];
     // Build widget
@@ -63,31 +67,37 @@ Future<void> blocTestWidget<W extends Widget, B extends BlocBase<State>, State>(
     final testableWidget = makeTestableWidget(
       child: widget,
     );
-    await tester.pumpWidget(testableWidget);
-    // Build bloc
-    final bloc = build(widget);
-    // Listen on state changes for the bloc
-    bloc.stream.listen(
-      (event) => states.add(event),
-    );
-    // Make an action for the bloc
-    act(bloc);
-    // Wait for UI
-    await tester.pump(const Duration(milliseconds: 50));
-    // Get expected state changes
-    final dynamic expected = expect(bloc);
-    // Check for shadow equality
-    shallowEquality = '$states' == '$expected';
-    try {
-      // Test between expected and actual states
-      test.expect(states, test.wrapMatcher(expected));
-    } on test.TestFailure catch (e) {
-      if (shallowEquality || expected is! List<State>) rethrow;
-      final diff = _diff(expected: expected, actual: states);
-      final message = '${e.message}\n$diff';
-      // ignore: only_throw_errors
-      throw test.TestFailure(message);
-    }
+    // Mock network images
+    await mockNetworkImagesFor(
+        () async {
+          // Pump page
+          await tester.pumpWidget(testableWidget);
+
+          // Build bloc
+          final bloc = await build(widget);
+          // Listen on state changes for the bloc
+          bloc.stream.listen(
+                (event) => states.add(event),
+          );
+          // Make an action for the bloc
+          act(bloc);
+          // Wait for UI
+          await tester.pump(const Duration(milliseconds: 50));
+          // Get expected state changes
+          final dynamic expected = await expect(bloc);
+          // Check for shadow equality
+          shallowEquality = '$states' == '$expected';
+          try {
+            // Test between expected and actual states
+            test.expect(states, test.wrapMatcher(expected));
+          } on test.TestFailure catch (e) {
+            if (shallowEquality || expected is! List<State>) rethrow;
+            final diff = _diff(expected: expected, actual: states);
+            final message = '${e.message}\n$diff';
+            // ignore: only_throw_errors
+            throw test.TestFailure(message);
+          }
+        });
   });
 }
 
