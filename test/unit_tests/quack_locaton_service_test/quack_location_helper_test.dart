@@ -15,10 +15,8 @@ void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
 
-  setUp(() async {});
-
-  group("getQuackLocationType", () {
-    test("Unknown category", () async {
+  group("QuackLocationHelper", () {
+    test("Use uncorrelated category", () async {
       List<FoursquareCategory> categs = [
         FoursquareCategory(id: 11111, name: "Category from FSQ")
       ];
