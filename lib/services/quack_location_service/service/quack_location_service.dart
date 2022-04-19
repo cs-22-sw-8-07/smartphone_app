@@ -74,7 +74,12 @@ class QuackLocationService implements IQuackLocationFunctions {
   Position? get locationTypeUpdatePerimeterCenterPosition =>
       _locationTypeUpdatePerimeterCenterPosition;
 
+  @override
   QuackLocationType get locationType => _locationType;
+
+  @override
+  List<HighestDistancePerimeter> get highestDistancePerimeters =>
+      _highestDistancePerimeters;
 
   //endregion
 
