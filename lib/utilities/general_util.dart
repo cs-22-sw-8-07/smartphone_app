@@ -7,6 +7,20 @@ import 'package:smartphone_app/values/values.dart';
 
 enum PermissionState { granted, denied }
 
+extension DateTimeExtension on DateTime {
+  String getDateOnlyAsString() {
+    return year.toString() +
+        "-" +
+        month.toString() +
+        "-" +
+        day.toString() +
+        " " +
+        hour.toString() +
+        ":" +
+        minute.toString();
+  }
+}
+
 class GeneralUtil {
   /// Set editing controller text
   /// Set [text] for a given [textEditingController]
@@ -109,8 +123,8 @@ class GeneralUtil {
 
   /// Show a snackbar to the user (A message popup in the bottom of the screen)
   /// [message] is the string shown to the user
-  static showSnackBar({required BuildContext context, required String message}) {
-    if (Platform.environment.containsKey('FLUTTER_TEST')) return;
+  static showSnackBar(
+      {required BuildContext context, required String message}) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         backgroundColor: Colors.white,

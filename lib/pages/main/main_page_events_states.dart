@@ -10,7 +10,7 @@ import '../../services/webservices/quack/models/quack_classes.dart';
 
 enum MainButtonEvent {
   startStopRecommendation,
-  seeRecommendations,
+  seeHistory,
   goToSettings,
   logOff,
   viewPlaylist,

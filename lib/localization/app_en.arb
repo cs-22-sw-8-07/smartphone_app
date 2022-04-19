@@ -51,6 +51,10 @@
   "@delete_account_confirmation": {
     "description": "Dialog text"
   },
+    "history": "History",
+  "@history": {
+    "description": "Button text"
+  },
   "log_off": "Log off",
   "@log_off": {
     "description": "Button text"
