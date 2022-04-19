@@ -102,19 +102,14 @@ class TrackSelected extends MainPageEvent {
 // ignore: must_be_immutable
 class MainPageValueChanged extends MainPageEvent {
   final QuackTrack? currentTrack;
-  final bool? isRecommendationStarted;
   final bool? isLoading;
   final QuackLocationType? quackLocationType;
 
   const MainPageValueChanged(
-      {this.currentTrack,
-      this.isRecommendationStarted,
-      this.quackLocationType,
-      this.isLoading});
+      {this.currentTrack, this.quackLocationType, this.isLoading});
 
   @override
-  List<Object?> get props =>
-      [currentTrack, isRecommendationStarted, isLoading, quackLocationType];
+  List<Object?> get props => [currentTrack, isLoading, quackLocationType];
 }
 
 class HasPerformedSpotifyPlayerAction extends MainPageEvent {
@@ -131,7 +126,6 @@ class HasPerformedSpotifyPlayerAction extends MainPageEvent {
 // ignore: must_be_immutable
 class MainPageState extends Equatable {
   bool? isPlaylistShown;
-  bool? isRecommendationStarted;
   PlayerState? playerState;
   QuackPlaylist? playlist;
   bool? hasJustPerformedAction;
@@ -151,7 +145,6 @@ class MainPageState extends Equatable {
       this.lockedQuackLocationType,
       this.quackLocationType,
       this.hasJustPerformedAction,
-      this.isRecommendationStarted,
       this.playerState});
 
   MainPageState copyWith(
@@ -163,29 +156,26 @@ class MainPageState extends Equatable {
       QuackLocationType? quackLocationType,
       bool? hasJustPerformedAction,
       bool? isLoading,
-      bool? isRecommendationStarted,
       PlayerState? playerState}) {
     return MainPageState(
-        playlist: playlist ?? this.playlist,
-        isLoading: isLoading ?? this.isLoading,
-        currentTrack: currentTrack ?? this.currentTrack,
-        lockedQuackLocationType:
-            lockedQuackLocationType ?? this.lockedQuackLocationType,
-        hasJustPerformedAction:
-            hasJustPerformedAction ?? this.hasJustPerformedAction,
-        updatedItemHashCode: updatedItemHashCode ?? this.updatedItemHashCode,
-        quackLocationType: quackLocationType ?? this.quackLocationType,
-        isPlaylistShown: isPlaylistShown ?? this.isPlaylistShown,
-        playerState: playerState ?? this.playerState,
-        isRecommendationStarted:
-            isRecommendationStarted ?? this.isRecommendationStarted);
+      playlist: playlist ?? this.playlist,
+      isLoading: isLoading ?? this.isLoading,
+      currentTrack: currentTrack ?? this.currentTrack,
+      lockedQuackLocationType:
+          lockedQuackLocationType ?? this.lockedQuackLocationType,
+      hasJustPerformedAction:
+          hasJustPerformedAction ?? this.hasJustPerformedAction,
+      updatedItemHashCode: updatedItemHashCode ?? this.updatedItemHashCode,
+      quackLocationType: quackLocationType ?? this.quackLocationType,
+      isPlaylistShown: isPlaylistShown ?? this.isPlaylistShown,
+      playerState: playerState ?? this.playerState,
+    );
   }
 
   @override
   List<Object?> get props => [
         isPlaylistShown,
         currentTrack,
-        isRecommendationStarted,
         lockedQuackLocationType,
         isLoading,
         playlist,

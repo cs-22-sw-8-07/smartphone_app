@@ -12,7 +12,6 @@ void main() {
           MainPageState().copyWith(
               currentTrack: QuackTrack(id: "1234", key: const Key("1234")),
               isLoading: false,
-              isRecommendationStarted: false,
               quackLocationType: QuackLocationType.cemetery,
               lockedQuackLocationType: QuackLocationType.beach,
               hasJustPerformedAction: true,
@@ -23,7 +22,6 @@ void main() {
           MainPageState(
               currentTrack: QuackTrack(id: "1234", key: const Key("1234")),
               isLoading: false,
-              isRecommendationStarted: false,
               quackLocationType: QuackLocationType.cemetery,
               lockedQuackLocationType: QuackLocationType.beach,
               hasJustPerformedAction: true,
@@ -42,10 +40,6 @@ void main() {
     test("States are not equal -> isLoading", () {
       expect(MainPageState().copyWith(isLoading: true),
           isNot(MainPageState(isLoading: false)));
-    });
-    test("States are not equal -> isRecommendationStarted", () {
-      expect(MainPageState().copyWith(isRecommendationStarted: true),
-          isNot(MainPageState(isRecommendationStarted: false)));
     });
     test("States are not equal -> quackLocationType", () {
       expect(

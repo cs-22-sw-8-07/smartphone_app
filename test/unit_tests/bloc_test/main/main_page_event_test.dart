@@ -79,12 +79,10 @@ void main() {
           const MainPageValueChanged(
               isLoading: false,
               quackLocationType: QuackLocationType.beach,
-              isRecommendationStarted: true,
               currentTrack: null),
           const MainPageValueChanged(
               isLoading: false,
               quackLocationType: QuackLocationType.beach,
-              isRecommendationStarted: true,
               currentTrack: null),
         );
       });
@@ -100,12 +98,6 @@ void main() {
               quackLocationType: QuackLocationType.beach),
           isNot(const MainPageValueChanged(
               quackLocationType: QuackLocationType.unknown)),
-        );
-      });
-      test("Events are not equal -> isRecommendationStarted", () {
-        expect(
-          const MainPageValueChanged(isRecommendationStarted: false),
-          isNot(const MainPageValueChanged(isRecommendationStarted: true)),
         );
       });
       test("Events are not equal -> currentTrack", () {

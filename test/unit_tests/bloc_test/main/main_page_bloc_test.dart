@@ -47,8 +47,7 @@ Future<void> main() async {
               hasJustPerformedAction: false,
               isPlaylistShown: false,
               isLoading: false,
-              quackLocationType: QuackLocationType.unknown,
-              isRecommendationStarted: false));
+              quackLocationType: QuackLocationType.unknown));
     });
 
     blocTest<MainPageBloc, MainPageState>("ButtonPressed -> Resize playlist",
@@ -104,14 +103,12 @@ Future<void> main() async {
         build: () => bloc,
         act: (bloc) => bloc.add(MainPageValueChanged(
             currentTrack: QuackTrack(id: "1"),
-            isRecommendationStarted: true,
             quackLocationType: QuackLocationType.nightLife,
             isLoading: false)),
         expect: () {
           return [
             bloc.state.copyWith(
                 currentTrack: QuackTrack(id: "1"),
-                isRecommendationStarted: true,
                 quackLocationType: QuackLocationType.nightLife,
                 isLoading: false)
           ];
@@ -120,11 +117,10 @@ Future<void> main() async {
     blocTest<MainPageBloc, MainPageState>(
         "MainPageValueChanged -> Booleans changed",
         build: () => bloc,
-        act: (bloc) => bloc.add(const MainPageValueChanged(
-            isRecommendationStarted: true, isLoading: false)),
+        act: (bloc) => bloc.add(const MainPageValueChanged(isLoading: false)),
         expect: () {
           return [
-            bloc.state.copyWith(isRecommendationStarted: true, isLoading: false)
+            bloc.state.copyWith(isLoading: false)
           ];
         });
 
@@ -181,8 +177,7 @@ Future<void> main() async {
         act: (bloc) => bloc.add(
             const ButtonPressed(buttonEvent: MainButtonEvent.refreshPlaylist)),
         expect: (bloc) async {
-          var newState = bloc.state.copyWith(
-              isRecommendationStarted: false, hasJustPerformedAction: false);
+          var newState = bloc.state.copyWith(hasJustPerformedAction: false);
           newState.currentTrack = null;
           newState.playlist = null;
           newState.updatedItemHashCode = null;
@@ -204,7 +199,6 @@ Future<void> main() async {
                 playlist: playlistFromQuack,
                 isLoading: false,
                 updatedItemHashCode: playlistFromQuack.hashCode,
-                isRecommendationStarted: true,
                 hasJustPerformedAction: true,
                 currentTrack: playlistFromQuack!.tracks!.first)
           ];
@@ -252,7 +246,7 @@ Future<void> main() async {
             const ButtonPressed(buttonEvent: MainButtonEvent.appendToPlaylist)),
         expect: (bloc) {
           var newState = bloc.state
-              .copyWith(isLoading: true, isRecommendationStarted: false);
+              .copyWith(isLoading: true);
           newState.updatedItemHashCode = null;
           return [
             newState,
@@ -262,8 +256,7 @@ Future<void> main() async {
             newState.copyWith(
                 playlist: expandedPlaylist,
                 isLoading: false,
-                updatedItemHashCode: expandedPlaylist.hashCode,
-                isRecommendationStarted: true)
+                updatedItemHashCode: expandedPlaylist.hashCode)
           ];
         });
   });
