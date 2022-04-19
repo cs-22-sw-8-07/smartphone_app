@@ -19,9 +19,17 @@
   "@please_go_to_settings_and_give_the_app_all_the_necessary_permissions": {
     "description": "Dialog text"
   },
+  "are_you_sure_you_want_to_refresh_the_playlist": "Are you sure you want to refresh the playlist?",
+  "@are_you_sure_you_want_to_refresh_the_playlist": {
+    "description": "Dialog text"
+  },
   "go_to_settings": "Go to settings",
   "@go_to_settings": {
     "description": "Button text"
+  },
+  "do_you_want_to_save_changes": "You have unsaved changes\nDo you want to save the current changes?",
+  "@do_you_want_to_save_changes" :  {
+    "description": "Dialog text"
   },
   "continue_with_spotify": "Continue with Spotify",
   "@continue_with_spotify": {
@@ -34,6 +42,14 @@
   "settings": "Settings",
   "@settings": {
     "description": "Button text"
+  },
+  "delete_account": "Delete your account",
+  "@delete_account": {
+    "description": "Button text"
+  },
+  "delete_account_confirmation": "Are you sure you want to delete your account?\nThis cannot be undone.",
+  "@delete_account_confirmation": {
+    "description": "Dialog text"
   },
   "log_off": "Log off",
   "@log_off": {
@@ -86,5 +102,9 @@
   "unlocked_location": "Unlocked location",
   "@unlocked_location": {
     "description": "Snackbar text"
+  },
+  "retrieve": "Retrieve",
+  "@retrieve": {
+    "description": "Button text"
   }
 }

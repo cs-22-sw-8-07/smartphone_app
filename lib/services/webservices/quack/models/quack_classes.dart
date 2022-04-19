@@ -101,7 +101,7 @@ class QuackPlaylist extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, locationType];
+  List<Object?> get props => [id, locationType, tracks];
 }
 
 @JsonSerializable()

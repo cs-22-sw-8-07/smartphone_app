@@ -15,7 +15,7 @@ void main() {
         expect(
           const ButtonPressed(buttonEvent: MainButtonEvent.resumePausePlayer),
           isNot(
-              const ButtonPressed(buttonEvent: MainButtonEvent.resizePlaylist)),
+              const ButtonPressed(buttonEvent: MainButtonEvent.viewPlaylist)),
         );
       });
     });

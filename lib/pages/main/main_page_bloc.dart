@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,19 +9,20 @@ import 'package:smartphone_app/localization/localization_helper.dart';
 import 'package:smartphone_app/pages/login/login_page_ui.dart';
 import 'package:smartphone_app/pages/main/main_page_events_states.dart';
 import 'package:smartphone_app/services/quack_location_service/service/quack_location_service.dart';
+import 'package:smartphone_app/widgets/question_dialog.dart';
 import 'package:spotify_sdk/models/connection_status.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // ignore: unnecessary_import, implementation_imports
-import 'package:geolocator_android/src/types/foreground_settings.dart';
 
-import '../../helpers/position_helper/udp_position_helper.dart';
+import '../../helpers/key_helper.dart';
 import '../../helpers/position_helper/position_helper.dart';
 import '../../services/webservices/quack/models/quack_classes.dart';
 import '../../services/webservices/quack/services/quack_service.dart';
 import '../../services/webservices/spotify/services/spotify_service.dart';
 import '../../utilities/general_util.dart';
+import '../settings/settings_page_ui.dart';
 
 class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
   ///
@@ -69,7 +69,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
           // TODO: Handle this case.
           break;
         case MainButtonEvent.goToSettings:
-          // TODO: Handle this case.
+          GeneralUtil.showPageAsDialog(context, SettingsPage());
           break;
         case MainButtonEvent.logOff:
           AppValuesHelper.getInstance()
@@ -77,7 +77,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
           GeneralUtil.goToPage(context, const LoginPage());
           break;
-        case MainButtonEvent.resizePlaylist:
+        case MainButtonEvent.viewPlaylist:
           emit(state.copyWith(isPlaylistShown: !state.isPlaylistShown!));
           break;
         case MainButtonEvent.resumePausePlayer:
@@ -109,6 +109,22 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
           if (kDebugMode) {
             print("Test");
           }
+          break;
+        case MainButtonEvent.refreshPlaylist:
+          var reply = await QuestionDialog.getInstance().show(
+              context: context,
+              question: AppLocalizations.of(context)!
+                  .are_you_sure_you_want_to_refresh_the_playlist);
+          if (reply != DialogQuestionResponse.yes) {
+            return;
+          }
+          if (state.playerState != null && state.playerState!.isPaused) {
+            await _resumePausePlayer();
+          }
+          await _startRecommendation();
+          break;
+        case MainButtonEvent.appendToPlaylist:
+          await _appendToExistingPlaylist();
           break;
       }
     });
@@ -240,7 +256,9 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
     /// PlaylistReceived
     on<PlaylistReceived>((event, emit) {
-      emit(state.copyWith(playlist: event.playList));
+      emit(state.copyWith(
+          playlist: event.playList,
+          updatedItemHashCode: event.playList.hashCode));
     });
 
     /// TrackSelected
@@ -479,7 +497,16 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
   /// Get playlist from Quack API
   ///
   /// Returns: The response from the Quack API
-  Future<QuackServiceResponse<GetPlaylistResponse>> _getPlaylist() async {
+  Future<QuackServiceResponse<GetPlaylistResponse>> _getPlaylist(
+      {bool showLoadingBefore = false, bool removeLoadingAfter = false}) async {
+    if (showLoadingBefore) {
+      // Show loading animation
+      add(const MainPageValueChanged(isLoading: true));
+    }
+
+    // Test delay when using mock service
+    //await Future.delayed(const Duration(seconds: 2));
+
     // Get playlist from Quack API
     QuackServiceResponse<GetPlaylistResponse> getPlaylistResponse =
         await QuackService.getInstance().getPlaylist(
@@ -493,7 +520,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       }
 
       for (var track in getPlaylistResponse.quackResponse!.result!.tracks!) {
-        track.key = UniqueKey();
+        track.key = KeyHelper.uniqueKey;
       }
     } else {
       if (kDebugMode) {
@@ -501,26 +528,50 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       }
     }
 
+    if (removeLoadingAfter) {
+      // Remove loading animation
+      add(const MainPageValueChanged(isLoading: false));
+    }
+
     // Return response
     return getPlaylistResponse;
   }
 
-  /// Start recommendation
-  Future<void> _startRecommendation() async {
-    // Show loading animation
-    add(MainPageValueChanged(isLoading: true));
-
-    // Test delay when using mock service
-    //await Future.delayed(const Duration(seconds: 2));
-
+  /// Append to existing playlist
+  Future<void> _appendToExistingPlaylist() async {
     // Get playlist from Quack API
     QuackServiceResponse<GetPlaylistResponse> getPlaylistResponse =
-        await _getPlaylist();
+        await _getPlaylist(showLoadingBefore: true);
     // If not success
     if (!getPlaylistResponse.isSuccess) {
       GeneralUtil.showSnackBar(
           context: context, message: "Could not get a playlist");
-      add(MainPageValueChanged(isLoading: false));
+      add(const MainPageValueChanged(isLoading: false));
+      return;
+    }
+
+    // Add to existing playlist
+    var newPlaylist = state.playlist!;
+    newPlaylist.tracks!
+        .addAll(getPlaylistResponse.quackResponse!.result!.tracks!);
+
+    // Show new playlist
+    add(PlaylistReceived(playList: newPlaylist));
+    // Remove loading animation and start recommendation animation
+    add(const MainPageValueChanged(
+        isLoading: false, isRecommendationStarted: true));
+  }
+
+  /// Start recommendation
+  Future<void> _startRecommendation() async {
+    // Get playlist from Quack API
+    QuackServiceResponse<GetPlaylistResponse> getPlaylistResponse =
+        await _getPlaylist(showLoadingBefore: true);
+    // If not success
+    if (!getPlaylistResponse.isSuccess) {
+      GeneralUtil.showSnackBar(
+          context: context, message: "Could not get a playlist");
+      add(const MainPageValueChanged(isLoading: false));
       return;
     }
 
@@ -529,7 +580,8 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     // Show playlist
     add(PlaylistReceived(playList: getPlaylistResponse.quackResponse!.result!));
     // Remove loading animation and start recommendation animation
-    add(MainPageValueChanged(isLoading: false, isRecommendationStarted: true));
+    add(const MainPageValueChanged(
+        isLoading: false, isRecommendationStarted: true));
   }
 
   //endregion
@@ -541,8 +593,6 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     if (!(await _connectToSpotifyRemote())) {
       return false;
     }
-
-    //await _getPlaylist();
 
     return true;
   }

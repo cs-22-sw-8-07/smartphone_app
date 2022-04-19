@@ -19,9 +19,9 @@ class MockSpotifyService implements ISpotifyFunctions {
   //region Variables
 
   StreamController<ConnectionStatus> connectionStatusStreamController =
-  StreamController.broadcast();
+      StreamController.broadcast();
   StreamController<PlayerState> playerStateStreamController =
-  StreamController.broadcast();
+      StreamController.broadcast();
 
   //endregion
 
@@ -37,7 +37,7 @@ class MockSpotifyService implements ISpotifyFunctions {
     } on Exception {}
   }
 
-  static PlayerState getMockPlayerState() {
+  static PlayerState getMockPlayerState({bool isPaused = false}) {
     var album = Album("test", "http://test");
     var artist = Artist("test", "http://test");
     var track = Track(
@@ -45,20 +45,26 @@ class MockSpotifyService implements ISpotifyFunctions {
         artist,
         [],
         100,
-        ImageUri("test"),
+        ImageUri(
+            "spotify:image:ab67616d00001e02dbc48db84d5cde3ba6b13c07"),
         "the test track",
-        "http://test",
+        "spotify:track:1K0LoLME6kJXWbOL2E5llC",
         null,
         isEpisode: false,
         isPodcast: false);
     var playerState = PlayerState(
-        track, 0, 0, PlayerOptions(RepeatMode.off, isShuffling: false),
-        PlayerRestrictions(canSkipNext: true,
+        track,
+        0,
+        0,
+        PlayerOptions(RepeatMode.off, isShuffling: false),
+        PlayerRestrictions(
+            canSkipNext: true,
             canRepeatContext: true,
             canRepeatTrack: true,
             canSeek: true,
             canSkipPrevious: true,
-            canToggleShuffle: true), isPaused: false);
+            canToggleShuffle: true),
+        isPaused: isPaused);
     return playerState;
   }
 
@@ -86,8 +92,9 @@ class MockSpotifyService implements ISpotifyFunctions {
 
   @override
   Future<SpotifyServiceResponse<GetCurrentUsersProfileResponse>>
-  getCurrentUsersProfile({required String token}) async {
-    var response = GetCurrentUsersProfileResponse(id: "test",
+      getCurrentUsersProfile({required String token}) async {
+    var response = GetCurrentUsersProfileResponse(
+        id: "test",
         email: "test@test.com",
         displayName: "John Doe",
         images: [SpotifyImage(url: "https://test.com")]);
@@ -146,7 +153,7 @@ class MockSpotifyService implements ISpotifyFunctions {
 
   @override
   SpotifySdkResponseWithResult<Stream<ConnectionStatus>>
-  subscribeConnectionStatus() {
+      subscribeConnectionStatus() {
     return SpotifySdkResponseWithResult.success(
         connectionStatusStreamController.stream);
   }

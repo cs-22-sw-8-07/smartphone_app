@@ -62,7 +62,7 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
           AppValuesHelper.getInstance().saveString(AppValuesKey.userImageUrl,
               getCurrentUsersProfileResponse.spotifyResponse!.images!.isEmpty ? "" :
               getCurrentUsersProfileResponse.spotifyResponse!.images![0].url);
-          GeneralUtil.goToPage(context, const MainPage());
+          GeneralUtil.goToPage(context, MainPage());
           break;
         case LoginButtonEvent.goToSettings:
           await permissionHelper.openAppSettings();
