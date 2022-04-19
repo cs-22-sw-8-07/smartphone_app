@@ -154,13 +154,13 @@ class QuackLocationService implements IQuackLocationFunctions {
       if (kDebugMode) {
         print("Number of places retrieved: " + places.length.toString());
       }
-      double? highestDistancePerimeterRadius;
+      double? furthestDistancePerimeterRadius;
 
       if (places.isNotEmpty) {
         // Get distance to furthest place
-        highestDistancePerimeterRadius = places.last.distance!.toDouble();
+        furthestDistancePerimeterRadius = places.last.distance!.toDouble();
         if (kDebugMode) {
-          print("HP radius: " + highestDistancePerimeterRadius.toString());
+          print("FP radius: " + furthestDistancePerimeterRadius.toString());
         }
         // Add to all places list
         for (var place in places) {
@@ -171,9 +171,9 @@ class QuackLocationService implements IQuackLocationFunctions {
       }
 
       if (places.isEmpty ||
-          highestDistancePerimeterRadius! <
+          furthestDistancePerimeterRadius! <
               _locationTypeUpdatePerimeterRadius.toDouble()) {
-        highestDistancePerimeterRadius =
+        furthestDistancePerimeterRadius =
             _locationTypeUpdatePerimeterRadius.toDouble() * 2;
       }
 
@@ -182,7 +182,7 @@ class QuackLocationService implements IQuackLocationFunctions {
       _highestDistancePerimeters.insert(
           0,
           HighestDistancePerimeter(
-              center: position, radius: highestDistancePerimeterRadius));
+              center: position, radius: furthestDistancePerimeterRadius));
       // Go through all places to get a QuackLocationType
       return getQuackLocationTypeFromAllPlaces(position);
     } else if (_locationTypeUpdatePerimeterCenterPosition != null) {
