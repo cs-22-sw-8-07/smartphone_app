@@ -153,7 +153,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
           emit(state.copyWith(playerState: event.playerState));
           return;
         }
-        
+
         if (state.currentTrack != null) {
           if (state.playlist!.tracks!.contains(state.currentTrack)) {
             if (kDebugMode) {
