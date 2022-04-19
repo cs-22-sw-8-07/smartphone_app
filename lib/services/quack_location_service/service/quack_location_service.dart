@@ -174,7 +174,7 @@ class QuackLocationService implements IQuackLocationFunctions {
           highestDistancePerimeterRadius! <
               _locationTypeUpdatePerimeterRadius.toDouble()) {
         highestDistancePerimeterRadius =
-            _locationTypeUpdatePerimeterRadius.toDouble();
+            _locationTypeUpdatePerimeterRadius.toDouble() * 2;
       }
 
       // Add highest distance perimeter first in the list. This is done because the
