@@ -2,16 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
 import 'package:smartphone_app/pages/history/history_page_events_states.dart';
-
+import 'package:smartphone_app/pages/history/history_playlist/history_playlist_page_ui.dart';
+import 'package:smartphone_app/values/colors.dart' as custom_colors;
 import '../../helpers/permission_helper.dart';
-import '../../services/webservices/spotify/models/spotify_classes.dart';
-import '../../services/webservices/spotify/services/spotify_service.dart';
 import '../../utilities/general_util.dart';
-import '../main/main_page_ui.dart';
 
 class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
   ///
@@ -31,8 +28,8 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
   //region Constructor
 
   HistoryBloc({required this.context})
-      : super(const HistoryState()) {
-    
+      : super(HistoryState(
+            playlists: AppValuesHelper.getInstance().getPlaylists())) {
     // ButtonPressed
     on<ButtonPressed>((event, emit) async {
       switch (event.buttonEvent) {
@@ -40,7 +37,6 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
           Navigator.of(context).pop(null);
           break;
         case HistoryButtonEvent.openPlaylist:
-          // TODO: Handle this case.
           break;
         case HistoryButtonEvent.openWithSpotify:
           // TODO: Handle this case.
@@ -48,17 +44,24 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
       }
     });
 
+    on<PlaylistSelected>((event, emit) async {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return HistoryPlaylistPage(playlist: event.selectedPlaylist);
+          });
+    });
+  }
 //endregion
 
-    ///
-    /// METHODS
-    ///
+  ///
+  /// METHODS
+  ///
 //region Methods
 
-    void acquireHistory() {
-      //TODO: Get the list of previously recommended playlists
-    }
+  void acquireHistory() {
+    //TODO: Get the list of previously recommended playlists
+  }
 
 //endregion
-  }
 }

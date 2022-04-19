@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../../services/webservices/quack/models/quack_classes.dart';
+
 ///
 /// ENUMS
 ///
@@ -30,6 +32,15 @@ class ButtonPressed extends HistoryEvent {
   List<Object?> get props => [buttonEvent];
 }
 
+class PlaylistSelected extends HistoryEvent {
+  final QuackPlaylist selectedPlaylist;
+
+  const PlaylistSelected({required this.selectedPlaylist});
+
+  @override
+  List<Object?> get props => [selectedPlaylist];
+}
+
 //endregion
 
 ///
@@ -39,14 +50,16 @@ class ButtonPressed extends HistoryEvent {
 
 // ignore: must_be_immutable
 class HistoryState extends Equatable {
-  const HistoryState();
+  List<QuackPlaylist>? playlists;
 
-  HistoryState copyWith() {
-    return const HistoryState();
+  HistoryState({this.playlists});
+
+  HistoryState copyWith({List<QuackPlaylist>? playlists}) {
+    return HistoryState(playlists: playlists ?? this.playlists);
   }
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [playlists];
 }
 
 //endregion
