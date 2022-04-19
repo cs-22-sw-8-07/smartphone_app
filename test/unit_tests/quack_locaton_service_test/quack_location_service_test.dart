@@ -33,37 +33,20 @@ void main() async {
         isMocked: true));
   }
 
-// arrange
   setUp(() async {
-    QuackService.init(MockQuackService());
     QuackLocationService.init(QuackLocationService());
     FoursquareService.init(MockFoursquareService());
   });
 
-  group("getPlaylist", () {
-    //tester på om beach får den rigtige playliste
-    test("getPlaylist beach test", () async {
-      QuackServiceResponse<GetPlaylistResponse> response =
-          await QuackService.getInstance().getPlaylist(QuackLocationType.beach);
-      expect(response.quackResponse!.result!.id!, "1");
-    });
-    //tester om alle andre locationer får den anden playliste. I dette tilfælde er det forest
-    test("getPlaylist other test", () async {
-      QuackServiceResponse<GetPlaylistResponse> response =
-          await QuackService.getInstance()
-              .getPlaylist(QuackLocationType.forest);
-      expect(response.quackResponse!.result!.id!, "2");
-    });
-  });
-  group("GetLocationType", () {
-    test("Get location after acquiring Places", () async {
+  group("GetQuackLocationType", () {
+    test("Get initial ", () async {
       QuackLocationType? loc = await mockLocation(57.73, 10.59);
-      expect(loc, QuackLocationType.beach);
+      expect(loc, QuackLocationType.urban);
     });
 
     test("Check location without moving", () async {
       QuackLocationType? loc = await mockLocation(57.73, 10.59);
-      expect(loc, QuackLocationType.beach);
+      expect(loc, QuackLocationType.urban);
       QuackLocationType? newLoc = await mockLocation(57.73, 10.59);
       expect(newLoc, null);
     });
@@ -74,12 +57,12 @@ void main() async {
       expect(newLoc, null);
     });
     test("Check location after moving near Place with 'Rail Station' category",
-        () async {
-      QuackLocationType? loc = await mockLocation(57.73, 10.59);
-      expect(loc, QuackLocationType.beach);
-      QuackLocationType? newLoc = await mockLocation(57.72405, 10.590755);
-      expect(newLoc, QuackLocationType.urban);
-    });
+            () async {
+          QuackLocationType? loc = await mockLocation(57.73, 10.59);
+          expect(loc, QuackLocationType.beach);
+          QuackLocationType? newLoc = await mockLocation(57.72405, 10.590755);
+          expect(newLoc, QuackLocationType.urban);
+        });
     test("Check location after moving to edge of update radius", () async {
       QuackLocationType? loc = await mockLocation(57.73, 10.59);
       expect(loc, QuackLocationType.beach);
