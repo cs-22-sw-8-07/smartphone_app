@@ -1,13 +1,13 @@
-const double padding = 8;
-const double buttonPadding = 15;
-const double smallPadding = 5;
-const double borderRadius = 20;
-
 ///
 /// GENERAL
 ///
 //region General
 
+const double buttonHeight = 55;
+const double padding = 10;
+const double buttonPadding = 15;
+const double smallPadding = 5;
+const double borderRadius = 20;
 const int pageTransitionTime = 300;
 const double actionBarHeight = 56;
 

@@ -584,7 +584,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 border: Border.all(width: 0, color: backgroundColor)),
             margin: const EdgeInsets.all(0),
             width: values.mainPageOverlayHeight,
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(values.padding),
             child: ClipRRect(
                 borderRadius: const BorderRadius.all(Radius.circular(5)),
                 child: Image.network(quackTrack.imageUrl!)), //
@@ -637,7 +637,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                             useOverflowReplacement: true,
                             alignmentGeometry: Alignment.bottomLeft,
                             padding: const EdgeInsets.only(
-                                left: 0, top: 10, bottom: 5, right: 10),
+                                left: 0,
+                                top: values.padding,
+                                bottom: values.padding / 2,
+                                right: values.padding),
                             margin: const EdgeInsets.all(0),
                           ),
                           CustomLabel(
@@ -649,7 +652,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                             useOverflowReplacement: true,
                             margin: const EdgeInsets.all(0),
                             padding: const EdgeInsets.only(
-                                left: 0, top: 5, bottom: 10, right: 10),
+                                left: 0,
+                                top: values.padding / 2,
+                                bottom: values.padding,
+                                right: values.padding),
                             title: quackTrack.artist,
                             textColor: custom_colors.darkGrey,
                           )
@@ -661,7 +667,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   color: Colors.transparent,
                   border: Border.all(width: 0, color: backgroundColor)),
               width: values.mainPageOverlayHeight,
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(values.padding),
               child: Center(
                   child: CustomButton(
                       fontWeight: FontWeight.bold,
@@ -705,7 +711,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         Border.all(width: 0, color: custom_colors.darkBlue)),
                 margin: const EdgeInsets.all(0),
                 width: values.mainPageOverlayHeight,
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(values.padding),
                 child: ClipRRect(
                     borderRadius: const BorderRadius.all(Radius.circular(5)),
                     child: Image.network(quackTrack!.imageUrl!)), //
@@ -730,9 +736,11 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     alignmentGeometry: Alignment.centerLeft,
                     padding: EdgeInsets.only(
                         left: 0,
-                        top: 10,
+                        top: values.padding,
                         bottom: 5,
-                        right: state.currentTrack == quackTrack ? 0 : 10),
+                        right: state.currentTrack == quackTrack
+                            ? 0
+                            : values.padding),
                     margin: const EdgeInsets.all(0),
                   ),
                   CustomLabel(
@@ -746,8 +754,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     padding: EdgeInsets.only(
                         left: 0,
                         top: 5,
-                        bottom: 10,
-                        right: state.currentTrack == quackTrack ? 0 : 10),
+                        bottom: values.padding,
+                        right: state.currentTrack == quackTrack
+                            ? 0
+                            : values.padding),
                     title: quackTrack.artist,
                     textColor: custom_colors.darkGrey,
                   )
@@ -783,7 +793,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             const ButtonPressed(buttonEvent: MainButtonEvent.appendToPlaylist)),
         text: AppLocalizations.of(context)!.retrieve,
         fontWeight: FontWeight.bold,
-        borderRadius: const BorderRadius.all(Radius.circular(27.5)),
+        borderRadius:
+            const BorderRadius.all(Radius.circular(values.buttonHeight / 2)),
         fontSize: 20,
         textColor: Colors.black,
         defaultBackground: custom_colors.whiteGradient,
