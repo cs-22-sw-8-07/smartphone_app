@@ -272,7 +272,10 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
     /// LocationSelected
     on<LocationSelected>((event, emit) async {
-      print("Change to " + event.location);
+      emit(state.copyWith(
+        isLocationListShown: false,
+        lockedQuackLocationType: event.quackLocation,
+      ));
     });
 
     /// MainPageValueChanged

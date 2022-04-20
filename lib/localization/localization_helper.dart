@@ -76,6 +76,58 @@ class LocalizationHelper {
     return localizedQlt;
   }
 
+  String? fromQuackLocationToLocation(QuackLocationType quackLocation){
+    switch(quackLocation)
+    {
+      case QuackLocationType.unknown:
+        return "Unknown";
+      case QuackLocationType.forest:
+        return "Forest";
+      case QuackLocationType.beach:
+        return "Beach";
+      case QuackLocationType.nightLife:
+        return "Night Life";
+      case QuackLocationType.urban:
+        return "Urban";
+      case QuackLocationType.cemetery:
+        return "Cemetery";
+      case QuackLocationType.education:
+        return "Education";
+      case QuackLocationType.church:
+        return "Church";
+    }
+  }
+
+  String getQuackLocationTypeSmallImagePath(QuackLocationType qlt) {
+    switch (qlt) {
+      case QuackLocationType.unknown:
+        return values.qltUnknownSmall;
+        break;
+      case QuackLocationType.forest:
+        return values.qltForestSmall;
+        break;
+      case QuackLocationType.beach:
+        return values.qltBeachSmall;
+        break;
+      case QuackLocationType.nightLife:
+        return values.qltNightLifeSmall;
+        break;
+      case QuackLocationType.urban:
+        return values.qltUrbanSmall;
+        break;
+      case QuackLocationType.cemetery:
+        return values.qltCemeterySmall;
+        break;
+      case QuackLocationType.education:
+        return values.qltEducationSmall;
+        break;
+      case QuackLocationType.church:
+        return values.qltChurchSmall;
+        break;
+    }
+    return qltBeach;
+  }
+
   String getQuackLocationTypeImagePath(QuackLocationType qlt) {
     switch (qlt) {
       case QuackLocationType.unknown:

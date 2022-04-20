@@ -17,6 +17,7 @@ void main() {
               lockedQuackLocationType: QuackLocationType.beach,
               hasJustPerformedAction: true,
               isPlaylistShown: true,
+              isLocationListShown: true,
               playerState: null,
               playlist:
                   QuackPlaylist(id: "1234", locationType: 1, tracks: const [])),
@@ -28,6 +29,7 @@ void main() {
               lockedQuackLocationType: QuackLocationType.beach,
               hasJustPerformedAction: true,
               isPlaylistShown: true,
+              isLocationListShown: true,
               playerState: null,
               playlist: QuackPlaylist(
                   id: "1234", locationType: 1, tracks: const [])));
@@ -66,6 +68,10 @@ void main() {
     test("States are not equal -> isPlaylistShown", () {
       expect(MainPageState().copyWith(isPlaylistShown: true),
           isNot(MainPageState(isPlaylistShown: false)));
+    });
+    test("States are not equal -> isLocationListShown", () {
+      expect(MainPageState().copyWith(isLocationListShown: true),
+          isNot(MainPageState(isLocationListShown: false)));
     });
     test("States are not equal -> playerState", () {
       expect(

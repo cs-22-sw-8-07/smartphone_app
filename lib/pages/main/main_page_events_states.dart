@@ -103,12 +103,12 @@ class TrackSelected extends MainPageEvent {
 ///
 /// The [location] is the location that the user selected
 class LocationSelected extends MainPageEvent {
-  final String location;
+  final QuackLocationType quackLocation;
 
-  const LocationSelected({required this.location});
+  const LocationSelected({required this.quackLocation});
 
   @override
-  List<Object?> get props => [location];
+  List<Object?> get props => [quackLocation];
 }
 
 // ignore: must_be_immutable

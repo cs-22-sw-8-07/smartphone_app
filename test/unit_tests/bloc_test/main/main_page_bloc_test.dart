@@ -46,6 +46,7 @@ Future<void> main() async {
           MainPageState(
               hasJustPerformedAction: false,
               isPlaylistShown: false,
+              isLocationListShown: false,
               isLoading: false,
               quackLocationType: QuackLocationType.unknown,
               isRecommendationStarted: false));
@@ -56,6 +57,12 @@ Future<void> main() async {
         act: (bloc) => bloc.add(
             const ButtonPressed(buttonEvent: MainButtonEvent.viewPlaylist)),
         expect: () => [bloc.state.copyWith(isPlaylistShown: true)]);
+
+    blocTest<MainPageBloc, MainPageState>("ButtonPressed -> Expand location selector",
+        build: () => bloc,
+        act: (bloc) => bloc.add(
+            const ButtonPressed(buttonEvent: MainButtonEvent.selectManualLocation)),
+        expect: () => [bloc.state.copyWith(isLocationListShown: true)]);
 
     blocTest<MainPageBloc, MainPageState>("TouchEvent -> Go to next track",
         build: () => bloc,

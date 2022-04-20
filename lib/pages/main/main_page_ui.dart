@@ -887,7 +887,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   }
 
   Widget _getLocationListTile(
-      MainPageState state, String location, String imageUrl) {
+      MainPageState state, QuackLocationType quackLocation) {
     return CustomListTile(
         pressedBackground: custom_colors.transparentGradient,
         defaultBackground: custom_colors.transparentGradient,
@@ -907,8 +907,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 padding: const EdgeInsets.all(values.padding),
                 child: ClipRRect(
                     borderRadius: const BorderRadius.all(Radius.circular(5)),
-                    child: Image.network(
-                        "https://i.scdn.co/image/ab67616d000048512c5b24ecfa39523a75c993c4")), //
+                    child: Image.asset(LocalizationHelper.getInstance()
+                        .getQuackLocationTypeSmallImagePath(quackLocation))), //
               ),
               CustomLabel(
                   height: values.mainPageOverlayHeight / 2,
@@ -917,7 +917,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   softWrap: false,
                   useOverflowReplacement: true,
                   fontWeight: FontWeight.w900,
-                  title: location,
+                  title: LocalizationHelper.getInstance()
+                      .fromQuackLocationToLocation(quackLocation)!,
                   textColor: Colors.white,
                   alignmentGeometry: Alignment.centerLeft,
                   padding: const EdgeInsets.only(
@@ -927,23 +928,22 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       right: values.padding),
                   margin: const EdgeInsets.all(0))
             ])),
-        onPressed: () => bloc.add(LocationSelected(location: _fromLocationToQuackLocation(location)!)));
-  }
-
-  String? _fromLocationToQuackLocation(String location){
-    switch(location)
-    {
-      case "Night Life":
-        return "night_life";
-    }
-    return location.toLowerCase();
+        onPressed: () => {
+              bloc.add(LocationSelected(quackLocation: quackLocation)),
+              bloc.state.isLocationListShown!
+                  ? locationListAnimationController.reverse()
+                  : locationListAnimationController.forward()
+            });
   }
 
   Widget _getLocationList(MainPageState state) {
     List<Widget> children = [];
 
-    for (var location in ["Beach", "Forest", "Urban", "Night Life"]) {
-      children.add(_getLocationListTile(state, location, "test"));
+    for (var quackLocation in QuackLocationType.values) {
+      if (quackLocation == QuackLocationType.unknown) {
+        continue;
+      }
+      children.add(_getLocationListTile(state, quackLocation));
     }
 
     return Expanded(
