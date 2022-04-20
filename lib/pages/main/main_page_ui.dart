@@ -372,48 +372,52 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   Widget _getLocationContent(MainPageBloc bloc) {
     return BlocBuilder<MainPageBloc, MainPageState>(builder: (context, state) {
-      if (!state.isLocationListShown! &&
-          locationListSizeAnimation!.value <= values.actionBarHeight) {
-        return Container();
-      }
-
-      var overlayContent = _getLocationList(state);
-
       return AnimatedBuilder(
-        animation: locationListAnimationController,
-        builder: (context, _) {
-          return Container(
-            decoration: BoxDecoration(
-              color: custom_colors.darkBlue,
-              border: Border.all(color: custom_colors.darkBlue, width: 0)),
-            height: locationListSizeAnimation!.value,
-            child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-              overlayContent,
-              CustomButton(
-                fontWeight: FontWeight.bold,
-                height: null,
-                icon: const Icon(
-                  Icons.expand_less,
-                  color: Colors.white,
-                  size: 30,
-                ),
-                onPressed: () => {
-                  bloc.add(const ButtonPressed(
-                    buttonEvent:
-                      MainButtonEvent.selectManualLocation)),
-                  bloc.state.isLocationListShown!
-                    ? locationListAnimationController.reverse()
-                    : locationListAnimationController.forward(),
-                },
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(0),
-                ),
-                margin: const EdgeInsets.all(0),
-                textColor: custom_colors.black,
-                pressedBackground: custom_colors.appButtonPressedGradient,
-                defaultBackground: custom_colors.appButtonGradient)
-            ]));
-        });
+          animation: locationListAnimationController,
+          builder: (context, _) {
+            Widget child;
+
+            if (!state.isLocationListShown! &&
+                !locationListSizeAnimation!.isCompleted) {
+              child = Container();
+            } else {
+              child =
+                  Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+                _getLocationList(state),
+                CustomButton(
+                    fontWeight: FontWeight.bold,
+                    height: values.actionBarHeight,
+                    icon: const Icon(
+                      Icons.expand_less,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                    onPressed: () => {
+                          bloc.add(const ButtonPressed(
+                              buttonEvent:
+                                  MainButtonEvent.selectManualLocation)),
+                          bloc.state.isLocationListShown!
+                              ? locationListAnimationController.reverse()
+                              : locationListAnimationController.forward(),
+                        },
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(0),
+                    ),
+                    margin: const EdgeInsets.all(0),
+                    textColor: custom_colors.black,
+                    pressedBackground: custom_colors.appButtonPressedGradient,
+                    defaultBackground: custom_colors.appButtonGradient)
+              ]);
+            }
+
+            return Container(
+                decoration: BoxDecoration(
+                    color: custom_colors.darkBlue,
+                    border:
+                        Border.all(color: custom_colors.darkBlue, width: 0)),
+                height: locationListSizeAnimation!.value,
+                child: child);
+          });
     });
   }
 
@@ -655,9 +659,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               child: ClipRect(
                   child: Dismissible(
                       dismissThresholds: const {
-                        DismissDirection.startToEnd: 0.2,
-                        DismissDirection.endToStart: 0.2,
-                      },
+                DismissDirection.startToEnd: 0.2,
+                DismissDirection.endToStart: 0.2,
+              },
                       background: const Icon(
                         Icons.skip_previous,
                         color: Colors.white,
