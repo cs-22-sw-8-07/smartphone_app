@@ -301,6 +301,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       textColor: custom_colors.black,
                       pressedBackground: custom_colors.appButtonPressedGradient,
                       defaultBackground: custom_colors.appButtonGradient),
+                  // Only show the refresh button when the playlist is shown
+                  // and there is no loading of playlists
                   if (state.isPlaylistShown! && !state.isLoading!)
                     Align(
                       alignment: Alignment.centerRight,
@@ -331,6 +333,17 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                             defaultBackground:
                                 custom_colors.transparentGradient),
                       ),
+                    ),
+                  if (state.isPlaylistShown! && !state.isLoading!)
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                          padding: const EdgeInsets.only(
+                              left: (values.actionBarHeight - 30) / 2),
+                          child: const Image(
+                              height: 30,
+                              width: 30,
+                              image: AssetImage(values.spotifyWhiteIcon))),
                     )
                 ],
               )),
@@ -680,7 +693,17 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       pressedBackground:
                           custom_colors.backButtonGradientPressedDefault,
                       defaultBackground: custom_colors.transparentGradient)),
-            )
+            ),
+          if (!state.isPlaylistShown!)
+            const SizedBox(
+                width: 60,
+                height: 60,
+                child: Align(
+                    alignment: Alignment.center,
+                    child: Image(
+                        height: 30,
+                        width: 30,
+                        image: AssetImage(values.spotifyWhiteIcon))))
         ],
       ),
     );
