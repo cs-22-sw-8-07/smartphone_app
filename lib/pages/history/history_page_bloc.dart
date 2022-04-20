@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,8 +34,6 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
       switch (event.buttonEvent) {
         case HistoryButtonEvent.back:
           Navigator.of(context).pop(null);
-          break;
-        case HistoryButtonEvent.openPlaylist:
           break;
         case HistoryButtonEvent.openWithSpotify:
           // TODO: Handle this case.

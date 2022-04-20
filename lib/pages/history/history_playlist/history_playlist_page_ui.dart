@@ -3,15 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:smartphone_app/pages/history/history_page_events_states.dart';
 import 'package:smartphone_app/services/webservices/quack/models/quack_classes.dart';
-import 'package:smartphone_app/utilities/general_util.dart';
 
 import 'package:smartphone_app/values/colors.dart' as custom_colors;
 import 'package:smartphone_app/values/values.dart' as values;
-import 'package:smartphone_app/widgets/custom_app_bar.dart';
 import 'package:smartphone_app/widgets/custom_button.dart';
-import 'package:smartphone_app/helpers/app_values_helper.dart';
 
 import '../../../localization/localization_helper.dart';
 import 'history_playlist_page_events_states.dart';
@@ -41,13 +37,14 @@ class HistoryPlaylistPage extends StatelessWidget {
                 color: custom_colors.transparent,
                 child: SafeArea(
                     child: ClipRRect(
-                        borderRadius: BorderRadius.circular(45),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(20)),
                         child: BlocBuilder<HistoryPlaylistBloc,
                             HistoryPlaylistState>(
                           builder: (context, state) {
                             return Scaffold(
                               backgroundColor: custom_colors.darkBlue,
-                              body: _getContent(context, bloc, state),
+                              body: _getContent(context, bloc, state, playlist),
                             );
                           },
                         ))))));
@@ -55,26 +52,78 @@ class HistoryPlaylistPage extends StatelessWidget {
 }
 
 Widget _getContent(BuildContext context, HistoryPlaylistBloc bloc,
-    HistoryPlaylistState state) {
-  return ClipRect(
+    HistoryPlaylistState state, QuackPlaylist playlist) {
+  return Container(
+      constraints: const BoxConstraints.expand(),
       child: Container(
-          constraints: const BoxConstraints.expand(),
-          child: Container(
-              color: Colors.transparent, child: _createPlaylistContent())));
+        width: 2,
+        padding: const EdgeInsets.only(top: 10),
+        child: _createPlaylistContent(playlist, context, bloc),
+      ));
 }
 
-Widget _createPlaylistContent(PlaylistSelected playlist) {
-  if (playlist.selectedPlaylist.tracks == null) {
+Widget _addTrack(QuackTrack? quackTrack) {
+  return ListTile(
+      dense: true,
+      isThreeLine: false,
+      textColor: Colors.white,
+      leading: ClipRRect(
+        child: Image.network(
+          quackTrack!.imageUrl!,
+        ),
+        borderRadius: const BorderRadius.all(Radius.circular(5)),
+      ),
+      title: Text(
+        quackTrack.name!,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+      subtitle: Text(quackTrack.artist!));
+}
+
+Widget _createPlaylistContent(
+    QuackPlaylist playlist, BuildContext context, HistoryPlaylistBloc bloc) {
+  if (playlist.tracks == null) {
     return Container();
   } else {
-    List<QuackTrack> tracks = playlist.selectedPlaylist.tracks!;
+    List<QuackTrack> tracks = playlist.tracks!;
     List<Widget> trackElements = [];
 
     for (QuackTrack track in tracks) {
-      trackElements.add();
+      trackElements.add(_addTrack(track));
     }
-  }
-  Widget _addTrack(QuackTrack? quackTrack) {
-    return ListTile(autofocus: false, leading: Text("x"), trailing: Text("x"));
+    return Stack(children: [
+      SizedBox(
+          height: MediaQuery.of(context).size.height - 190,
+          width: double.infinity,
+          child: RawScrollbar(
+              isAlwaysShown: true,
+              thickness: 4,
+              thumbColor: Colors.white,
+              child: ListView.builder(
+                  itemCount: trackElements.length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                        margin: const EdgeInsets.all(0),
+                        child: trackElements[index]);
+                  }))),
+      Align(
+          alignment: AlignmentDirectional.bottomCenter,
+          child: CustomButton(
+            onPressed: () => bloc.add(const ButtonPressed(
+                buttonEvent: HistoryPlaylistButtonEvent.back)),
+            text: AppLocalizations.of(context)!.close,
+            fontWeight: FontWeight.bold,
+            borderRadius: const BorderRadius.all(
+                Radius.circular(values.buttonHeight / 2)),
+            fontSize: 20,
+            textColor: Colors.black,
+            defaultBackground: custom_colors.whiteGradient,
+            pressedBackground: custom_colors.greyGradient,
+            margin: const EdgeInsets.only(
+                left: values.padding,
+                right: values.padding,
+                bottom: values.padding),
+          ))
+    ]);
   }
 }

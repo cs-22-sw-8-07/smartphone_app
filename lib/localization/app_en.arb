@@ -15,6 +15,10 @@
   "@cancel": {
     "description": "Button text"
   },
+  "close": "Close",
+  "@close": {
+    "description": "Button text"
+  },
   "please_go_to_settings_and_give_the_app_all_the_necessary_permissions": "Please go to settings and give Quack all the necessary permissions",
   "@please_go_to_settings_and_give_the_app_all_the_necessary_permissions": {
     "description": "Dialog text"
