@@ -45,6 +45,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       : super(MainPageState(
             hasJustPerformedAction: false,
             isPlaylistShown: false,
+            isLocationListShown: false,
             isLoading: false,
             quackLocationType: QuackLocationType.unknown,
             isRecommendationStarted: false)) {
@@ -106,9 +107,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
           GeneralUtil.showSnackBar(context: context, message: message);
           break;
         case MainButtonEvent.selectManualLocation:
-          if (kDebugMode) {
-            print("Test");
-          }
+          emit(state.copyWith(isLocationListShown: !state.isLocationListShown!));
           break;
         case MainButtonEvent.refreshPlaylist:
           var reply = await QuestionDialog.getInstance().show(

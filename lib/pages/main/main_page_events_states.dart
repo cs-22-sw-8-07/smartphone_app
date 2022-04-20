@@ -131,6 +131,7 @@ class HasPerformedSpotifyPlayerAction extends MainPageEvent {
 // ignore: must_be_immutable
 class MainPageState extends Equatable {
   bool? isPlaylistShown;
+  bool? isLocationListShown;
   bool? isRecommendationStarted;
   PlayerState? playerState;
   QuackPlaylist? playlist;
@@ -144,6 +145,7 @@ class MainPageState extends Equatable {
 
   MainPageState(
       {this.isPlaylistShown,
+      this.isLocationListShown,
       this.playlist,
       this.currentTrack,
       this.isLoading,
@@ -156,6 +158,7 @@ class MainPageState extends Equatable {
 
   MainPageState copyWith(
       {bool? isPlaylistShown,
+      bool? isLocationListShown,
       QuackPlaylist? playlist,
       QuackTrack? currentTrack,
       int? updatedItemHashCode,
@@ -176,6 +179,7 @@ class MainPageState extends Equatable {
         updatedItemHashCode: updatedItemHashCode ?? this.updatedItemHashCode,
         quackLocationType: quackLocationType ?? this.quackLocationType,
         isPlaylistShown: isPlaylistShown ?? this.isPlaylistShown,
+        isLocationListShown: isLocationListShown ?? this.isLocationListShown,
         playerState: playerState ?? this.playerState,
         isRecommendationStarted:
             isRecommendationStarted ?? this.isRecommendationStarted);
@@ -184,6 +188,7 @@ class MainPageState extends Equatable {
   @override
   List<Object?> get props => [
         isPlaylistShown,
+        isLocationListShown,
         currentTrack,
         isRecommendationStarted,
         lockedQuackLocationType,
