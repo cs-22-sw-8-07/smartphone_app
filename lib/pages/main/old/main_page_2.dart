@@ -229,7 +229,7 @@ class _MainPageState extends State<MainPage2> with TickerProviderStateMixin {
                   bloc.add(const ButtonPressed(
                       buttonEvent: MainButtonEvent.seeHistory));
                 },
-                text: AppLocalizations.of(context)!.recommendations,
+                text: AppLocalizations.of(context)!.history,
               ),
               CustomDrawerTile(
                 icon: const Icon(

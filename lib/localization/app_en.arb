@@ -39,8 +39,8 @@
   "@continue_with_spotify": {
     "description": "Button text"
   },
-  "recommendations": "Recommendations",
-  "@recommendations": {
+  "history": "History",
+  "@history": {
     "description": "Button text"
   },
   "settings": "Settings",
