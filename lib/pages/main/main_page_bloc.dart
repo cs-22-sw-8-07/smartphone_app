@@ -270,6 +270,11 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       emit(state.copyWith(hasJustPerformedAction: true));
     });
 
+    /// LocationSelected
+    on<LocationSelected>((event, emit) async {
+      print("Change to " + event.location);
+    });
+
     /// MainPageValueChanged
     on<MainPageValueChanged>((event, emit) {
       if (kDebugMode) {

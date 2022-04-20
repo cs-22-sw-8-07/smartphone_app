@@ -927,13 +927,22 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       right: values.padding),
                   margin: const EdgeInsets.all(0))
             ])),
-        onPressed: () => print("Test"));
+        onPressed: () => bloc.add(LocationSelected(location: _fromLocationToQuackLocation(location)!)));
+  }
+
+  String? _fromLocationToQuackLocation(String location){
+    switch(location)
+    {
+      case "Night Life":
+        return "night_life";
+    }
+    return location.toLowerCase();
   }
 
   Widget _getLocationList(MainPageState state) {
     List<Widget> children = [];
 
-    for (var location in ["Beach", "Forest", "Urban"]) {
+    for (var location in ["Beach", "Forest", "Urban", "Night Life"]) {
       children.add(_getLocationListTile(state, location, "test"));
     }
 
