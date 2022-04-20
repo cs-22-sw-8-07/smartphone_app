@@ -1,4 +1,5 @@
 // ignore: must_be_immutable
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -90,43 +91,49 @@ Widget _getHistory(HistoryState state, BuildContext context, HistoryBloc bloc) {
 Card _getPlaylist(
     QuackPlaylist playlist, BuildContext context, HistoryBloc bloc) {
   return Card(
-    shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(values.borderRadius)),
-    child: ListTile(
-      tileColor: custom_colors.darkBlue,
       shape: RoundedRectangleBorder(
-        side: const BorderSide(width: 0),
-        borderRadius: BorderRadius.circular(values.borderRadius),
-      ),
-      onTap: () {
-        bloc.add(PlaylistSelected(selectedPlaylist: playlist));
-      },
-      leading:
-          const Icon(Icons.broken_image, size: 50, color: custom_colors.white1),
-      title: Text(
-        DateTime.now().getDateOnlyAsString(),
-        style: const TextStyle(color: Colors.white),
-      ),
-      subtitle: Text(
-        LocalizationHelper.getInstance().getLocalizedQuackLocationType(
-                context, playlist.quackLocationType!) +
-            ", " +
-            playlist.tracks!.length.toString() +
-            " Songs",
-        style: const TextStyle(color: Colors.white),
-      ),
-      trailing: GestureDetector(
-        child: const Image(
-            width: 45,
-            height: 45,
-            color: Colors.white,
-            image: AssetImage(
-              "assets/spotify_icon.png",
-            )),
-        onTap: () {
-          GeneralUtil.showToast("🙄");
-        },
-      ),
-    ),
-  );
+          borderRadius: BorderRadius.circular(values.borderRadius)),
+      child: Theme(
+        data: ThemeData(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent),
+        child: ListTile(
+          tileColor: custom_colors.darkBlue,
+          shape: RoundedRectangleBorder(
+            side: const BorderSide(width: 0),
+            borderRadius: BorderRadius.circular(values.borderRadius),
+          ),
+          onTap: () {
+            bloc.add(PlaylistSelected(selectedPlaylist: playlist));
+          },
+          leading: const Icon(Icons.broken_image,
+              size: 50, color: custom_colors.white1),
+          title: Text(
+            DateTime.now().getDateOnlyAsString(),
+            style: const TextStyle(color: Colors.white),
+          ),
+          subtitle: Text(
+            LocalizationHelper.getInstance().getLocalizedQuackLocationType(
+                    context, playlist.quackLocationType!) +
+                ", " +
+                playlist.tracks!.length.toString() +
+                " Songs",
+            style: const TextStyle(color: Colors.white),
+          ),
+          trailing: GestureDetector(
+            child: const Image(
+                width: 45,
+                height: 45,
+                color: Colors.white,
+                image: AssetImage(
+                  "assets/spotify_icon.png",
+                )),
+            onTap: () {
+              if (kDebugMode) {
+                print("Not yet implemented");
+              }
+            },
+          ),
+        ),
+      ));
 }
