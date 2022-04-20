@@ -372,7 +372,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   Widget _getLocationContent(MainPageBloc bloc) {
     return BlocBuilder<MainPageBloc, MainPageState>(builder: (context, state) {
-      if (!state.isLocationListShown! && locationListSizeAnimation!.value <= 55) {
+      if (!state.isLocationListShown! &&
+          locationListSizeAnimation!.value <= values.actionBarHeight) {
         return Container();
       }
 
@@ -384,8 +385,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           return Container(
             decoration: BoxDecoration(
               color: custom_colors.darkBlue,
-              border:
-                Border.all(color: custom_colors.darkBlue, width: 0)),
+              border: Border.all(color: custom_colors.darkBlue, width: 0)),
             height: locationListSizeAnimation!.value,
             child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
               overlayContent,
@@ -404,7 +404,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   bloc.state.isLocationListShown!
                     ? locationListAnimationController.reverse()
                     : locationListAnimationController.forward(),
-                  },
+                },
                 borderRadius: const BorderRadius.all(
                   Radius.circular(0),
                 ),
@@ -655,9 +655,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               child: ClipRect(
                   child: Dismissible(
                       dismissThresholds: const {
-                DismissDirection.startToEnd: 0.2,
-                DismissDirection.endToStart: 0.2,
-              },
+                        DismissDirection.startToEnd: 0.2,
+                        DismissDirection.endToStart: 0.2,
+                      },
                       background: const Icon(
                         Icons.skip_previous,
                         color: Colors.white,
