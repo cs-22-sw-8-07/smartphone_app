@@ -6,4 +6,12 @@ class IFoursquareFunctions {
       {required double latitude, required double longitude}) {
     throw UnimplementedError();
   }
+
+  Future<FoursquareServiceResponse<GetPlacesResponse>> getPlaces(
+      {required double latitude,
+      required double longitude,
+      required int radiusInMeters,
+      required List<int> categories}) {
+    throw UnimplementedError();
+  }
 }

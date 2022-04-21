@@ -72,6 +72,24 @@ class FoursquareService implements IFoursquareFunctions {
   //endregion
 
   ///
+  /// METHODS
+  ///
+  //region Methods
+
+  String _getIntegerListAsCommaSeparatedString(List<int> list) {
+    if (list.isEmpty) {
+      return "";
+    }
+    String str = list.first.toString();
+    for (int i = 1; i < list.length; i++) {
+      str += "," + list[i].toString();
+    }
+    return str;
+  }
+
+  //endregion
+
+  ///
   /// OVERRIDE METHODS
   ///
 //region Override methods
@@ -97,6 +115,41 @@ class FoursquareService implements IFoursquareFunctions {
       // Decode json
       GetNearbyPlacesResponse response =
           GetNearbyPlacesResponse.fromJson(restResponse.jsonResponse);
+      // Return success response
+      return FoursquareServiceResponse.success(response);
+    } on Exception catch (e) {
+      return FoursquareServiceResponse.error(e.toString());
+    }
+  }
+
+  @override
+  Future<FoursquareServiceResponse<GetPlacesResponse>> getPlaces(
+      {required double latitude,
+      required double longitude,
+      required int radiusInMeters,
+      required List<int> categories}) async {
+    try {
+      // Send GET request
+      RestResponse restResponse =
+          await restHelper.sendGetRequest("/v3/places/search", parameters: {
+        "ll": latitude.toString().replaceAll(",", ".") +
+            "," +
+            longitude.toString().replaceAll(",", "."),
+        "limit": "50",
+        "radius": radiusInMeters.toString(),
+        "sort": "distance",
+        if (categories.isNotEmpty)
+          "categories": _getIntegerListAsCommaSeparatedString(categories)
+      }, headers: {
+        "Authorization": _apiKey!
+      });
+      // Check for errors
+      if (!restResponse.isSuccess) {
+        return FoursquareServiceResponse.error(restResponse.errorMessage);
+      }
+      // Decode json
+      GetPlacesResponse response =
+          GetPlacesResponse.fromJson(restResponse.jsonResponse);
       // Return success response
       return FoursquareServiceResponse.success(response);
     } on Exception catch (e) {

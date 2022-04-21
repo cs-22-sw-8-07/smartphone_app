@@ -15,6 +15,19 @@ class FoursquareResponse {
 }
 
 @JsonSerializable()
+class GetPlacesResponse extends FoursquareResponse {
+  List<FoursquarePlace>? results;
+
+  GetPlacesResponse({this.results});
+
+  factory GetPlacesResponse.fromJson(Map<String, dynamic> json) =>
+      _$GetPlacesResponseFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$GetPlacesResponseToJson(this);
+}
+
+@JsonSerializable()
 class GetNearbyPlacesResponse extends FoursquareResponse {
   List<FoursquarePlace>? results;
 

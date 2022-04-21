@@ -36,6 +36,7 @@ const String settingsBackground = "assets/quack_locationtypes/unknown.jpeg";
 const String locationShadowImage = "assets/locations_shadow.png";
 const String appFeatureImage = "assets/feature_image.svg";
 const String appFeatureImage2 = "assets/feature_image2.svg";
+const String spotifyWhiteIcon = "assets/spotify_white_icon.png";
 
 /// Quack Location Type Images
 const String qltBeach = "assets/quack_locationtypes/beach.jpg";
