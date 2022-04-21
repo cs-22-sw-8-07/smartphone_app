@@ -23,6 +23,7 @@ import '../../services/webservices/quack/services/quack_service.dart';
 import '../../services/webservices/spotify/services/spotify_service.dart';
 import '../../utilities/general_util.dart';
 import '../settings/settings_page_ui.dart';
+import '../history/history_page_ui.dart';
 
 class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
   ///
@@ -60,8 +61,8 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
             await _resumePausePlayer();
           }
           break;
-        case MainButtonEvent.seeRecommendations:
-          // TODO: Handle this case.
+        case MainButtonEvent.seeHistory:
+          GeneralUtil.showPageAsDialog(context, HistoryPage());
           break;
         case MainButtonEvent.goToSettings:
           GeneralUtil.showPageAsDialog(context, SettingsPage());
