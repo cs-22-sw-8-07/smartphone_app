@@ -3,22 +3,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart' as intl;
 import 'package:smartphone_app/values/values.dart';
 
 enum PermissionState { granted, denied }
 
 extension DateTimeExtension on DateTime {
-  String getDateOnlyAsString() {
-    return year.toString() +
-        "-" +
-        month.toString() +
-        "-" +
-        day.toString() +
-        " " +
-        hour.toString() +
-        ":" +
-        minute.toString();
-  }
+  String nowNoSecondsAsString() {
+    return intl.DateFormat('dd-MM-yyyy kk:mm').format(DateTime.now());
+  }   
 }
 
 class GeneralUtil {

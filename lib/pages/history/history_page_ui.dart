@@ -109,7 +109,7 @@ Card _getPlaylist(
           leading: const Icon(Icons.broken_image,
               size: 50, color: custom_colors.white1),
           title: Text(
-            DateTime.now().getDateOnlyAsString(),
+            DateTime.now().nowNoSecondsAsString(),
             style: const TextStyle(color: Colors.white),
           ),
           subtitle: Text(
