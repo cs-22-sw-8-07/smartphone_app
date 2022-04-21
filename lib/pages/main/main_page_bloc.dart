@@ -77,7 +77,6 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
           break;
         case MainButtonEvent.resumePausePlayer:
           if (state.playerState == null) {
-            // TODO: Show message to user
             return;
           }
           await _resumePausePlayer();
@@ -181,54 +180,25 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     /// TouchEvent
     on<TouchEvent>((event, emit) async {
       if (state.playlist != null && state.currentTrack != null) {
-        int index = state.playlist!.tracks!.indexOf(state.currentTrack!);
         switch (event.touchEvent) {
           case MainTouchEvent.goToNextTrack:
             {
-              var response = await _playNextTrack(index);
-              if (!response.isSuccess) {
-                return;
-              }
-              break;
-            }
-          case MainTouchEvent.goToPreviousTrack:
-            {
-              QuackTrack? previousTrack;
-              if (index == 0) {
-                previousTrack =
-                    state.playlist!.tracks![state.playlist!.tracks!.length - 1];
-              } else {
-                previousTrack = state.playlist!.tracks![index - 1];
-              }
+              var nextTrack = getNextTrack(state.currentTrack!);
+              await _playTrack(nextTrack!);
 
-              SpotifySdkResponse response = await _playTrack(previousTrack);
-              if (!response.isSuccess) {
-                GeneralUtil.showToast(response.errorMessage);
-                return;
+              if (nextTrack == state.playlist!.tracks!.last) {
+                await _appendToExistingPlaylist();
               }
               break;
             }
-        }
-        emit(state.copyWith(hasJustPerformedAction: true));
-      } else {
-        switch (event.touchEvent) {
-          case MainTouchEvent.goToNextTrack:
-            SpotifySdkResponse response =
-                await SpotifyService.getInstance().skipNext();
-            if (!response.isSuccess) {
-              GeneralUtil.showToast(response.errorMessage);
-              return;
-            }
-            emit(state.copyWith(hasJustPerformedAction: true));
-            break;
           case MainTouchEvent.goToPreviousTrack:
-            SpotifySdkResponse response =
-                await SpotifyService.getInstance().skipPrevious();
-            if (!response.isSuccess) {
-              GeneralUtil.showToast(response.errorMessage);
-              return;
+            {
+              QuackTrack? previousTrack = getPreviousTrack(state.currentTrack!);
+              if (previousTrack != null) {
+                _playTrack(previousTrack);
+              }
+              break;
             }
-            break;
         }
         emit(state.copyWith(hasJustPerformedAction: true));
       }
@@ -414,6 +384,16 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     return null;
   }
 
+  QuackTrack? getPreviousTrack(QuackTrack track) {
+    int index = state.playlist!.tracks!.indexOf(state.currentTrack!);
+    if (index != -1) {
+      if (index > 0) {
+        return state.playlist!.tracks![index - 1];
+      }
+    }
+    return null;
+  }
+
   //endregion
 
   //region Player actions
@@ -432,16 +412,12 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     return response;
   }
 
-  /// Play next track in the playlist
-  /// You have to provide the [index] of the track currently being played
-  Future<SpotifySdkResponse> _playNextTrack(int index,
-      {bool hasPerformedAction = true}) async {
-    QuackTrack? nextTrack = getNextTrack(state.playlist!.tracks![index]);
-    return await _playTrack(nextTrack!, hasPerformedAction: hasPerformedAction);
-  }
-
   /// Resume/Pause Spotify player
   Future<void> _resumePausePlayer() async {
+    if (state.playerState == null) {
+      return;
+    }
+
     if (state.playerState!.isPaused) {
       SpotifySdkResponse response = await SpotifyService.getInstance().resume();
       if (!response.isSuccess) {

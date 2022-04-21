@@ -30,6 +30,7 @@ Future<void> main() async {
   group("MainPage", () {
     late MainPageBloc bloc;
     late MainPage mainPage;
+    QuackPlaylist? playlistFromQuackService;
 
     setUp(() {
       GoogleFonts.config.allowRuntimeFetching = false;
@@ -83,7 +84,11 @@ Future<void> main() async {
           bloc.state.playlist = QuackPlaylist(
               id: "test",
               locationType: 1,
-              tracks: [QuackTrack(id: "1"), QuackTrack(id: "2")]);
+              tracks: [
+                QuackTrack(id: "1"),
+                QuackTrack(id: "2"),
+                QuackTrack(id: "3")
+              ]);
         },
         act: (bloc) => bloc
             .add(const TouchEvent(touchEvent: MainTouchEvent.goToNextTrack)),
@@ -94,6 +99,53 @@ Future<void> main() async {
                 currentTrack: QuackTrack(id: "1")),
             bloc.state.copyWith(
                 hasJustPerformedAction: true, currentTrack: QuackTrack(id: "2"))
+          ];
+        });
+
+    blocTest<MainPageBloc, MainPageState>(
+        "TouchEvent -> Go to next track -> Last track so also append to existing playlist",
+        build: () => bloc,
+        setUp: () async {
+          playlistFromQuackService = (await QuackService.getInstance()
+                  .getPlaylist(QuackLocationType.beach))
+              .quackResponse!
+              .result!;
+          bloc.state.quackLocationType = QuackLocationType.beach;
+          bloc.state.currentTrack = QuackTrack(id: "1");
+          bloc.state.playlist = QuackPlaylist(
+              id: "test", tracks: [QuackTrack(id: "1"), QuackTrack(id: "2")]);
+        },
+        act: (bloc) => bloc
+            .add(const TouchEvent(touchEvent: MainTouchEvent.goToNextTrack)),
+        expect: () {
+          var newState = bloc.state.copyWith(
+              hasJustPerformedAction: true,
+              isLoading: false,
+              playlist: QuackPlaylist(
+                  id: "test",
+                  tracks: [QuackTrack(id: "1"), QuackTrack(id: "2")]));
+          newState.updatedItemHashCode = null;
+
+          var tempExpandedPlaylist = QuackPlaylist(
+              id: "test", tracks: [QuackTrack(id: "1"), QuackTrack(id: "2")]);
+          tempExpandedPlaylist.tracks!
+              .addAll(playlistFromQuackService!.tracks!);
+
+          return [
+            newState.copyWith(currentTrack: QuackTrack(id: "1")),
+            newState.copyWith(currentTrack: QuackTrack(id: "2")),
+            newState.copyWith(
+                currentTrack: QuackTrack(id: "2"), isLoading: true),
+            newState.copyWith(
+                currentTrack: QuackTrack(id: "2"),
+                isLoading: true,
+                updatedItemHashCode: tempExpandedPlaylist.hashCode,
+                playlist: tempExpandedPlaylist),
+            newState.copyWith(
+                currentTrack: QuackTrack(id: "2"),
+                isLoading: false,
+                updatedItemHashCode: tempExpandedPlaylist.hashCode,
+                playlist: tempExpandedPlaylist),
           ];
         });
 
@@ -228,7 +280,7 @@ Future<void> main() async {
     blocTestWidget<MainPage, MainPageBloc, MainPageState>(
         "ButtonPressed -> Refresh playlist -> Picked yes",
         setUp: () async {
-          playlistFromQuack = (await QuackService.getInstance()
+          playlistFromQuackService = (await QuackService.getInstance()
                   .getPlaylist(QuackLocationType.beach))
               .quackResponse!
               .result;
@@ -255,19 +307,19 @@ Future<void> main() async {
             newState.copyWith(
                 isLoading: true,
                 hasJustPerformedAction: true,
-                currentTrack: playlistFromQuack!.tracks!.first),
+                currentTrack: playlistFromQuackService!.tracks!.first),
             newState.copyWith(
-                playlist: playlistFromQuack,
+                playlist: playlistFromQuackService,
                 isLoading: true,
                 hasJustPerformedAction: true,
-                updatedItemHashCode: playlistFromQuack.hashCode,
-                currentTrack: playlistFromQuack!.tracks!.first),
+                updatedItemHashCode: playlistFromQuackService.hashCode,
+                currentTrack: playlistFromQuackService!.tracks!.first),
             newState.copyWith(
-                playlist: playlistFromQuack,
+                playlist: playlistFromQuackService,
                 isLoading: false,
-                updatedItemHashCode: playlistFromQuack.hashCode,
+                updatedItemHashCode: playlistFromQuackService.hashCode,
                 hasJustPerformedAction: true,
-                currentTrack: playlistFromQuack!.tracks!.first)
+                currentTrack: playlistFromQuackService!.tracks!.first)
           ];
         });
 
@@ -282,7 +334,7 @@ Future<void> main() async {
             const ButtonPressed(buttonEvent: MainButtonEvent.refreshPlaylist)),
         expect: (bloc) => []);
 
-    blocTest<MainPageBloc, MainPageState>("HasPerformedAction",
+    blocTest<MainPageBloc, MainPageState>("HasPerformedSpotifyPlayerAction",
         build: () => bloc,
         act: (bloc) => bloc.add(const HasPerformedSpotifyPlayerAction()),
         expect: () {
@@ -299,16 +351,18 @@ Future<void> main() async {
                   .getPlaylist(QuackLocationType.beach))
               .quackResponse!
               .result;
+
           expandedPlaylist!.id = playlistFromQuackAppend!.id;
           expandedPlaylist!.locationType = playlistFromQuackAppend.locationType;
           expandedPlaylist!.tracks!.addAll(playlistFromQuackAppend.tracks!);
           expandedPlaylist!.tracks!.addAll(playlistFromQuackAppend.tracks!);
-        },
-        buildWidget: () => MainPage(),
-        build: (w) async {
+
           notExpandedPlaylist = expandedPlaylist!.copy();
           notExpandedPlaylist!.tracks =
               notExpandedPlaylist!.tracks!.take(10).toList(growable: true);
+        },
+        buildWidget: () => MainPage(),
+        build: (w) async {
           w.bloc.state.playlist = notExpandedPlaylist;
           w.bloc.state.quackLocationType = QuackLocationType.beach;
           return w.bloc;
@@ -316,12 +370,8 @@ Future<void> main() async {
         act: (bloc) => bloc.add(
             const ButtonPressed(buttonEvent: MainButtonEvent.appendToPlaylist)),
         expect: (bloc) {
-          var tempPlaylist = expandedPlaylist!.copy();
-          tempPlaylist.tracks =
-              tempPlaylist.tracks!.take(10).toList(growable: true);
-
-          var newState =
-              bloc.state.copyWith(playlist: tempPlaylist, isLoading: true);
+          var newState = bloc.state
+              .copyWith(playlist: notExpandedPlaylist, isLoading: true);
           newState.updatedItemHashCode = null;
 
           return [

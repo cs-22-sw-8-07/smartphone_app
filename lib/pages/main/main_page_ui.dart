@@ -662,10 +662,14 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           Expanded(
               child: ClipRect(
                   child: Dismissible(
+                      direction:
+                          state.playlist == null || state.currentTrack == null
+                              ? DismissDirection.none
+                              : DismissDirection.horizontal,
                       dismissThresholds: const {
-                DismissDirection.startToEnd: 0.2,
-                DismissDirection.endToStart: 0.2,
-              },
+                        DismissDirection.startToEnd: 0.2,
+                        DismissDirection.endToStart: 0.2,
+                      },
                       background: const Icon(
                         Icons.skip_previous,
                         color: Colors.white,
@@ -926,20 +930,17 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               ),
               CustomLabel(
                   height: values.mainPageOverlayHeight / 2,
-                  fontSize: 14,
+                  fontSize: 15,
                   maxLines: 1,
                   softWrap: false,
                   useOverflowReplacement: true,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   title: LocalizationHelper.getInstance()
                       .getLocalizedQuackLocationType(context, quackLocation),
                   textColor: Colors.white,
                   alignmentGeometry: Alignment.centerLeft,
                   padding: const EdgeInsets.only(
-                      left: 0,
-                      top: values.padding,
-                      bottom: 5,
-                      right: values.padding),
+                      left: 0, top: 0, bottom: 0, right: values.padding),
                   margin: const EdgeInsets.all(0))
             ])),
         onPressed: () => {
@@ -962,7 +963,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
     return Expanded(
         child: RawScrollbar(
-            isAlwaysShown: true,
+            isAlwaysShown:
+                locationListSizeAnimation!.isCompleted ? true : false,
             thickness: 4,
             thumbColor: Colors.white,
             child: ListView(

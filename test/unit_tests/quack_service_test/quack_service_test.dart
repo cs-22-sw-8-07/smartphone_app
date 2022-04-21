@@ -24,13 +24,15 @@ void main() async {
     QuackService.init(MockQuackService());
   });
 
-  group("Service method call -> getPlaylist", () {
-    test("getPlaylist -> QuackLocationType.beach", () async {
+  group("getPlaylist", () {
+    test("QuackLocationType.beach -> Correct deserialize",
+        () async {
       QuackServiceResponse<GetPlaylistResponse> response =
           await QuackService.getInstance().getPlaylist(QuackLocationType.beach);
       expect(response.quackResponse!.result!.id!, "1");
     });
-    test("getPlaylist -> QuackLocationType.forest", () async {
+    test("QuackLocationType.forest -> Correct deserialize",
+        () async {
       QuackServiceResponse<GetPlaylistResponse> response =
           await QuackService.getInstance()
               .getPlaylist(QuackLocationType.forest);

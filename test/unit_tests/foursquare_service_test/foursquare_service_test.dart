@@ -20,8 +20,10 @@ void main() async {
     FoursquareService.init(MockFoursquareService());
   });
 
-  group("FourSquareService API Mock", () {
-    test("Get Mock Result", () async {
+  group("FourSquareService", () {
+    test(
+        "getNearbyPlaces -> Latitude: 0, Longitude: 0 -> Check correct deserialize",
+        () async {
       var resp = await FoursquareService.getInstance()
           .getNearbyPlaces(latitude: 0, longitude: 0);
 

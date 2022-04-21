@@ -33,9 +33,6 @@ enum MainTouchEvent { goToNextTrack, goToPreviousTrack }
 /// Base event class
 abstract class MainPageEvent extends Equatable {
   const MainPageEvent();
-
-  @override
-  List<Object?> get props => [];
 }
 
 /// Event for when a button is pressed
@@ -131,8 +128,13 @@ class LocationSelected extends MainPageEvent {
   List<Object?> get props => [quackLocationType];
 }
 
+/// Event fired whenever a Spotify player action has been executed by the Quack
+/// app
 class HasPerformedSpotifyPlayerAction extends MainPageEvent {
   const HasPerformedSpotifyPlayerAction();
+
+  @override
+  List<Object?> get props => [];
 }
 
 //endregion
