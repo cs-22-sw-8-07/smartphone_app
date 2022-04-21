@@ -24,11 +24,12 @@ Future<void> main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
 
+  QuackService.init(MockQuackService());
+  SpotifyService.init(MockSpotifyService());
+
   group("MainPage", () {
     late MainPageBloc bloc;
     late MainPage mainPage;
-    QuackService.init(MockQuackService());
-    SpotifyService.init(MockSpotifyService());
 
     setUp(() {
       GoogleFonts.config.allowRuntimeFetching = false;
@@ -46,15 +47,34 @@ Future<void> main() async {
           MainPageState(
               hasJustPerformedAction: false,
               isPlaylistShown: false,
+              isLocationListShown: false,
               isLoading: false,
               quackLocationType: QuackLocationType.unknown));
     });
+
+    blocTest<MainPageBloc, MainPageState>(
+        "ButtonPressed -> Select manual location",
+        build: () => bloc,
+        act: (bloc) => bloc.add(const ButtonPressed(
+            buttonEvent: MainButtonEvent.selectManualLocation)),
+        expect: () => [bloc.state.copyWith(isLocationListShown: true)]);
 
     blocTest<MainPageBloc, MainPageState>("ButtonPressed -> Resize playlist",
         build: () => bloc,
         act: (bloc) => bloc.add(
             const ButtonPressed(buttonEvent: MainButtonEvent.viewPlaylist)),
         expect: () => [bloc.state.copyWith(isPlaylistShown: true)]);
+
+    blocTest<MainPageBloc, MainPageState>("LocationSelected",
+        build: () => bloc,
+        setUp: () => bloc.state.isLocationListShown = true,
+        act: (bloc) => bloc.add(const LocationSelected(
+            quackLocationType: QuackLocationType.cemetery)),
+        expect: () => [
+              bloc.state.copyWith(
+                  lockedQuackLocationType: QuackLocationType.cemetery,
+                  isLocationListShown: false)
+            ]);
 
     blocTest<MainPageBloc, MainPageState>("TouchEvent -> Go to next track",
         build: () => bloc,
@@ -119,9 +139,7 @@ Future<void> main() async {
         build: () => bloc,
         act: (bloc) => bloc.add(const MainPageValueChanged(isLoading: false)),
         expect: () {
-          return [
-            bloc.state.copyWith(isLoading: false)
-          ];
+          return [bloc.state.copyWith(isLoading: false)];
         });
 
     var playerState = MockSpotifyService.getMockPlayerState();
@@ -145,6 +163,8 @@ Future<void> main() async {
         });
 
     blocTest<MainPageBloc, MainPageState>("TrackSelected",
+        setUp: () => bloc.state.playlist = QuackPlaylist(
+            id: "1", tracks: [QuackTrack(id: "1"), QuackTrack(id: "2")]),
         build: () => bloc,
         act: (bloc) => bloc.add(TrackSelected(quackTrack: QuackTrack(id: "1"))),
         expect: () {
@@ -154,6 +174,53 @@ Future<void> main() async {
             firstState,
             bloc.state.copyWith(
                 hasJustPerformedAction: true, currentTrack: QuackTrack(id: "1"))
+          ];
+        });
+
+    var trackSelectedPlaylist = QuackPlaylist(
+        id: "1", tracks: [QuackTrack(id: "1"), QuackTrack(id: "2")]);
+    QuackPlaylist? trackSelectedQuackPlaylist;
+    blocTest<MainPageBloc, MainPageState>(
+        "TrackSelected -> Append to existing playlist",
+        setUp: () async {
+          trackSelectedQuackPlaylist = (await QuackService.getInstance()
+                  .getPlaylist(QuackLocationType.beach))
+              .quackResponse!
+              .result!;
+          bloc.state.quackLocationType = QuackLocationType.beach;
+          bloc.state.playlist = trackSelectedPlaylist;
+        },
+        build: () => bloc,
+        act: (bloc) => bloc.add(TrackSelected(quackTrack: QuackTrack(id: "2"))),
+        expect: () {
+          var newState = bloc.state.copyWith(
+              isLoading: false,
+              hasJustPerformedAction: true,
+              playlist: QuackPlaylist(
+                  id: "1", tracks: [QuackTrack(id: "1"), QuackTrack(id: "2")]));
+          newState.currentTrack = null;
+          newState.updatedItemHashCode = null;
+
+          var tempPlaylist = QuackPlaylist(
+              id: "1", tracks: [QuackTrack(id: "1"), QuackTrack(id: "2")]);
+          tempPlaylist.tracks!.addAll(trackSelectedQuackPlaylist!.tracks!);
+          var hashCode = tempPlaylist.hashCode;
+
+          return [
+            newState,
+            newState.copyWith(currentTrack: QuackTrack(id: "2")),
+            newState.copyWith(
+                currentTrack: QuackTrack(id: "2"), isLoading: true),
+            newState.copyWith(
+                currentTrack: QuackTrack(id: "2"),
+                isLoading: true,
+                updatedItemHashCode: hashCode,
+                playlist: tempPlaylist),
+            newState.copyWith(
+                currentTrack: QuackTrack(id: "2"),
+                isLoading: false,
+                updatedItemHashCode: hashCode,
+                playlist: tempPlaylist),
           ];
         });
 
@@ -222,6 +289,7 @@ Future<void> main() async {
           return [bloc.state.copyWith(hasJustPerformedAction: true)];
         });
 
+    QuackPlaylist? notExpandedPlaylist;
     QuackPlaylist? expandedPlaylist;
     blocTestWidget<MainPage, MainPageBloc, MainPageState>(
         "ButtonPressed -> Append to playlist",
@@ -238,16 +306,24 @@ Future<void> main() async {
         },
         buildWidget: () => MainPage(),
         build: (w) async {
-          w.bloc.state.playlist = expandedPlaylist;
+          notExpandedPlaylist = expandedPlaylist!.copy();
+          notExpandedPlaylist!.tracks =
+              notExpandedPlaylist!.tracks!.take(10).toList(growable: true);
+          w.bloc.state.playlist = notExpandedPlaylist;
           w.bloc.state.quackLocationType = QuackLocationType.beach;
           return w.bloc;
         },
         act: (bloc) => bloc.add(
             const ButtonPressed(buttonEvent: MainButtonEvent.appendToPlaylist)),
         expect: (bloc) {
-          var newState = bloc.state
-              .copyWith(isLoading: true);
+          var tempPlaylist = expandedPlaylist!.copy();
+          tempPlaylist.tracks =
+              tempPlaylist.tracks!.take(10).toList(growable: true);
+
+          var newState =
+              bloc.state.copyWith(playlist: tempPlaylist, isLoading: true);
           newState.updatedItemHashCode = null;
+
           return [
             newState,
             newState.copyWith(

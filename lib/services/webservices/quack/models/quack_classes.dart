@@ -100,6 +100,18 @@ class QuackPlaylist extends Equatable {
     return null;
   }
 
+  QuackPlaylist copy() {
+    List<QuackTrack>? newList;
+    if (tracks != null) {
+      newList = List.of([], growable: true);
+      for (var track in tracks!) {
+        newList.add(track);
+      }
+    }
+
+    return QuackPlaylist(id: id, locationType: locationType, tracks: newList);
+  }
+
   @override
   List<Object?> get props => [id, locationType, tracks];
 }

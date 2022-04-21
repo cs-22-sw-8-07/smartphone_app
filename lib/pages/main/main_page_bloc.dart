@@ -45,6 +45,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       : super(MainPageState(
             hasJustPerformedAction: false,
             isPlaylistShown: false,
+            isLocationListShown: false,
             isLoading: false,
             quackLocationType: QuackLocationType.unknown)) {
     LocalizationHelper.init(context: context);
@@ -100,9 +101,8 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
           GeneralUtil.showSnackBar(context: context, message: message);
           break;
         case MainButtonEvent.selectManualLocation:
-          if (kDebugMode) {
-            print("Test");
-          }
+          emit(
+              state.copyWith(isLocationListShown: !state.isLocationListShown!));
           break;
         case MainButtonEvent.refreshPlaylist:
           var reply = await QuestionDialog.getInstance().show(
@@ -248,12 +248,19 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
         GeneralUtil.showToast(response.errorMessage);
         return;
       }
-      emit(state.copyWith(hasJustPerformedAction: true));
       // If the last track is selected append additional tracks to the
       // current playlist
       if (event.quackTrack == state.playlist!.tracks!.last) {
         await _appendToExistingPlaylist();
       }
+    });
+
+    /// LocationSelected
+    on<LocationSelected>((event, emit) async {
+      emit(state.copyWith(
+        isLocationListShown: false,
+        lockedQuackLocationType: event.quackLocationType,
+      ));
     });
 
     /// MainPageValueChanged
@@ -533,7 +540,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     }
 
     // Add to existing playlist
-    var newPlaylist = state.playlist!;
+    var newPlaylist = state.playlist!.copy();
     newPlaylist.tracks!
         .addAll(getPlaylistResponse.quackResponse!.result!.tracks!);
 

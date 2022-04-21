@@ -28,7 +28,7 @@
     "description": "Button text"
   },
   "do_you_want_to_save_changes": "You have unsaved changes\nDo you want to save the current changes?",
-  "@do_you_want_to_save_changes" :  {
+  "@do_you_want_to_save_changes": {
     "description": "Dialog text"
   },
   "continue_with_spotify": "Continue with Spotify",
@@ -106,5 +106,61 @@
   "retrieve": "Retrieve",
   "@retrieve": {
     "description": "Button text"
+  },
+  "quack_api_response_error_1": "An exception occurred in a controller",
+  "@quack_api_response_error_1": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_2": "An exception occurred in the service access layer",
+  "@quack_api_response_error_2": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_5": "Changes could not be applied to the dataabase",
+  "@quack_api_response_error_5": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_50": "Quack update list has a bad format",
+  "@quack_api_response_error_50": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_101": "Something went wrong in the recommender",
+  "@quack_api_response_error_101": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_102": "Path is null",
+  "@quack_api_response_error_102": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_103": "Path not found",
+  "@quack_api_response_error_103": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_104": "Process could not start",
+  "@quack_api_response_error_104": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_105": "Path to Recommender is wrong",
+  "@quack_api_response_error_105": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_106": "The result from the command line is empty",
+  "@quack_api_response_error_106": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_110": "Could not initialize Spotipy",
+  "@quack_api_response_error_110": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_111": "Could not find the playlists",
+  "@quack_api_response_error_111": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_112": "Could not find songs from the playlist",
+  "@quack_api_response_error_112": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_113": "Could not format song list to JSON",
+  "@quack_api_response_error_113": {
+    "description": "Error message"
   }
 }

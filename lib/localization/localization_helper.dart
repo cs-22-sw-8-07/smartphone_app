@@ -29,16 +29,40 @@ class LocalizationHelper {
 //region Methods
 
   Future<String?> getLocalizedResponseError(int errorNo) async {
-    String? localizedResponseError;
     AppLocalizations appLocalizations =
         await LocalAppLocalizations.getAppLocalizations();
     switch (errorNo) {
       case 1:
-        localizedResponseError = "This is an error";
-        break;
+        return appLocalizations.quack_api_response_error_1;
+      case 2:
+        return appLocalizations.quack_api_response_error_2;
+      case 5:
+        return appLocalizations.quack_api_response_error_5;
+      case 50:
+        return appLocalizations.quack_api_response_error_50;
+      case 101:
+        return appLocalizations.quack_api_response_error_101;
+      case 102:
+        return appLocalizations.quack_api_response_error_102;
+      case 103:
+        return appLocalizations.quack_api_response_error_103;
+      case 104:
+        return appLocalizations.quack_api_response_error_104;
+      case 105:
+        return appLocalizations.quack_api_response_error_105;
+      case 106:
+        return appLocalizations.quack_api_response_error_106;
+      case 110:
+        return appLocalizations.quack_api_response_error_110;
+      case 111:
+        return appLocalizations.quack_api_response_error_111;
+      case 112:
+        return appLocalizations.quack_api_response_error_112;
+      case 113:
+        return appLocalizations.quack_api_response_error_113;
+      default:
+        return null;
     }
-
-    return localizedResponseError;
   }
 
   String getLocalizedQuackLocationType(
@@ -72,7 +96,6 @@ class LocalizationHelper {
         localizedQlt = appLocalizations.church;
         break;
     }
-
     return localizedQlt;
   }
 
@@ -80,30 +103,42 @@ class LocalizationHelper {
     switch (qlt) {
       case QuackLocationType.unknown:
         return values.qltUnknown;
-        break;
       case QuackLocationType.forest:
         return values.qltForest;
-        break;
       case QuackLocationType.beach:
         return values.qltBeach;
-        break;
       case QuackLocationType.nightLife:
         return values.qltNightLife;
-        break;
       case QuackLocationType.urban:
         return values.qltUrban;
-        break;
       case QuackLocationType.cemetery:
         return values.qltCemetery;
-        break;
       case QuackLocationType.education:
         return values.qltEducation;
-        break;
       case QuackLocationType.church:
         return values.qltChurch;
-        break;
     }
-    return qltBeach;
+  }
+
+  String getQuackLocationTypeSmallImagePath(QuackLocationType qlt) {
+    switch (qlt) {
+      case QuackLocationType.unknown:
+        return values.qltUnknownSmall;
+      case QuackLocationType.forest:
+        return values.qltForestSmall;
+      case QuackLocationType.beach:
+        return values.qltBeachSmall;
+      case QuackLocationType.nightLife:
+        return values.qltNightLifeSmall;
+      case QuackLocationType.urban:
+        return values.qltUrbanSmall;
+      case QuackLocationType.cemetery:
+        return values.qltCemeterySmall;
+      case QuackLocationType.education:
+        return values.qltEducationSmall;
+      case QuackLocationType.church:
+        return values.qltChurchSmall;
+    }
   }
 
 //endregion

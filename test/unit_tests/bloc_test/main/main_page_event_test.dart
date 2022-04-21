@@ -108,6 +108,25 @@ void main() {
       });
     });
 
+    group("LocationSelected", () {
+      test("Events are equal", () {
+        expect(
+          const LocationSelected(
+              quackLocationType: QuackLocationType.beach),
+          const LocationSelected(
+              quackLocationType: QuackLocationType.beach),
+        );
+      });
+      test("Events are not equal", () {
+        expect(
+          const LocationSelected(
+              quackLocationType: QuackLocationType.beach),
+          isNot(const LocationSelected(
+              quackLocationType: QuackLocationType.urban)),
+        );
+      });
+    });
+
     group("HasPerformedSpotifyPlayerAction", () {
       test("Events are equal", () {
         expect(

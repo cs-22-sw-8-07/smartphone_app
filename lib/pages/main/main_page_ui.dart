@@ -44,7 +44,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   late MainPageBloc bloc;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   late AnimationController playlistAnimationController;
+  late AnimationController locationListAnimationController;
   Animation<double>? playlistSizeAnimation;
+  Animation<double>? locationListSizeAnimation;
   late double playlistHeight;
   Image? userImage;
   Widget? userImageWidget;
@@ -85,6 +87,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
     playlistAnimationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 200));
+    locationListAnimationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 200));
   }
 
   @override
@@ -97,6 +101,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   @override
   void dispose() {
     playlistAnimationController.dispose();
+    locationListAnimationController.dispose();
     super.dispose();
   }
 
@@ -118,6 +123,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     playlistSizeAnimation ??=
         Tween<double>(begin: values.mainPageOverlayHeight, end: playlistHeight)
             .animate(playlistAnimationController);
+    locationListSizeAnimation ??= Tween<double>(begin: 0, end: availableHeight)
+        .animate(locationListAnimationController);
 
     return WillPopScope(
         onWillPop: () async {
@@ -174,7 +181,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     return Stack(
       children: [
         _getMainContent(bloc),
-        _getOverlayContent(bloc),
+        _getPlaylistContent(bloc),
+        _getLocationContent(bloc)
       ],
     );
   }
@@ -261,7 +269,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _getOverlayContent(MainPageBloc bloc) {
+  Widget _getPlaylistContent(MainPageBloc bloc) {
     return BlocBuilder<MainPageBloc, MainPageState>(builder: (context, state) {
       var overlayContent = state.isPlaylistShown!
           ? _getPlaylist(state)
@@ -367,6 +375,57 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     });
   }
 
+  Widget _getLocationContent(MainPageBloc bloc) {
+    return BlocBuilder<MainPageBloc, MainPageState>(builder: (context, state) {
+      return AnimatedBuilder(
+          animation: locationListAnimationController,
+          builder: (context, _) {
+            Widget child;
+
+            if (!state.isLocationListShown! &&
+                !locationListSizeAnimation!.isCompleted) {
+              child = Container();
+            } else {
+              child =
+                  Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+                _getLocationList(state),
+                CustomButton(
+                    fontWeight: FontWeight.bold,
+                    height: values.actionBarHeight,
+                    icon: const Icon(
+                      Icons.expand_less,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                    onPressed: () => {
+                          bloc.add(const ButtonPressed(
+                              buttonEvent:
+                                  MainButtonEvent.selectManualLocation)),
+                          bloc.state.isLocationListShown!
+                              ? locationListAnimationController.reverse()
+                              : locationListAnimationController.forward(),
+                        },
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(0),
+                    ),
+                    margin: const EdgeInsets.all(0),
+                    textColor: custom_colors.black,
+                    pressedBackground: custom_colors.appButtonPressedGradient,
+                    defaultBackground: custom_colors.appButtonGradient)
+              ]);
+            }
+
+            return Container(
+                decoration: BoxDecoration(
+                    color: custom_colors.darkBlue,
+                    border:
+                        Border.all(color: custom_colors.darkBlue, width: 0)),
+                height: locationListSizeAnimation!.value,
+                child: child);
+          });
+    });
+  }
+
   Widget _getMainContent(MainPageBloc bloc) {
     return Container(
         decoration: const BoxDecoration(color: custom_colors.transparent),
@@ -429,9 +488,14 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       Align(
                           alignment: Alignment.center,
                           child: GestureDetector(
-                              onTapUp: (v) => bloc.add(const ButtonPressed(
-                                  buttonEvent:
-                                      MainButtonEvent.selectManualLocation)),
+                              onTapUp: (v) {
+                                bloc.add(const ButtonPressed(
+                                    buttonEvent:
+                                        MainButtonEvent.selectManualLocation));
+                                bloc.state.isLocationListShown!
+                                    ? locationListAnimationController.reverse()
+                                    : locationListAnimationController.forward();
+                              },
                               child: Container(
                                 constraints: BoxConstraints(
                                     maxWidth: availableWidth / 2),
@@ -834,6 +898,77 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         ],
       );
     }
+  }
+
+  Widget _getLocationListTile(
+      MainPageState state, QuackLocationType quackLocation) {
+    return CustomListTile(
+        pressedBackground: custom_colors.transparentGradient,
+        defaultBackground: custom_colors.transparentGradient,
+        widget: Container(
+            decoration: BoxDecoration(
+                color: custom_colors.darkBlue,
+                border: Border.all(width: 0, color: custom_colors.darkBlue)),
+            height: values.mainPageOverlayHeight,
+            child: Row(children: [
+              Container(
+                decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    border:
+                        Border.all(width: 0, color: custom_colors.darkBlue)),
+                margin: const EdgeInsets.all(0),
+                width: values.mainPageOverlayHeight,
+                padding: const EdgeInsets.all(values.padding),
+                child: ClipRRect(
+                    borderRadius: const BorderRadius.all(Radius.circular(5)),
+                    child: Image.asset(LocalizationHelper.getInstance()
+                        .getQuackLocationTypeSmallImagePath(quackLocation))), //
+              ),
+              CustomLabel(
+                  height: values.mainPageOverlayHeight / 2,
+                  fontSize: 14,
+                  maxLines: 1,
+                  softWrap: false,
+                  useOverflowReplacement: true,
+                  fontWeight: FontWeight.w900,
+                  title: LocalizationHelper.getInstance()
+                      .getLocalizedQuackLocationType(context, quackLocation),
+                  textColor: Colors.white,
+                  alignmentGeometry: Alignment.centerLeft,
+                  padding: const EdgeInsets.only(
+                      left: 0,
+                      top: values.padding,
+                      bottom: 5,
+                      right: values.padding),
+                  margin: const EdgeInsets.all(0))
+            ])),
+        onPressed: () => {
+              bloc.add(LocationSelected(quackLocationType: quackLocation)),
+              bloc.state.isLocationListShown!
+                  ? locationListAnimationController.reverse()
+                  : locationListAnimationController.forward()
+            });
+  }
+
+  Widget _getLocationList(MainPageState state) {
+    List<Widget> children = [];
+
+    for (var quackLocation in QuackLocationType.values) {
+      if (quackLocation == QuackLocationType.unknown) {
+        continue;
+      }
+      children.add(_getLocationListTile(state, quackLocation));
+    }
+
+    return Expanded(
+        child: RawScrollbar(
+            isAlwaysShown: true,
+            thickness: 4,
+            thumbColor: Colors.white,
+            child: ListView(
+              children: children,
+              shrinkWrap: true,
+            )));
   }
 
 //endregion

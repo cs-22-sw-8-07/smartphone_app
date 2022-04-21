@@ -99,6 +99,13 @@ class TrackSelected extends MainPageEvent {
   List<Object?> get props => [quackTrack];
 }
 
+/// Event for changes in several MainPage values
+///
+/// The [currentTrack] is the track currently being played by the Quack app.
+/// [isLoading] is a boolean used to indicate on the screen that something
+/// is being loaded e.g. a playlist from the Qauck API.
+/// [quackLocationType] is the type received from the QuackLocationService
+/// based on the position provided.
 // ignore: must_be_immutable
 class MainPageValueChanged extends MainPageEvent {
   final QuackTrack? currentTrack;
@@ -112,6 +119,18 @@ class MainPageValueChanged extends MainPageEvent {
   List<Object?> get props => [currentTrack, isLoading, quackLocationType];
 }
 
+/// Event for selecting a location manually
+///
+/// The [location] is the location that the user selected
+class LocationSelected extends MainPageEvent {
+  final QuackLocationType? quackLocationType;
+
+  const LocationSelected({required this.quackLocationType});
+
+  @override
+  List<Object?> get props => [quackLocationType];
+}
+
 class HasPerformedSpotifyPlayerAction extends MainPageEvent {
   const HasPerformedSpotifyPlayerAction();
 }
@@ -123,6 +142,27 @@ class HasPerformedSpotifyPlayerAction extends MainPageEvent {
 ///
 //region State
 
+/// The state for the MainPage
+///
+/// [isPlaylistShown] is used to tell whether the playlist should be shown on
+/// the screen or not.
+/// [playerState] is received from the Spotify SDK and tells the state of the
+/// Spotify player.
+/// [playlist] has the content of playlist currently being played in the
+/// Quack app.
+/// [hasJustPerformedAction] is used to identify whether it was the Quack app or
+/// Spotify who has changed the current track received in the [playerState].
+/// [quackLocationType] is the type received from the QuackLocationService
+/// based on the position provided.
+/// [lockedQuackLocationType] is set either by locking the current
+/// [quackLocationType] or set manually through the [LocationSelected] event.
+/// [isLoading] is a boolean used to indicate on the screen that something
+/// is being loaded e.g. a playlist from the Qauck API.
+/// The [currentTrack] is the track currently being played by the Quack app.
+///
+/// [updatedItemHashCode] is used to force a state update whenever a change is
+/// made to a list e.g. the list of tracks in the [playlist].
+/// It can be used by setting it to the hashcode of the list in question.
 // ignore: must_be_immutable
 class MainPageState extends Equatable {
   bool? isPlaylistShown;
@@ -133,12 +173,14 @@ class MainPageState extends Equatable {
   QuackLocationType? lockedQuackLocationType;
   bool? isLoading;
   QuackTrack? currentTrack;
+  bool? isLocationListShown;
 
   int? updatedItemHashCode;
 
   MainPageState(
       {this.isPlaylistShown,
       this.playlist,
+      this.isLocationListShown,
       this.currentTrack,
       this.isLoading,
       this.updatedItemHashCode,
@@ -151,6 +193,7 @@ class MainPageState extends Equatable {
       {bool? isPlaylistShown,
       QuackPlaylist? playlist,
       QuackTrack? currentTrack,
+      bool? isLocationListShown,
       int? updatedItemHashCode,
       QuackLocationType? lockedQuackLocationType,
       QuackLocationType? quackLocationType,
@@ -161,6 +204,7 @@ class MainPageState extends Equatable {
       playlist: playlist ?? this.playlist,
       isLoading: isLoading ?? this.isLoading,
       currentTrack: currentTrack ?? this.currentTrack,
+      isLocationListShown: isLocationListShown ?? this.isLocationListShown,
       lockedQuackLocationType:
           lockedQuackLocationType ?? this.lockedQuackLocationType,
       hasJustPerformedAction:
@@ -176,6 +220,7 @@ class MainPageState extends Equatable {
   List<Object?> get props => [
         isPlaylistShown,
         currentTrack,
+        isLocationListShown,
         lockedQuackLocationType,
         isLoading,
         playlist,
