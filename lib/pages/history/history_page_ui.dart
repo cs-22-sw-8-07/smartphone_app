@@ -11,6 +11,7 @@ import 'package:smartphone_app/values/values.dart' as values;
 import 'package:smartphone_app/widgets/custom_app_bar.dart';
 import 'package:smartphone_app/widgets/custom_button.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
+import 'package:smartphone_app/widgets/custom_list_tile.dart';
 
 import '../../localization/localization_helper.dart';
 import 'history_page_events_states.dart';
@@ -91,34 +92,33 @@ Widget _getHistory(HistoryState state, BuildContext context, HistoryBloc bloc) {
 Card _getPlaylist(
     QuackPlaylist playlist, BuildContext context, HistoryBloc bloc) {
   return Card(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(values.borderRadius)),
-      child: Theme(
-        data: ThemeData(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent),
-        child: ListTile(
-          tileColor: custom_colors.darkBlue,
-          shape: RoundedRectangleBorder(
-            side: const BorderSide(width: 0),
-            borderRadius: BorderRadius.circular(values.borderRadius),
-          ),
-          onTap: () {
-            bloc.add(PlaylistSelected(selectedPlaylist: playlist));
-          },
-          leading: const Icon(Icons.broken_image,
-              size: 50, color: custom_colors.white1),
-          title: Text(
-            DateTime.now().nowNoSecondsAsString(),
-            style: const TextStyle(color: Colors.white),
-          ),
+    shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(values.borderRadius)),
+    child: CustomListTile(
+        defaultBackground: custom_colors.appButtonGradient,
+        pressedBackground: custom_colors.buttonPressedGradient,
+        widget: ListTile(
+          contentPadding: const EdgeInsets.only(
+              left: values.padding - 1, right: values.padding),
+          leading: ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+              child: Image.asset(LocalizationHelper.getInstance()
+                  .getQuackLocationTypeSmallImagePath(
+                      playlist.quackLocationType!))),
+          title: Padding(
+              padding: const EdgeInsets.only(bottom: values.padding),
+              child: Text(
+                LocalizationHelper.getInstance().getLocalizedQuackLocationType(
+                        context, playlist.quackLocationType!) +
+                    ", " +
+                    playlist.tracks!.length.toString() +
+                    " Songs",
+                style: const TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.w700),
+              )),
           subtitle: Text(
-            LocalizationHelper.getInstance().getLocalizedQuackLocationType(
-                    context, playlist.quackLocationType!) +
-                ", " +
-                playlist.tracks!.length.toString() +
-                " Songs",
-            style: const TextStyle(color: Colors.white),
+            DateTime.now().nowNoSecondsAsString(),
+            style: const TextStyle(color: custom_colors.darkGrey),
           ),
           trailing: GestureDetector(
             child: const Image(
@@ -126,7 +126,7 @@ Card _getPlaylist(
                 height: 45,
                 color: Colors.white,
                 image: AssetImage(
-                  "assets/spotify_icon.png",
+                  "assets/spotify_white_icon.png",
                 )),
             onTap: () {
               if (kDebugMode) {
@@ -135,5 +135,8 @@ Card _getPlaylist(
             },
           ),
         ),
-      ));
+        onPressed: () {
+          bloc.add(PlaylistSelected(selectedPlaylist: playlist));
+        }),
+  );
 }
