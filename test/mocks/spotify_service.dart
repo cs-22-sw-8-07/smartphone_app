@@ -37,23 +37,27 @@ class MockSpotifyService implements ISpotifyFunctions {
     } on Exception {}
   }
 
-  static PlayerState getMockPlayerState({bool isPaused = false}) {
+  static Track getMockTrack({String? id}) {
+    id ??= "1K0LoLME6kJXWbOL2E5llC";
     var album = Album("test", "http://test");
     var artist = Artist("test", "http://test");
-    var track = Track(
+    return Track(
         album,
         artist,
         [],
         100,
-        ImageUri(
-            "spotify:image:ab67616d00001e02dbc48db84d5cde3ba6b13c07"),
+        ImageUri("spotify:image:ab67616d00001e02dbc48db84d5cde3ba6b13c07"),
         "the test track",
-        "spotify:track:1K0LoLME6kJXWbOL2E5llC",
+        "spotify:track:" + id,
         null,
         isEpisode: false,
         isPodcast: false);
+  }
+
+  static PlayerState getMockPlayerState(
+      {bool isPaused = false, String? trackId, bool useTrack = true}) {
     var playerState = PlayerState(
-        track,
+        useTrack ? getMockTrack(id: trackId) : null,
         0,
         0,
         PlayerOptions(RepeatMode.off, isShuffling: false),

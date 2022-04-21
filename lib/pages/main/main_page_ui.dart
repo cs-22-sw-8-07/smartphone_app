@@ -261,7 +261,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   Navigator.pop(context);
 
                   bloc.add(
-                      const ButtonPressed(buttonEvent: MainButtonEvent.logOff));
+                      const ButtonPressed(buttonEvent: MainButtonEvent.logOut));
                 },
               ),
             ],

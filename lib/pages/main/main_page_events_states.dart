@@ -12,7 +12,7 @@ enum MainButtonEvent {
   startStopRecommendation,
   seeRecommendations,
   goToSettings,
-  logOff,
+  logOut,
   viewPlaylist,
   resumePausePlayer,
   lockUnlockQuackLocationType,

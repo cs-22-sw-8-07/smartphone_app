@@ -30,6 +30,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
   ///
   //region Variables
 
+  bool _gettingLocationType = false;
   late BuildContext context;
   PositionHelper positionHelper;
   late StreamSubscription<Position?> positionStreamSubscription;
@@ -66,7 +67,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
         case MainButtonEvent.goToSettings:
           GeneralUtil.showPageAsDialog(context, SettingsPage());
           break;
-        case MainButtonEvent.logOff:
+        case MainButtonEvent.logOut:
           AppValuesHelper.getInstance()
               .saveString(AppValuesKey.accessToken, "");
 
@@ -111,7 +112,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
           if (reply != DialogQuestionResponse.yes) {
             return;
           }
-          if (state.playerState != null && state.playerState!.isPaused) {
+          if (state.playerState != null && !state.playerState!.isPaused) {
             await _resumePausePlayer();
           }
           await _startRecommendation();
@@ -129,7 +130,9 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       }
 
       if (state.playerState == null || event.playerState == null) {
-        emit(state.copyWith(playerState: event.playerState));
+        var newState = state.copyWith();
+        newState.playerState = event.playerState;
+        emit(newState);
         return;
       }
 
@@ -146,22 +149,13 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
         emit(state.copyWith(
             playerState: event.playerState, hasJustPerformedAction: false));
       } else {
-        if (state.playlist == null ||
-            trackFromPreviousPlayerState == null ||
-            event.playerState == null) {
+        if (state.playlist == null || trackFromPreviousPlayerState == null) {
           emit(state.copyWith(playerState: event.playerState));
           return;
         }
 
         if (state.currentTrack != null) {
           if (state.playlist!.tracks!.contains(state.currentTrack)) {
-            if (kDebugMode) {
-              print("Playlist Index: " +
-                  state.playlist!.tracks!
-                      .indexOf(state.currentTrack!)
-                      .toString());
-            }
-
             var nextTrack = getNextTrack(state.currentTrack!);
             await _playTrack(nextTrack!);
 
@@ -287,46 +281,51 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
   /// Subscribe to a stream providing GPS positions
   /// Called once in the constructor of the Bloc
   void _subscribeToPosition() async {
-    bool gettingLocationType = false;
-
     positionStreamSubscription =
         positionHelper.getPositionStream().listen((position) async {
+      await positionReceived(position);
+    });
+  }
+
+  Future<void> positionReceived(Position? position) async {
+    if (kDebugMode) {
+      print(position != null
+          ? (position.latitude.toString().replaceAll(",", ".") +
+              ", " +
+              position.longitude.toString().replaceAll(",", "."))
+          : "Unknown");
+    }
+
+    if (position != null && !_gettingLocationType) {
+      _gettingLocationType = true;
+      QuackLocationType? qlt = await QuackLocationService.getInstance()
+          .getQuackLocationType(position);
+
       if (kDebugMode) {
-        print(position != null
-            ? (position.latitude.toString().replaceAll(",", ".") +
-                ", " +
-                position.longitude.toString().replaceAll(",", "."))
-            : "Unknown");
+        print("QLT: " +
+            (qlt == null
+                ? "null"
+                : LocalizationHelper.getInstance()
+                    .getLocalizedQuackLocationType(context, qlt)));
       }
 
-      if (position != null && !gettingLocationType) {
-        gettingLocationType = true;
-        QuackLocationType? qlt = await QuackLocationService.getInstance()
-            .getQuackLocationType(position);
-
-        if (kDebugMode) {
-          print("QLT: " +
-              (qlt == null
-                  ? "null"
-                  : LocalizationHelper.getInstance()
-                      .getLocalizedQuackLocationType(context, qlt)));
-        }
-
-        if (qlt != null) {
-          if (state.playlist != null && state.quackLocationType != qlt) {
-            QuackServiceResponse<GetPlaylistResponse> response =
-                await _getPlaylist();
-            if (!response.isSuccess) {
-              return;
-            }
-            add(PlaylistReceived(playList: response.quackResponse!.result!));
+      if (qlt != null) {
+        if (state.playlist != null && state.quackLocationType != qlt) {
+          add(MainPageValueChanged(quackLocationType: qlt));
+          QuackServiceResponse<GetPlaylistResponse> response =
+              await _getPlaylist(showLoadingBefore: true);
+          if (!response.isSuccess) {
+            return;
           }
+          add(PlaylistReceived(playList: response.quackResponse!.result!));
+          add(const MainPageValueChanged(isLoading: false));
+        } else {
           add(MainPageValueChanged(quackLocationType: qlt));
         }
-
-        gettingLocationType = false;
       }
-    });
+
+      _gettingLocationType = false;
+    }
   }
 
   /// Subscribe to the Spotify remote connection status
