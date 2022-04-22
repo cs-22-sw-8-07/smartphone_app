@@ -3,9 +3,16 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart' as intl;
 import 'package:smartphone_app/values/values.dart';
 
 enum PermissionState { granted, denied }
+
+extension DateTimeExtension on DateTime {
+  String nowNoSecondsAsString() {
+    return intl.DateFormat('dd-MM-yyyy kk:mm').format(DateTime.now());
+  }   
+}
 
 class GeneralUtil {
   /// Set editing controller text
@@ -109,8 +116,8 @@ class GeneralUtil {
 
   /// Show a snackbar to the user (A message popup in the bottom of the screen)
   /// [message] is the string shown to the user
-  static showSnackBar({required BuildContext context, required String message}) {
-    if (Platform.environment.containsKey('FLUTTER_TEST')) return;
+  static showSnackBar(
+      {required BuildContext context, required String message}) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         backgroundColor: Colors.white,

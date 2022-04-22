@@ -1,8 +1,17 @@
 import 'dart:convert';
 
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smartphone_app/services/webservices/quack/models/quack_classes.dart';
 
-enum AppValuesKey { accessToken, email, displayName, userImageUrl }
+enum AppValuesKey {
+  accessToken,
+  email,
+  displayName,
+  userImageUrl,
+  tracks,
+  playlists
+}
 
 class AppValuesHelper {
   ///
@@ -64,6 +73,19 @@ class AppValuesHelper {
 
   setup() async {
     _sharedPreferences = await SharedPreferences.getInstance();
+
+    _sharedPreferences!.setString(AppValuesKey.playlists.toString(),
+        await rootBundle.loadString('assets/mock_data/playlists_mock.json'));
+  }
+
+  List<QuackTrack> getTracks() {
+    return _getList<QuackTrack>(
+        AppValuesKey.tracks, (model) => QuackTrack.fromJson(model));
+  }
+
+  List<QuackPlaylist> getPlaylists() {
+    return _getList<QuackPlaylist>(
+        AppValuesKey.playlists, (model) => QuackPlaylist.fromJson(model));
   }
 
   String? getString(AppValuesKey appValuesKey) {
@@ -84,6 +106,10 @@ class AppValuesHelper {
     } on Exception catch (_) {
       return false;
     }
+  }
+
+  savePlaylists(List<QuackPlaylist> playlists) {
+    _saveList(AppValuesKey.playlists, playlists);
   }
 
   Future<bool> saveString(AppValuesKey appValuesKey, String? value) async {

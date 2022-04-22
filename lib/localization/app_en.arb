@@ -15,6 +15,10 @@
   "@cancel": {
     "description": "Button text"
   },
+  "close": "Close",
+  "@close": {
+    "description": "Button text"
+  },
   "please_go_to_settings_and_give_the_app_all_the_necessary_permissions": "Please go to settings and give Quack all the necessary permissions",
   "@please_go_to_settings_and_give_the_app_all_the_necessary_permissions": {
     "description": "Dialog text"
@@ -35,8 +39,8 @@
   "@continue_with_spotify": {
     "description": "Button text"
   },
-  "recommendations": "Recommendations",
-  "@recommendations": {
+  "history": "History",
+  "@history": {
     "description": "Button text"
   },
   "settings": "Settings",
@@ -50,6 +54,14 @@
   "delete_account_confirmation": "Are you sure you want to delete your account?\nThis cannot be undone.",
   "@delete_account_confirmation": {
     "description": "Dialog text"
+  },
+    "history": "History",
+  "@history": {
+    "description": "Button text"
+  },
+  "songs": "songs",
+  "@songs": {
+    "description": "Tile Text"
   },
   "log_off": "Log off",
   "@log_off": {

@@ -236,9 +236,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 onPressed: () {
                   Navigator.pop(context);
                   bloc.add(const ButtonPressed(
-                      buttonEvent: MainButtonEvent.seeRecommendations));
+                      buttonEvent: MainButtonEvent.seeHistory));
                 },
-                text: AppLocalizations.of(context)!.recommendations,
+                text: AppLocalizations.of(context)!.history,
               ),
               CustomDrawerTile(
                 icon: const Icon(
