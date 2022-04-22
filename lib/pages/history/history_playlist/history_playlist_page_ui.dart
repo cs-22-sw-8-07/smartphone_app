@@ -63,7 +63,7 @@ Widget _getContent(BuildContext context, HistoryPlaylistBloc bloc,
         child: _createPlaylistContent(playlist, context, bloc),
       ));
 }
-
+/// Creates a ListTile with with song title, artist & coverart
 Widget _addTrack(QuackTrack? quackTrack) {
   return CustomListTile(
     pressedBackground: custom_colors.transparentGradient,
@@ -134,6 +134,7 @@ Widget _addTrack(QuackTrack? quackTrack) {
   );
 }
 
+/// Creates the playlist screen
 Widget _createPlaylistContent(
     QuackPlaylist playlist, BuildContext context, HistoryPlaylistBloc bloc) {
   if (playlist.tracks == null) {

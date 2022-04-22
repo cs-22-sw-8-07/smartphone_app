@@ -80,7 +80,7 @@ Widget _getContent(BuildContext context, HistoryBloc bloc, HistoryState state) {
                 ],
               ))));
 }
-
+/// Creates the listview, appended with prior playlists through [_getPlaylist]
 Widget _getHistory(HistoryState state, BuildContext context, HistoryBloc bloc) {
   return ListView.builder(
     itemCount: state.playlists!.length,
@@ -88,7 +88,8 @@ Widget _getHistory(HistoryState state, BuildContext context, HistoryBloc bloc) {
         _getPlaylist(state.playlists![index], context, bloc),
   );
 }
-
+/// Creates card(s) with Playlist; contains the [quackLocationType],
+/// Current Date & Time and Spotify Button
 Card _getPlaylist(
     QuackPlaylist playlist, BuildContext context, HistoryBloc bloc) {
   return Card(
@@ -126,7 +127,7 @@ Card _getPlaylist(
                 height: 45,
                 color: Colors.white,
                 image: AssetImage(
-                  "assets/spotify_white_icon.png",
+                  values.spotifyWhiteIcon,
                 )),
             onTap: () {
               if (kDebugMode) {

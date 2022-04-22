@@ -41,6 +41,8 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
       }
     });
 
+    /// After selecting a playlist in history page,
+    /// show dialog of history playlist screen with selected playlist 
     on<PlaylistSelected>((event, emit) async {
       showDialog(
           context: context,
