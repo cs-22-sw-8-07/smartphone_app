@@ -432,7 +432,9 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       }
 
       if (qlt != null) {
-        if (state.playlist != null && state.quackLocationType != qlt) {
+        if (state.lockedQuackLocationType == null &&
+            state.playlist != null &&
+            state.quackLocationType != qlt) {
           add(MainPageValueChanged(quackLocationType: qlt));
           QuackServiceResponse<GetPlaylistResponse> response =
               await _getPlaylist(showLoadingBefore: true);

@@ -91,7 +91,9 @@ Future<void> main() async {
         ]);
 
     blocTestWidget<MainPage, MainPageBloc, MainPageState>(
-        "PositionReceived method -> Position is not null -> Playlist is not null and the current QuackLocationType does not match the one from QuackLocationService",
+        "PositionReceived method -> Position is not null -> Playlist is not null "
+            "and the current QuackLocationType does not match the one from "
+            "QuackLocationService",
         buildWidget: () => mainPage,
         setUp: () async {
           playlistFromQuackService = (await QuackService.getInstance()
@@ -107,6 +109,36 @@ Future<void> main() async {
           w.bloc.state.playlist = QuackPlaylist(
               id: "1", tracks: [QuackTrack(id: "1"), QuackTrack(id: "2")]);
           w.bloc.state.quackLocationType = QuackLocationType.beach;
+          w.bloc.state.lockedQuackLocationType = QuackLocationType.nightLife;
+          return w.bloc;
+        },
+        act: (bloc) => bloc.positionReceived(getMockPosition(0, 0)),
+        expect: (bloc) {
+          return [
+            bloc.state.copyWith(quackLocationType: QuackLocationType.cemetery),
+          ];
+        });
+
+    blocTestWidget<MainPage, MainPageBloc, MainPageState>(
+        "PositionReceived method -> Position is not null -> Playlist is not null "
+            "and the current QuackLocationType does not match the one from "
+            "QuackLocationService and LockedQuackLocationType is null",
+        buildWidget: () => mainPage,
+        setUp: () async {
+          playlistFromQuackService = (await QuackService.getInstance()
+              .getPlaylist(QuackLocationType.beach))
+              .quackResponse!
+              .result;
+
+          var service = MockQuackLocationService();
+          service.locationType = QuackLocationType.cemetery;
+          QuackLocationService.init(service);
+        },
+        build: (w) {
+          w.bloc.state.playlist = QuackPlaylist(
+              id: "1", tracks: [QuackTrack(id: "1"), QuackTrack(id: "2")]);
+          w.bloc.state.quackLocationType = QuackLocationType.beach;
+          w.bloc.state.lockedQuackLocationType = null;
           return w.bloc;
         },
         act: (bloc) => bloc.positionReceived(getMockPosition(0, 0)),
