@@ -113,7 +113,7 @@ Card _getPlaylist(
                         context, playlist.quackLocationType!) +
                     ", " +
                     playlist.tracks!.length.toString() +
-                    " Songs",
+                    " songs",
                 style: const TextStyle(
                     color: Colors.white, fontWeight: FontWeight.w700),
               )),
