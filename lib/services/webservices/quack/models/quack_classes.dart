@@ -19,6 +19,27 @@ enum QuackLocationType {
   church
 }
 
+int getQuackLocationTypeInt(QuackLocationType qlt) {
+  switch (qlt) {
+    case QuackLocationType.unknown:
+      return 0;
+    case QuackLocationType.church:
+      return 1;
+    case QuackLocationType.education:
+      return 2;
+    case QuackLocationType.cemetery:
+      return 3;
+    case QuackLocationType.forest:
+      return 4;
+    case QuackLocationType.beach:
+      return 5;
+    case QuackLocationType.urban:
+      return 6;
+    case QuackLocationType.nightLife:
+      return 7;
+  }
+}
+
 @JsonSerializable()
 class QuackResponse {
   @JsonKey(name: "is_successful")
@@ -45,9 +66,9 @@ class QuackResponse {
           return errorMessage;
       }
       // Get localized error message
-      String? waspError = await LocalizationHelper.getInstance()
+      String? quackError = await LocalizationHelper.getInstance()
           .getLocalizedResponseError(errorNo);
-      if (waspError != null) return waspError;
+      if (quackError != null) return quackError;
       return "Quack error: ${errorNo.toString()}";
     } else if (errorMessage != null) {
       return errorMessage;
@@ -98,6 +119,18 @@ class QuackPlaylist extends Equatable {
       }
     }
     return null;
+  }
+
+  QuackPlaylist copy() {
+    List<QuackTrack>? newList;
+    if (tracks != null) {
+      newList = List.of([], growable: true);
+      for (var track in tracks!) {
+        newList.add(track);
+      }
+    }
+
+    return QuackPlaylist(id: id, locationType: locationType, tracks: newList);
   }
 
   @override

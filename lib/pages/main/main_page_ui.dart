@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
-import 'package:smartphone_app/helpers/position_helper/mock_position_helper.dart';
 import 'package:smartphone_app/localization/localization_helper.dart';
 import 'package:smartphone_app/values/values.dart' as values;
 import 'package:smartphone_app/values/colors.dart' as custom_colors;
@@ -12,9 +10,7 @@ import 'package:smartphone_app/widgets/custom_label.dart';
 import 'package:smartphone_app/widgets/custom_list_tile.dart';
 import 'package:spotify_sdk/models/track.dart';
 
-import '../../helpers/position_helper/udp_position_helper.dart';
 import '../../helpers/position_helper/position_helper.dart';
-import '../../helpers/position_helper/models/position_helper_classes.dart';
 import '../../services/webservices/quack/models/quack_classes.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_button.dart';
@@ -48,8 +44,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   late MainPageBloc bloc;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   late AnimationController playlistAnimationController;
-  late AnimationController startStopRecommendationController;
+  late AnimationController locationListAnimationController;
   Animation<double>? playlistSizeAnimation;
+  Animation<double>? locationListSizeAnimation;
   late double playlistHeight;
   Image? userImage;
   Widget? userImageWidget;
@@ -90,8 +87,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
     playlistAnimationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 200));
-    startStopRecommendationController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 2));
+    locationListAnimationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 200));
   }
 
   @override
@@ -104,7 +101,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   @override
   void dispose() {
     playlistAnimationController.dispose();
-    startStopRecommendationController.dispose();
+    locationListAnimationController.dispose();
     super.dispose();
   }
 
@@ -126,6 +123,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     playlistSizeAnimation ??=
         Tween<double>(begin: values.mainPageOverlayHeight, end: playlistHeight)
             .animate(playlistAnimationController);
+    locationListSizeAnimation ??= Tween<double>(begin: 0, end: availableHeight)
+        .animate(locationListAnimationController);
 
     return WillPopScope(
         onWillPop: () async {
@@ -182,7 +181,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     return Stack(
       children: [
         _getMainContent(bloc),
-        _getOverlayContent(bloc),
+        _getPlaylistContent(bloc),
+        _getLocationContent(bloc)
       ],
     );
   }
@@ -261,7 +261,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   Navigator.pop(context);
 
                   bloc.add(
-                      const ButtonPressed(buttonEvent: MainButtonEvent.logOff));
+                      const ButtonPressed(buttonEvent: MainButtonEvent.logOut));
                 },
               ),
             ],
@@ -269,35 +269,11 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _getOverlayContent(MainPageBloc bloc) {
+  Widget _getPlaylistContent(MainPageBloc bloc) {
     return BlocBuilder<MainPageBloc, MainPageState>(builder: (context, state) {
       var overlayContent = state.isPlaylistShown!
           ? _getPlaylist(state)
           : _getCurrentlyPlayingTrack(state);
-
-      var refreshButton = state.isPlaylistShown! && !state.isLoading!
-          ? CustomButton(
-              fontWeight: FontWeight.bold,
-              height: 40,
-              width: 40,
-              icon: const Icon(
-                Icons.refresh_outlined,
-                color: Colors.white,
-                size: 30,
-              ),
-              onPressed: () {
-                bloc.add(const ButtonPressed(
-                    buttonEvent: MainButtonEvent.refreshPlaylist));
-              },
-              borderRadius: const BorderRadius.all(
-                Radius.circular(20),
-              ),
-              margin: const EdgeInsets.only(
-                  right: (values.actionBarHeight - 30) / 2),
-              textColor: custom_colors.black,
-              pressedBackground: custom_colors.backButtonGradientPressedDefault,
-              defaultBackground: custom_colors.transparentGradient)
-          : Container();
 
       return Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -333,13 +309,50 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       textColor: custom_colors.black,
                       pressedBackground: custom_colors.appButtonPressedGradient,
                       defaultBackground: custom_colors.appButtonGradient),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 200),
-                      child: refreshButton,
+                  // Only show the refresh button when the playlist is shown
+                  // and there is no loading of playlists
+                  if (state.isPlaylistShown! && !state.isLoading!)
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 200),
+                        child: CustomButton(
+                            fontWeight: FontWeight.bold,
+                            height: 40,
+                            width: 40,
+                            icon: const Icon(
+                              Icons.refresh_outlined,
+                              color: Colors.white,
+                              size: 30,
+                            ),
+                            onPressed: () {
+                              bloc.add(const ButtonPressed(
+                                  buttonEvent:
+                                      MainButtonEvent.refreshPlaylist));
+                            },
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(20),
+                            ),
+                            margin: const EdgeInsets.only(
+                                right: (values.actionBarHeight - 30) / 2),
+                            textColor: custom_colors.black,
+                            pressedBackground:
+                                custom_colors.backButtonGradientPressedDefault,
+                            defaultBackground:
+                                custom_colors.transparentGradient),
+                      ),
                     ),
-                  )
+                  if (state.isPlaylistShown! && !state.isLoading!)
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                          padding: const EdgeInsets.only(
+                              left: (values.actionBarHeight - 30) / 2),
+                          child: const Image(
+                              height: 30,
+                              width: 30,
+                              image: AssetImage(values.spotifyWhiteIcon))),
+                    )
                 ],
               )),
           AnimatedBuilder(
@@ -359,6 +372,57 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               })
         ],
       );
+    });
+  }
+
+  Widget _getLocationContent(MainPageBloc bloc) {
+    return BlocBuilder<MainPageBloc, MainPageState>(builder: (context, state) {
+      return AnimatedBuilder(
+          animation: locationListAnimationController,
+          builder: (context, _) {
+            Widget child;
+
+            if (!state.isLocationListShown! &&
+                !locationListSizeAnimation!.isCompleted) {
+              child = Container();
+            } else {
+              child =
+                  Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+                _getLocationList(state),
+                CustomButton(
+                    fontWeight: FontWeight.bold,
+                    height: values.actionBarHeight,
+                    icon: const Icon(
+                      Icons.expand_less,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                    onPressed: () => {
+                          bloc.add(const ButtonPressed(
+                              buttonEvent:
+                                  MainButtonEvent.selectManualLocation)),
+                          bloc.state.isLocationListShown!
+                              ? locationListAnimationController.reverse()
+                              : locationListAnimationController.forward(),
+                        },
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(0),
+                    ),
+                    margin: const EdgeInsets.all(0),
+                    textColor: custom_colors.black,
+                    pressedBackground: custom_colors.appButtonPressedGradient,
+                    defaultBackground: custom_colors.appButtonGradient)
+              ]);
+            }
+
+            return Container(
+                decoration: BoxDecoration(
+                    color: custom_colors.darkBlue,
+                    border:
+                        Border.all(color: custom_colors.darkBlue, width: 0)),
+                height: locationListSizeAnimation!.value,
+                child: child);
+          });
     });
   }
 
@@ -424,9 +488,14 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       Align(
                           alignment: Alignment.center,
                           child: GestureDetector(
-                              onTapUp: (v) => bloc.add(const ButtonPressed(
-                                  buttonEvent:
-                                      MainButtonEvent.selectManualLocation)),
+                              onTapUp: (v) {
+                                bloc.add(const ButtonPressed(
+                                    buttonEvent:
+                                        MainButtonEvent.selectManualLocation));
+                                bloc.state.isLocationListShown!
+                                    ? locationListAnimationController.reverse()
+                                    : locationListAnimationController.forward();
+                              },
                               child: Container(
                                 constraints: BoxConstraints(
                                     maxWidth: availableWidth / 2),
@@ -487,45 +556,51 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                     values.mainPagePlayPauseButtonSize /
                                         2 /
                                         2)),
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.skip_previous,
-                              color: custom_colors.darkBlue,
+                              color: state.playlist == null
+                                  ? custom_colors.darkGrey2
+                                  : custom_colors.darkBlue,
                               size: values.mainPagePlayPauseButtonSize / 3,
                             ),
-                            onPressed: () => bloc.add(const TouchEvent(
-                                touchEvent: MainTouchEvent.goToPreviousTrack)),
-                            pressedBackground: custom_colors.greyGradient,
+                            onPressed: () {
+                              if (state.playlist != null) {
+                                bloc.add(const TouchEvent(
+                                    touchEvent:
+                                        MainTouchEvent.goToPreviousTrack));
+                              }
+                            },
+                            pressedBackground: state.playlist == null
+                                ? custom_colors.transparentGradient
+                                : custom_colors.greyGradient,
                             defaultBackground:
                                 custom_colors.transparentGradient),
-                        AnimatedBuilder(
-                          animation: startStopRecommendationController,
-                          builder: (context, _) {
-                            return PlayButton(
-                              margin:
-                                  const EdgeInsets.only(top: 30, bottom: 30),
-                              height: values.mainPagePlayPauseButtonSize,
-                              width: values.mainPagePlayPauseButtonSize,
-                              defaultBackground:
-                                  custom_colors.appButtonGradient,
-                              pressedBackground:
-                                  custom_colors.appButtonPressedGradient,
-                              isPlaying: state.isRecommendationStarted!,
-                              foreground: state.isLoading!
-                                  ? Container(
-                                      padding: const EdgeInsets.all(35),
-                                      child: const CircularProgressIndicator(
-                                          color: Colors.white))
-                                  : Icon(
-                                      state.isRecommendationStarted!
-                                          ? Icons.pause
-                                          : Icons.play_arrow,
-                                      color: Colors.white,
-                                      size: 40),
-                              onPressed: () => bloc.add(const ButtonPressed(
-                                  buttonEvent:
-                                      MainButtonEvent.startStopRecommendation)),
-                            );
-                          },
+                        PlayButton(
+                          margin: const EdgeInsets.only(top: 30, bottom: 30),
+                          height: values.mainPagePlayPauseButtonSize,
+                          width: values.mainPagePlayPauseButtonSize,
+                          defaultBackground: custom_colors.appButtonGradient,
+                          pressedBackground:
+                              custom_colors.appButtonPressedGradient,
+                          isPlaying: state.playlist != null &&
+                              state.playerState != null &&
+                              !state.playerState!.isPaused,
+                          foreground: state.isLoading!
+                              ? Container(
+                                  padding: const EdgeInsets.all(35),
+                                  child: const CircularProgressIndicator(
+                                      color: Colors.white))
+                              : Icon(
+                                  state.playlist != null &&
+                                          state.playerState != null &&
+                                          !state.playerState!.isPaused
+                                      ? Icons.pause
+                                      : Icons.play_arrow,
+                                  color: Colors.white,
+                                  size: 40),
+                          onPressed: () => bloc.add(const ButtonPressed(
+                              buttonEvent:
+                                  MainButtonEvent.startStopRecommendation)),
                         ),
                         CustomButton(
                             margin: const EdgeInsets.only(left: 30),
@@ -536,14 +611,22 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                     values.mainPagePlayPauseButtonSize /
                                         2 /
                                         2)),
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.skip_next,
-                              color: custom_colors.darkBlue,
+                              color: state.playlist == null
+                                  ? custom_colors.darkGrey2
+                                  : custom_colors.darkBlue,
                               size: values.mainPagePlayPauseButtonSize / 3,
                             ),
-                            onPressed: () => bloc.add(const TouchEvent(
-                                touchEvent: MainTouchEvent.goToNextTrack)),
-                            pressedBackground: custom_colors.greyGradient,
+                            onPressed: () {
+                              if (state.playlist != null) {
+                                bloc.add(const TouchEvent(
+                                    touchEvent: MainTouchEvent.goToNextTrack));
+                              }
+                            },
+                            pressedBackground: state.playlist == null
+                                ? custom_colors.transparentGradient
+                                : custom_colors.greyGradient,
                             defaultBackground:
                                 custom_colors.transparentGradient),
                         const Expanded(child: SizedBox()),
@@ -559,17 +642,21 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   }
 
   Widget _getCurrentlyPlayingTrack(MainPageState state) {
+    Color backgroundColor = state.isPlaylistShown!
+        ? custom_colors.darkerBlue
+        : custom_colors.darkBlue;
+
     if (state.playerState == null || state.playerState!.track == null) {
-      // Can add design for when no track is being played
-      return Container();
+      return Container(
+        decoration: BoxDecoration(
+            color: backgroundColor,
+            border: Border.all(width: 0, color: custom_colors.darkBlue)),
+        height: values.mainPageOverlayHeight,
+      );
     }
     Track? track = state.playerState!.track;
 
     QuackTrack quackTrack = QuackTrack.trackToQuackTrack(track)!;
-
-    Color backgroundColor = state.isPlaylistShown!
-        ? custom_colors.darkerBlue
-        : custom_colors.darkBlue;
 
     return Container(
       decoration: BoxDecoration(
@@ -592,10 +679,14 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           Expanded(
               child: ClipRect(
                   child: Dismissible(
+                      direction:
+                          state.playlist == null || state.currentTrack == null
+                              ? DismissDirection.none
+                              : DismissDirection.horizontal,
                       dismissThresholds: const {
-                DismissDirection.startToEnd: 0.2,
-                DismissDirection.endToStart: 0.2,
-              },
+                        DismissDirection.startToEnd: 0.2,
+                        DismissDirection.endToStart: 0.2,
+                      },
                       background: const Icon(
                         Icons.skip_previous,
                         color: Colors.white,
@@ -687,7 +778,17 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       pressedBackground:
                           custom_colors.backButtonGradientPressedDefault,
                       defaultBackground: custom_colors.transparentGradient)),
-            )
+            ),
+          if (!state.isPlaylistShown!)
+            const SizedBox(
+                width: 60,
+                height: 60,
+                child: Align(
+                    alignment: Alignment.center,
+                    child: Image(
+                        height: 30,
+                        width: 30,
+                        image: AssetImage(values.spotifyWhiteIcon))))
         ],
       ),
     );
@@ -818,6 +919,90 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         ],
       );
     }
+  }
+
+  Widget _getLocationListTile(
+      MainPageState state, QuackLocationType locationType,
+      {bool useAutomaticTitle = false, bool isSelected = false}) {
+    return CustomListTile(
+        pressedBackground: custom_colors.transparentGradient,
+        defaultBackground: custom_colors.transparentGradient,
+        widget: Container(
+            decoration: BoxDecoration(
+                color: custom_colors.darkBlue,
+                border: Border.all(width: 0, color: custom_colors.darkBlue)),
+            height: values.mainPageOverlayHeight,
+            child: Row(children: [
+              Container(
+                decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    border:
+                        Border.all(width: 0, color: custom_colors.darkBlue)),
+                margin: const EdgeInsets.all(0),
+                width: values.mainPageOverlayHeight,
+                padding: const EdgeInsets.all(values.padding),
+                child: ClipRRect(
+                    borderRadius: const BorderRadius.all(Radius.circular(5)),
+                    child: Image.asset(LocalizationHelper.getInstance()
+                        .getQuackLocationTypeSmallImagePath(locationType))), //
+              ),
+              CustomLabel(
+                  height: values.mainPageOverlayHeight / 2,
+                  fontSize: 15,
+                  maxLines: 1,
+                  softWrap: false,
+                  useOverflowReplacement: true,
+                  fontWeight: FontWeight.w700,
+                  title: useAutomaticTitle
+                      ? AppLocalizations.of(context)!.automatic
+                      : LocalizationHelper.getInstance()
+                          .getLocalizedQuackLocationType(context, locationType),
+                  textColor: isSelected ? custom_colors.orange_1 : Colors.white,
+                  alignmentGeometry: Alignment.centerLeft,
+                  padding: const EdgeInsets.only(
+                      left: 0, top: 0, bottom: 0, right: values.padding),
+                  margin: const EdgeInsets.all(0))
+            ])),
+        onPressed: () {
+          bloc.add(LocationSelected(
+              quackLocationType: useAutomaticTitle ? null : locationType));
+          bloc.state.isLocationListShown!
+              ? locationListAnimationController.reverse()
+              : locationListAnimationController.forward();
+        });
+  }
+
+  Widget _getLocationList(MainPageState state) {
+    List<Widget> children = [
+      _getLocationListTile(state, state.quackLocationType!,
+          useAutomaticTitle: true,
+          isSelected: state.lockedQuackLocationType == null),
+      Container(
+        margin:
+            const EdgeInsets.only(left: values.padding, right: values.padding),
+        color: custom_colors.lightDarkBlue,
+        height: 2,
+      )
+    ];
+
+    for (var locationType in QuackLocationType.values) {
+      if (locationType == QuackLocationType.unknown) {
+        continue;
+      }
+      children.add(_getLocationListTile(state, locationType,
+          isSelected: state.lockedQuackLocationType == locationType));
+    }
+
+    return Expanded(
+        child: RawScrollbar(
+            isAlwaysShown:
+                locationListSizeAnimation!.isCompleted ? true : false,
+            thickness: 4,
+            thumbColor: Colors.white,
+            child: ListView(
+              children: children,
+              shrinkWrap: true,
+            )));
   }
 
 //endregion

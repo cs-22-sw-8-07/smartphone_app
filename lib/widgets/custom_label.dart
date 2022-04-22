@@ -101,7 +101,6 @@ class CustomLabel extends StatelessWidget {
                   : null,
               softWrap: softWrap,
               maxLines: maxLines,
-              //overflow: textOverflow,
               textAlign: textAlign,
               style: GoogleFonts.roboto(
                   textStyle: TextStyle(

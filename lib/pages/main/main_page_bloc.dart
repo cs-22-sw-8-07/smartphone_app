@@ -30,8 +30,17 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
   ///
   //region Variables
 
+  /// [_gettingLocationType] is a flag used to allow only one instance call to
+  /// QuackLocationService at a time
+  bool _gettingLocationType = false;
+
+  /// [context] set from the page
   late BuildContext context;
+
+  /// The current [positionHelper] set for the BLoC
   PositionHelper positionHelper;
+
+  /// Stream subscription to the [positionHelper] in order to receive positions
   late StreamSubscription<Position?> positionStreamSubscription;
 
   //endregion
@@ -45,57 +54,84 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       : super(MainPageState(
             hasJustPerformedAction: false,
             isPlaylistShown: false,
+            isLocationListShown: false,
             isLoading: false,
-            quackLocationType: QuackLocationType.unknown,
-            isRecommendationStarted: false)) {
+            quackLocationType: QuackLocationType.unknown)) {
     LocalizationHelper.init(context: context);
 
     /// ButtonPressed
     on<ButtonPressed>((event, emit) async {
       switch (event.buttonEvent) {
+
+        /// Start/Stop recommendation
         case MainButtonEvent.startStopRecommendation:
-          if (state.isRecommendationStarted!) {
-            emit(state.copyWith(
-                isLoading: true, isRecommendationStarted: false));
-            await SpotifyService.getInstance().pause();
-            var newState = state.copyWith(isLoading: false);
-            newState.playlist = null;
-            emit(newState);
-          } else {
+          // If the playlist is null start the recommendation by loading a
+          // playlist
+          if (state.playlist == null) {
             await _startRecommendation();
           }
+          // The playlist is not null, and now this button acts as a
+          // resume/pause button
+          else {
+            await _resumePausePlayer();
+          }
           break;
+
+        /// See recommendations
         case MainButtonEvent.seeRecommendations:
           // TODO: Handle this case.
           break;
+
+        /// Go to settings
         case MainButtonEvent.goToSettings:
+          // Go to the settings page
           GeneralUtil.showPageAsDialog(context, SettingsPage());
           break;
-        case MainButtonEvent.logOff:
+
+        /// Log out
+        case MainButtonEvent.logOut:
+          // Delete the access token
           AppValuesHelper.getInstance()
               .saveString(AppValuesKey.accessToken, "");
-
+          // Go to the login page
           GeneralUtil.goToPage(context, const LoginPage());
           break;
+
+        /// View playlist
         case MainButtonEvent.viewPlaylist:
+          // Set the isPlaylistShown flag negated
           emit(state.copyWith(isPlaylistShown: !state.isPlaylistShown!));
           break;
+
+        /// Resume/pause player
         case MainButtonEvent.resumePausePlayer:
+          // The current player state is null, do nothing
           if (state.playerState == null) {
-            // TODO: Show message to user
             return;
           }
+          // Do resume/pause actions
           await _resumePausePlayer();
           emit(state.copyWith(hasJustPerformedAction: true));
           break;
+
+        /// Lock/Unlock QuackLocationType
         case MainButtonEvent.lockUnlockQuackLocationType:
           String message = "";
+          bool getNewPlaylist = false;
 
+          // QuackLocationType is not locked and the user has not selected a
+          // QuackLocationType
           if (state.lockedQuackLocationType == null) {
+            // Set LockedQuackLocationType to QuackLocationType
             emit(state.copyWith(
                 lockedQuackLocationType: state.quackLocationType));
             message = AppLocalizations.of(context)!.locked_location;
           } else {
+            // Check if the QuackLocationType will change when unlocked.
+            // If it changes a new playlist will be loaded
+            getNewPlaylist =
+                state.quackLocationType != state.lockedQuackLocationType;
+            // Set LockedQuackLocationType to null
             var newState = state.copyWith();
             newState.lockedQuackLocationType = null;
             emit(newState);
@@ -104,26 +140,43 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
           // Show message to the user
           GeneralUtil.showSnackBar(context: context, message: message);
-          break;
-        case MainButtonEvent.selectManualLocation:
-          if (kDebugMode) {
-            print("Test");
+
+          // If the flag is set, start the recommendation again
+          if (getNewPlaylist) {
+            await _startRecommendation();
           }
           break;
+
+        /// Select manual location
+        case MainButtonEvent.selectManualLocation:
+          // Set the IsLocationListShown flag negated
+          emit(
+              state.copyWith(isLocationListShown: !state.isLocationListShown!));
+          break;
+
+        /// Refresh playlist
         case MainButtonEvent.refreshPlaylist:
+          // Ask the user if there sure they want to refresh
           var reply = await QuestionDialog.getInstance().show(
               context: context,
               question: AppLocalizations.of(context)!
                   .are_you_sure_you_want_to_refresh_the_playlist);
+          // If not yes, do nothing
           if (reply != DialogQuestionResponse.yes) {
             return;
           }
-          if (state.playerState != null && state.playerState!.isPaused) {
+          // The current player state is not null and a track is currently
+          // playing, then pause the track
+          if (state.playerState != null && !state.playerState!.isPaused) {
             await _resumePausePlayer();
           }
+          // Start recommendation
           await _startRecommendation();
           break;
+
+        /// Append to playlist
         case MainButtonEvent.appendToPlaylist:
+          // Append to existing playlist
           await _appendToExistingPlaylist();
           break;
       }
@@ -131,69 +184,78 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
     /// SpotifyPlayerStateChanged
     on<SpotifyPlayerStateChanged>(((event, emit) async {
+      if (kDebugMode) {
+        print("Player state changed");
+      }
+
+      // The current player state is null or the player state in the event is null
       if (state.playerState == null || event.playerState == null) {
-        emit(state.copyWith(playerState: event.playerState));
+        // Update to event player state
+        var newState = state.copyWith();
+        newState.playerState = event.playerState;
+        emit(newState);
         return;
       }
 
-      QuackTrack? trackFromPreviousPlayerState =
-          QuackTrack.trackToQuackTrack(state.playerState!.track);
+      // Get track from current player state
       QuackTrack? trackFromCurrentPlayerState =
+          QuackTrack.trackToQuackTrack(state.playerState!.track);
+      // Get track from event player state
+      QuackTrack? trackFromNewPlayerState =
           QuackTrack.trackToQuackTrack(event.playerState!.track);
 
+      // HasJustPerformedAction is set or
+      // Track from current player state is the same as the one in the track
+      // from the event player state or
+      // The current track in the state is not null and the track in the event
+      // player state is not null and current track in the state is equal to the
+      // track in the event player state
       if (state.hasJustPerformedAction! ||
-          trackFromCurrentPlayerState == trackFromPreviousPlayerState ||
+          trackFromNewPlayerState == trackFromCurrentPlayerState ||
           (state.currentTrack != null &&
-              trackFromCurrentPlayerState != null &&
-              trackFromCurrentPlayerState.id == state.currentTrack!.id)) {
+              trackFromNewPlayerState != null &&
+              trackFromNewPlayerState.id == state.currentTrack!.id)) {
+        // Update to event player state and remove HasJustPerformedAction flag
         emit(state.copyWith(
             playerState: event.playerState, hasJustPerformedAction: false));
       } else {
-        if (state.playlist == null || trackFromPreviousPlayerState == null) {
+        // Playlist is null or
+        // Track from the current player state is null
+        if (state.playlist == null || trackFromCurrentPlayerState == null) {
+          // Update to event player state
           emit(state.copyWith(playerState: event.playerState));
           return;
         }
 
-        emit(state.copyWith(playerState: event.playerState));
-
+        // Current track in the state is not null
         if (state.currentTrack != null) {
-          int index = state.playlist!.tracks!.indexOf(state.currentTrack!);
-
-          if (kDebugMode) {
-            print("PlayerState Index: " + index.toString());
-          }
-
-          // The QuackLocationType has changed, meaning the playlist has
-          // been overridden
-          if (index == -1) {
-            await _playTrack(state.playlist!.tracks!.first);
-            return;
-          }
-
-          var nextTrack = getNextTrack(state.currentTrack!);
-          await _playTrack(nextTrack!);
-
-          if (state.isRecommendationStarted! &&
-              index == state.playlist!.tracks!.length - 2) {
-            QuackServiceResponse<GetPlaylistResponse> getPlaylistResponse =
-                await _getPlaylist();
-            if (!getPlaylistResponse.isSuccess) {
+          // The current track in the state is part of the current playlist
+          if (state.playlist!.tracks!.contains(state.currentTrack)) {
+            // Get next track
+            var nextTrack = getNextTrack(state.currentTrack!);
+            // The current track in the state is the last in the playlist,
+            // which means there is no next track
+            if (nextTrack == null) {
               return;
             }
-            QuackPlaylist newPlaylist =
-                getPlaylistResponse.quackResponse!.result!;
-            QuackPlaylist currentPlaylist = state.playlist!;
-            // Same QuackLocationType as the current playlist
-            if (newPlaylist.quackLocationType ==
-                currentPlaylist.quackLocationType) {
-              currentPlaylist.tracks!.addAll(newPlaylist.tracks!);
-              add(PlaylistReceived(playList: currentPlaylist));
-            }
-            // New QuackLocationType
-            else {
-              add(PlaylistReceived(playList: newPlaylist));
+            // Play next track
+            await _playTrack(nextTrack);
+            // The next track is the last in the playlist
+            if (nextTrack == state.playlist!.tracks!.last) {
+              // Add new tracks to the playlist
+              await _appendToExistingPlaylist();
             }
           }
+          // The current track in the state is not part of the playlist,
+          // therefore play the first song in the playlist
+          else {
+            await _playTrack(state.playlist!.tracks!.first);
+          }
+        }
+        // Current track in the state is null
+        else {
+          // Update to event player state
+          emit(state.copyWith(playerState: event.playerState));
         }
       }
     }));
@@ -201,56 +263,44 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     /// TouchEvent
     on<TouchEvent>((event, emit) async {
       if (state.playlist != null && state.currentTrack != null) {
-        int index = state.playlist!.tracks!.indexOf(state.currentTrack!);
         switch (event.touchEvent) {
-          case MainTouchEvent.goToNextTrack:
-            {
-              var response = await _playNextTrack(index);
-              if (!response.isSuccess) {
-                return;
-              }
-              break;
-            }
-          case MainTouchEvent.goToPreviousTrack:
-            {
-              QuackTrack? previousTrack;
-              if (index == 0) {
-                previousTrack =
-                    state.playlist!.tracks![state.playlist!.tracks!.length - 1];
-              } else {
-                previousTrack = state.playlist!.tracks![index - 1];
-              }
 
-              SpotifySdkResponse response = await _playTrack(previousTrack);
-              if (!response.isSuccess) {
-                GeneralUtil.showToast(response.errorMessage);
+          /// Go to next track
+          case MainTouchEvent.goToNextTrack:
+            {
+              // Get the next track in the playlist
+              var nextTrack = getNextTrack(state.currentTrack!);
+              // The current track is the last in the playlist and there is no
+              // next track, so do nothing
+              if (nextTrack == null) {
                 return;
+              }
+              // Play the next track
+              await _playTrack(nextTrack);
+              // The next track is the last in the playlist
+              if (nextTrack == state.playlist!.tracks!.last) {
+                // Append new tracks to the playlist
+                await _appendToExistingPlaylist();
+              }
+              break;
+            }
+
+          /// Go to previous track
+          case MainTouchEvent.goToPreviousTrack:
+            {
+              // Get the previous track in the playlist
+              QuackTrack? previousTrack = getPreviousTrack(state.currentTrack!);
+              // The current track is the first in the playlist and there is no
+              // previous track, so play the current track from the beginning
+              if (previousTrack == null) {
+                await _playTrack(state.currentTrack!);
+              } else {
+                // Play the previous track
+                await _playTrack(previousTrack);
               }
               break;
             }
         }
-        emit(state.copyWith(hasJustPerformedAction: true));
-      } else {
-        switch (event.touchEvent) {
-          case MainTouchEvent.goToNextTrack:
-            SpotifySdkResponse response =
-                await SpotifyService.getInstance().skipNext();
-            if (!response.isSuccess) {
-              GeneralUtil.showToast(response.errorMessage);
-              return;
-            }
-            emit(state.copyWith(hasJustPerformedAction: true));
-            break;
-          case MainTouchEvent.goToPreviousTrack:
-            SpotifySdkResponse response =
-                await SpotifyService.getInstance().skipPrevious();
-            if (!response.isSuccess) {
-              GeneralUtil.showToast(response.errorMessage);
-              return;
-            }
-            break;
-        }
-        emit(state.copyWith(hasJustPerformedAction: true));
       }
     });
 
@@ -263,12 +313,35 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
     /// TrackSelected
     on<TrackSelected>((event, emit) async {
+      // Play the selected track
       SpotifySdkResponse response = await _playTrack(event.quackTrack);
       if (!response.isSuccess) {
         GeneralUtil.showToast(response.errorMessage);
         return;
       }
-      emit(state.copyWith(hasJustPerformedAction: true));
+      // If the last track is selected append additional tracks to the
+      // current playlist
+      if (event.quackTrack == state.playlist!.tracks!.last) {
+        await _appendToExistingPlaylist();
+      }
+    });
+
+    /// LocationSelected
+    on<LocationSelected>((event, emit) async {
+      // Flag is set if the QuackLocationType in the state is not equal to the
+      // one in the event
+      bool getNewPlaylist = state.quackLocationType != event.quackLocationType;
+      // Set IsLocationListShown to false and set LockedQuackLocationType to the
+      // one in the event
+      var newState = state.copyWith(
+        isLocationListShown: false,
+      );
+      newState.lockedQuackLocationType = event.quackLocationType;
+      emit(newState);
+      // If the flag is set start new recommendation
+      if (getNewPlaylist) {
+        await _startRecommendation();
+      }
     });
 
     /// MainPageValueChanged
@@ -279,21 +352,24 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
         }
       }
 
+      // Update the values in the state to the ones from the event
       var newState = state.copyWith(
           quackLocationType: event.quackLocationType ?? state.quackLocationType,
-          isRecommendationStarted:
-              event.isRecommendationStarted ?? state.isRecommendationStarted,
           isLoading: event.isLoading ?? state.isLoading);
+      // The current track is set here to allow null values
       newState.currentTrack = event.currentTrack ?? state.currentTrack;
       emit(newState);
     });
 
     /// HasJustPerformedSpotifyPlayerAction
     on<HasPerformedSpotifyPlayerAction>((event, emit) {
+      // Set the flag HasJustPerformedAction to true
       emit(state.copyWith(hasJustPerformedAction: true));
     });
 
+    // The Spotify player connection status
     _subscribeToConnectionStatus();
+    // The stream that receives positions from the PositionHelper
     _subscribeToPosition();
   }
 
@@ -327,47 +403,53 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
   /// Subscribe to a stream providing GPS positions
   /// Called once in the constructor of the Bloc
   void _subscribeToPosition() async {
-    bool gettingLocationType = false;
-
     positionStreamSubscription =
         positionHelper.getPositionStream().listen((position) async {
+      await positionReceived(position);
+    });
+  }
+
+  Future<void> positionReceived(Position? position) async {
+    if (kDebugMode) {
+      print(position != null
+          ? (position.latitude.toString().replaceAll(",", ".") +
+              ", " +
+              position.longitude.toString().replaceAll(",", "."))
+          : "Unknown");
+    }
+
+    if (position != null && !_gettingLocationType) {
+      _gettingLocationType = true;
+      QuackLocationType? qlt = await QuackLocationService.getInstance()
+          .getQuackLocationType(position);
+
       if (kDebugMode) {
-        print(position != null
-            ? (position.latitude.toString().replaceAll(",", ".") +
-                ", " +
-                position.longitude.toString().replaceAll(",", "."))
-            : "Unknown");
+        print("QLT: " +
+            (qlt == null
+                ? "null"
+                : LocalizationHelper.getInstance()
+                    .getLocalizedQuackLocationType(context, qlt)));
       }
 
-      if (position != null && !gettingLocationType) {
-        gettingLocationType = true;
-        QuackLocationType? qlt = await QuackLocationService.getInstance()
-            .getQuackLocationType(position);
-
-        if (kDebugMode) {
-          print("QLT: " +
-              (qlt == null
-                  ? "null"
-                  : LocalizationHelper.getInstance()
-                      .getLocalizedQuackLocationType(context, qlt)));
-        }
-
-        if (qlt != null) {
-          if (state.isRecommendationStarted! &&
-              state.quackLocationType != qlt) {
-            QuackServiceResponse<GetPlaylistResponse> response =
-                await _getPlaylist();
-            if (!response.isSuccess) {
-              return;
-            }
-            add(PlaylistReceived(playList: response.quackResponse!.result!));
+      if (qlt != null) {
+        if (state.lockedQuackLocationType == null &&
+            state.playlist != null &&
+            state.quackLocationType != qlt) {
+          add(MainPageValueChanged(quackLocationType: qlt));
+          QuackServiceResponse<GetPlaylistResponse> response =
+              await _getPlaylist(showLoadingBefore: true);
+          if (!response.isSuccess) {
+            return;
           }
+          add(PlaylistReceived(playList: response.quackResponse!.result!));
+          add(const MainPageValueChanged(isLoading: false));
+        } else {
           add(MainPageValueChanged(quackLocationType: qlt));
         }
-
-        gettingLocationType = false;
       }
-    });
+
+      _gettingLocationType = false;
+    }
   }
 
   /// Subscribe to the Spotify remote connection status
@@ -416,10 +498,19 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
   QuackTrack? getNextTrack(QuackTrack track) {
     int index = state.playlist!.tracks!.indexOf(track);
     if (index != -1) {
-      if (index == state.playlist!.tracks!.length - 1) {
-        return state.playlist!.tracks![0];
-      } else {
-        return state.playlist!.tracks![index + 1];
+      int nextIndex = index + 1;
+      if (index + 1 <= state.playlist!.tracks!.length - 1) {
+        return state.playlist!.tracks![nextIndex];
+      }
+    }
+    return null;
+  }
+
+  QuackTrack? getPreviousTrack(QuackTrack track) {
+    int index = state.playlist!.tracks!.indexOf(state.currentTrack!);
+    if (index != -1) {
+      if (index > 0) {
+        return state.playlist!.tracks![index - 1];
       }
     }
     return null;
@@ -443,16 +534,12 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     return response;
   }
 
-  /// Play next track in the playlist
-  /// You have to provide the [index] of the track currently being played
-  Future<SpotifySdkResponse> _playNextTrack(int index,
-      {bool hasPerformedAction = true}) async {
-    QuackTrack? nextTrack = getNextTrack(state.playlist!.tracks![index]);
-    return await _playTrack(nextTrack!, hasPerformedAction: hasPerformedAction);
-  }
-
   /// Resume/Pause Spotify player
   Future<void> _resumePausePlayer() async {
+    if (state.playerState == null) {
+      return;
+    }
+
     if (state.playerState!.isPaused) {
       SpotifySdkResponse response = await SpotifyService.getInstance().resume();
       if (!response.isSuccess) {
@@ -551,15 +638,14 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     }
 
     // Add to existing playlist
-    var newPlaylist = state.playlist!;
+    var newPlaylist = state.playlist!.copy();
     newPlaylist.tracks!
         .addAll(getPlaylistResponse.quackResponse!.result!.tracks!);
 
     // Show new playlist
     add(PlaylistReceived(playList: newPlaylist));
     // Remove loading animation and start recommendation animation
-    add(const MainPageValueChanged(
-        isLoading: false, isRecommendationStarted: true));
+    add(const MainPageValueChanged(isLoading: false));
   }
 
   /// Start recommendation
@@ -580,8 +666,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     // Show playlist
     add(PlaylistReceived(playList: getPlaylistResponse.quackResponse!.result!));
     // Remove loading animation and start recommendation animation
-    add(const MainPageValueChanged(
-        isLoading: false, isRecommendationStarted: true));
+    add(const MainPageValueChanged(isLoading: false));
   }
 
   //endregion

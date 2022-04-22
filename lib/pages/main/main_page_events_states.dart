@@ -12,7 +12,7 @@ enum MainButtonEvent {
   startStopRecommendation,
   seeRecommendations,
   goToSettings,
-  logOff,
+  logOut,
   viewPlaylist,
   resumePausePlayer,
   lockUnlockQuackLocationType,
@@ -33,9 +33,6 @@ enum MainTouchEvent { goToNextTrack, goToPreviousTrack }
 /// Base event class
 abstract class MainPageEvent extends Equatable {
   const MainPageEvent();
-
-  @override
-  List<Object?> get props => [];
 }
 
 /// Event for when a button is pressed
@@ -99,26 +96,45 @@ class TrackSelected extends MainPageEvent {
   List<Object?> get props => [quackTrack];
 }
 
+/// Event for changes in several MainPage values
+///
+/// The [currentTrack] is the track currently being played by the Quack app.
+/// [isLoading] is a boolean used to indicate on the screen that something
+/// is being loaded e.g. a playlist from the Qauck API.
+/// [quackLocationType] is the type received from the QuackLocationService
+/// based on the position provided.
 // ignore: must_be_immutable
 class MainPageValueChanged extends MainPageEvent {
   final QuackTrack? currentTrack;
-  final bool? isRecommendationStarted;
   final bool? isLoading;
   final QuackLocationType? quackLocationType;
 
   const MainPageValueChanged(
-      {this.currentTrack,
-      this.isRecommendationStarted,
-      this.quackLocationType,
-      this.isLoading});
+      {this.currentTrack, this.quackLocationType, this.isLoading});
 
   @override
-  List<Object?> get props =>
-      [currentTrack, isRecommendationStarted, isLoading, quackLocationType];
+  List<Object?> get props => [currentTrack, isLoading, quackLocationType];
 }
 
+/// Event for selecting a location manually
+///
+/// The [location] is the location that the user selected
+class LocationSelected extends MainPageEvent {
+  final QuackLocationType? quackLocationType;
+
+  const LocationSelected({required this.quackLocationType});
+
+  @override
+  List<Object?> get props => [quackLocationType];
+}
+
+/// Event fired whenever a Spotify player action has been executed by the Quack
+/// app
 class HasPerformedSpotifyPlayerAction extends MainPageEvent {
   const HasPerformedSpotifyPlayerAction();
+
+  @override
+  List<Object?> get props => [];
 }
 
 //endregion
@@ -128,10 +144,30 @@ class HasPerformedSpotifyPlayerAction extends MainPageEvent {
 ///
 //region State
 
+/// The state for the MainPage
+///
+/// [isPlaylistShown] is used to tell whether the playlist should be shown on
+/// the screen or not.
+/// [playerState] is received from the Spotify SDK and tells the state of the
+/// Spotify player.
+/// [playlist] has the content of playlist currently being played in the
+/// Quack app.
+/// [hasJustPerformedAction] is used to identify whether it was the Quack app or
+/// Spotify who has changed the current track received in the [playerState].
+/// [quackLocationType] is the type received from the QuackLocationService
+/// based on the position provided.
+/// [lockedQuackLocationType] is set either by locking the current
+/// [quackLocationType] or set manually through the [LocationSelected] event.
+/// [isLoading] is a boolean used to indicate on the screen that something
+/// is being loaded e.g. a playlist from the Qauck API.
+/// The [currentTrack] is the track currently being played by the Quack app.
+///
+/// [updatedItemHashCode] is used to force a state update whenever a change is
+/// made to a list e.g. the list of tracks in the [playlist].
+/// It can be used by setting it to the hashcode of the list in question.
 // ignore: must_be_immutable
 class MainPageState extends Equatable {
   bool? isPlaylistShown;
-  bool? isRecommendationStarted;
   PlayerState? playerState;
   QuackPlaylist? playlist;
   bool? hasJustPerformedAction;
@@ -139,53 +175,54 @@ class MainPageState extends Equatable {
   QuackLocationType? lockedQuackLocationType;
   bool? isLoading;
   QuackTrack? currentTrack;
+  bool? isLocationListShown;
 
   int? updatedItemHashCode;
 
   MainPageState(
       {this.isPlaylistShown,
       this.playlist,
+      this.isLocationListShown,
       this.currentTrack,
       this.isLoading,
       this.updatedItemHashCode,
       this.lockedQuackLocationType,
       this.quackLocationType,
       this.hasJustPerformedAction,
-      this.isRecommendationStarted,
       this.playerState});
 
   MainPageState copyWith(
       {bool? isPlaylistShown,
       QuackPlaylist? playlist,
       QuackTrack? currentTrack,
+      bool? isLocationListShown,
       int? updatedItemHashCode,
       QuackLocationType? lockedQuackLocationType,
       QuackLocationType? quackLocationType,
       bool? hasJustPerformedAction,
       bool? isLoading,
-      bool? isRecommendationStarted,
       PlayerState? playerState}) {
     return MainPageState(
-        playlist: playlist ?? this.playlist,
-        isLoading: isLoading ?? this.isLoading,
-        currentTrack: currentTrack ?? this.currentTrack,
-        lockedQuackLocationType:
-            lockedQuackLocationType ?? this.lockedQuackLocationType,
-        hasJustPerformedAction:
-            hasJustPerformedAction ?? this.hasJustPerformedAction,
-        updatedItemHashCode: updatedItemHashCode ?? this.updatedItemHashCode,
-        quackLocationType: quackLocationType ?? this.quackLocationType,
-        isPlaylistShown: isPlaylistShown ?? this.isPlaylistShown,
-        playerState: playerState ?? this.playerState,
-        isRecommendationStarted:
-            isRecommendationStarted ?? this.isRecommendationStarted);
+      playlist: playlist ?? this.playlist,
+      isLoading: isLoading ?? this.isLoading,
+      currentTrack: currentTrack ?? this.currentTrack,
+      isLocationListShown: isLocationListShown ?? this.isLocationListShown,
+      lockedQuackLocationType:
+          lockedQuackLocationType ?? this.lockedQuackLocationType,
+      hasJustPerformedAction:
+          hasJustPerformedAction ?? this.hasJustPerformedAction,
+      updatedItemHashCode: updatedItemHashCode ?? this.updatedItemHashCode,
+      quackLocationType: quackLocationType ?? this.quackLocationType,
+      isPlaylistShown: isPlaylistShown ?? this.isPlaylistShown,
+      playerState: playerState ?? this.playerState,
+    );
   }
 
   @override
   List<Object?> get props => [
         isPlaylistShown,
         currentTrack,
-        isRecommendationStarted,
+        isLocationListShown,
         lockedQuackLocationType,
         isLoading,
         playlist,
