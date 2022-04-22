@@ -21,9 +21,6 @@ enum LoginButtonEvent {
 
 abstract class LoginPageEvent extends Equatable {
   const LoginPageEvent();
-
-  @override
-  List<Object?> get props => [];
 }
 
 class ButtonPressed extends LoginPageEvent {
@@ -37,6 +34,9 @@ class ButtonPressed extends LoginPageEvent {
 
 class Resumed extends LoginPageEvent {
   const Resumed();
+
+  @override
+  List<Object?> get props => [];
 }
 
 class PermissionStateChanged extends LoginPageEvent {
