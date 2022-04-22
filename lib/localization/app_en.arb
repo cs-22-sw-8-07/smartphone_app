@@ -59,6 +59,10 @@
   "@history": {
     "description": "Button text"
   },
+  "songs": "songs",
+  "@songs": {
+    "description": "Tile Text"
+  },
   "log_off": "Log off",
   "@log_off": {
     "description": "Button text"

@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:smartphone_app/localization/local_app_localizations.dart';
 import 'package:smartphone_app/services/webservices/quack/models/quack_classes.dart';
 import 'package:smartphone_app/utilities/general_util.dart';
 
@@ -80,6 +81,7 @@ Widget _getContent(BuildContext context, HistoryBloc bloc, HistoryState state) {
                 ],
               ))));
 }
+
 /// Creates the listview, appended with prior playlists through [_getPlaylist]
 Widget _getHistory(HistoryState state, BuildContext context, HistoryBloc bloc) {
   return ListView.builder(
@@ -88,6 +90,7 @@ Widget _getHistory(HistoryState state, BuildContext context, HistoryBloc bloc) {
         _getPlaylist(state.playlists![index], context, bloc),
   );
 }
+
 /// Creates card(s) with Playlist; contains the [quackLocationType],
 /// Current Date & Time and Spotify Button
 Card _getPlaylist(
@@ -113,7 +116,8 @@ Card _getPlaylist(
                         context, playlist.quackLocationType!) +
                     ", " +
                     playlist.tracks!.length.toString() +
-                    " songs",
+                    " " +
+                    AppLocalizations.of(context)!.songs,
                 style: const TextStyle(
                     color: Colors.white, fontWeight: FontWeight.w700),
               )),
