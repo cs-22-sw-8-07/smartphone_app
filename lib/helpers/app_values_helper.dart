@@ -20,7 +20,7 @@ class AppValuesHelper {
   //region Static
 
   static AppValuesHelper? _appValuesHelper;
-  static late SharedPreferences _sharedPreferences;
+  static SharedPreferences? _sharedPreferences;
 
   static void init(AppValuesHelper appValuesHelper) {
     _appValuesHelper = appValuesHelper;
@@ -47,6 +47,16 @@ class AppValuesHelper {
   ///
   //region Properties
 
+  set sharedPreferences(SharedPreferences sharedPreferences) =>
+      _sharedPreferences = sharedPreferences;
+
+  //endregion
+
+  ///
+  /// METHODS
+  ///
+  //region Methods
+
   List<T> _getList<T>(
       AppValuesKey appValuesKey, Function(dynamic model) mapping) {
     String str = getString(appValuesKey) ?? "";
@@ -60,13 +70,6 @@ class AppValuesHelper {
     var json = jsonEncode(list.map((e) => e.toJson()).toList());
     saveString(appValuesKey, json);
   }
-
-  //endregion
-
-  ///
-  /// METHODS
-  ///
-  //region Methods
 
   setup() async {
     _sharedPreferences = await SharedPreferences.getInstance();
@@ -86,12 +89,12 @@ class AppValuesHelper {
   }
 
   String? getString(AppValuesKey appValuesKey) {
-    return _sharedPreferences.getString(appValuesKey.toString());
+    return _sharedPreferences!.getString(appValuesKey.toString());
   }
 
   int? getInteger(AppValuesKey appValuesKey) {
     try {
-      return _sharedPreferences.getInt(appValuesKey.toString());
+      return _sharedPreferences!.getInt(appValuesKey.toString());
     } on Exception catch (_) {
       return null;
     }
@@ -99,7 +102,7 @@ class AppValuesHelper {
 
   bool getBool(AppValuesKey appValuesKey) {
     try {
-      return _sharedPreferences.getBool(appValuesKey.toString()) ?? false;
+      return _sharedPreferences!.getBool(appValuesKey.toString()) ?? false;
     } on Exception catch (_) {
       return false;
     }
@@ -110,19 +113,19 @@ class AppValuesHelper {
   }
 
   Future<bool> saveString(AppValuesKey appValuesKey, String? value) async {
-    return _sharedPreferences.setString(appValuesKey.toString(), value ?? "");
+    return _sharedPreferences!.setString(appValuesKey.toString(), value ?? "");
   }
 
   Future<bool> saveBool(AppValuesKey appValuesKey, bool value) async {
-    return _sharedPreferences.setBool(appValuesKey.toString(), value);
+    return _sharedPreferences!.setBool(appValuesKey.toString(), value);
   }
 
   Future<bool> saveInteger(AppValuesKey appValuesKey, int? value) async {
     if (value == null) {
-      _sharedPreferences.remove(appValuesKey.toString());
+      _sharedPreferences!.remove(appValuesKey.toString());
       return true;
     } else {
-      return _sharedPreferences.setInt(appValuesKey.toString(), value);
+      return _sharedPreferences!.setInt(appValuesKey.toString(), value);
     }
   }
 

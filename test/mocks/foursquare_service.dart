@@ -43,3 +43,28 @@ class MockFoursquareService implements IFoursquareFunctions {
 
 //endregion
 }
+
+class MockFoursquareServiceNoPlaces implements IFoursquareFunctions {
+  ///
+  /// OVERRIDE METHODS
+  ///
+//region Override methods
+
+  @override
+  Future<FoursquareServiceResponse<GetNearbyPlacesResponse>> getNearbyPlaces(
+      {required double latitude, required double longitude}) async {
+    return FoursquareServiceResponse.success(
+        GetNearbyPlacesResponse(results: []));
+  }
+
+  @override
+  Future<FoursquareServiceResponse<GetPlacesResponse>> getPlaces(
+      {required double latitude,
+      required double longitude,
+      required int radiusInMeters,
+      required List<int> categories}) async {
+    return FoursquareServiceResponse.success(GetPlacesResponse(results: []));
+  }
+
+//endregion
+}

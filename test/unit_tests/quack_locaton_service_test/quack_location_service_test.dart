@@ -33,13 +33,23 @@ void main() async {
         isMocked: true));
   }
 
-  setUp(() async {
-    QuackLocationService.init(QuackLocationService());
-    FoursquareService.init(MockFoursquareService());
+  group("getQuackLocationType -> No places", () {
+    setUp(() async {
+      QuackLocationService.init(QuackLocationService());
+      FoursquareService.init(MockFoursquareServiceNoPlaces());
+      await mockLocation(57.73, 10.59);
+    });
+
+    test("Check initial with no places", () async {
+      expect(QuackLocationService.getInstance().locationType,
+          QuackLocationType.unknown);
+    });
   });
 
-  group("GetQuackLocationType", () {
+  group("getQuackLocationType", () {
     setUp(() async {
+      QuackLocationService.init(QuackLocationService());
+      FoursquareService.init(MockFoursquareService());
       await mockLocation(57.73, 10.59);
     });
 
@@ -84,7 +94,7 @@ void main() async {
       newLoc = await mockLocation(57.73, 10.59);
       expect(newLoc, QuackLocationType.urban);
       expect(
-          QuackLocationService.getInstance().highestDistancePerimeters.length,
+          QuackLocationService.getInstance().furthestDistancePerimeters.length,
           2);
     });
   });

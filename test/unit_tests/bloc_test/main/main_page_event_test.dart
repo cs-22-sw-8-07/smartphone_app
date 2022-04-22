@@ -2,6 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:smartphone_app/pages/main/main_page_events_states.dart';
 import 'package:smartphone_app/services/webservices/quack/models/quack_classes.dart';
 
+import '../../../mocks/spotify_service.dart';
+
 void main() {
   group("MainPageEvent", () {
     group("ButtonPressed", () {
@@ -14,8 +16,7 @@ void main() {
       test("Events are not equal", () {
         expect(
           const ButtonPressed(buttonEvent: MainButtonEvent.resumePausePlayer),
-          isNot(
-              const ButtonPressed(buttonEvent: MainButtonEvent.viewPlaylist)),
+          isNot(const ButtonPressed(buttonEvent: MainButtonEvent.viewPlaylist)),
         );
       });
     });
@@ -44,7 +45,8 @@ void main() {
       });
       test("Events are not equal", () {
         expect(
-          const SpotifyPlayerStateChanged(playerState: null),
+          SpotifyPlayerStateChanged(
+              playerState: MockSpotifyService.getMockPlayerState()),
           isNot(const TouchEvent(touchEvent: MainTouchEvent.goToPreviousTrack)),
         );
       });
@@ -111,18 +113,30 @@ void main() {
     group("LocationSelected", () {
       test("Events are equal", () {
         expect(
-          const LocationSelected(
-              quackLocationType: QuackLocationType.beach),
-          const LocationSelected(
-              quackLocationType: QuackLocationType.beach),
+          const LocationSelected(quackLocationType: QuackLocationType.beach),
+          const LocationSelected(quackLocationType: QuackLocationType.beach),
         );
       });
       test("Events are not equal", () {
         expect(
-          const LocationSelected(
-              quackLocationType: QuackLocationType.beach),
+          const LocationSelected(quackLocationType: QuackLocationType.beach),
           isNot(const LocationSelected(
               quackLocationType: QuackLocationType.urban)),
+        );
+      });
+    });
+
+    group("TrackSelected", () {
+      test("Events are equal", () {
+        expect(
+          TrackSelected(quackTrack: QuackTrack(id: "1")),
+          TrackSelected(quackTrack: QuackTrack(id: "1")),
+        );
+      });
+      test("Events are not equal", () {
+        expect(
+          TrackSelected(quackTrack: QuackTrack(id: "1")),
+          isNot(TrackSelected(quackTrack: QuackTrack(id: "2"))),
         );
       });
     });

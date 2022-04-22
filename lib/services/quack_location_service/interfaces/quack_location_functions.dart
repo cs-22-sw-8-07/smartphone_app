@@ -10,7 +10,7 @@ class IQuackLocationFunctions {
     throw UnimplementedError();
   }
 
-  List<HighestDistancePerimeter> get highestDistancePerimeters {
+  List<FurthestDistancePerimeter> get furthestDistancePerimeters {
     throw UnimplementedError();
   }
 

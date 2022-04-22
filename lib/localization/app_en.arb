@@ -170,5 +170,9 @@
   "quack_api_response_error_113": "Could not format song list to JSON",
   "@quack_api_response_error_113": {
     "description": "Error message"
+  },
+  "automatic": "Automatic",
+  "@automatic": {
+    "description": "Button text"
   }
 }

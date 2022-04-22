@@ -7,32 +7,11 @@ import 'package:smartphone_app/services/webservices/quack/models/quack_classes.d
 
 import '../interfaces/quack_location_functions.dart';
 
-class HighestDistancePerimeter {
+class FurthestDistancePerimeter {
   final Position center;
   final double radius;
 
-  HighestDistancePerimeter({required this.center, required this.radius});
-}
-
-int getQuackLocationTypeInt(QuackLocationType qlt) {
-  switch (qlt) {
-    case QuackLocationType.unknown:
-      return 0;
-    case QuackLocationType.church:
-      return 1;
-    case QuackLocationType.education:
-      return 2;
-    case QuackLocationType.cemetery:
-      return 3;
-    case QuackLocationType.forest:
-      return 4;
-    case QuackLocationType.beach:
-      return 5;
-    case QuackLocationType.urban:
-      return 6;
-    case QuackLocationType.nightLife:
-      return 7;
-  }
+  FurthestDistancePerimeter({required this.center, required this.radius});
 }
 
 class QuackLocationService implements IQuackLocationFunctions {
@@ -61,7 +40,7 @@ class QuackLocationService implements IQuackLocationFunctions {
   final int _locationTypeUpdatePerimeterRadius = 100;
   Position? _locationTypeUpdatePerimeterCenterPosition;
   final List<FoursquarePlace> _allPlaces = [];
-  final List<HighestDistancePerimeter> _highestDistancePerimeters = [];
+  final List<FurthestDistancePerimeter> _furthestDistancePerimeters = [];
   QuackLocationType _locationType = QuackLocationType.unknown;
 
   //endregion
@@ -71,15 +50,12 @@ class QuackLocationService implements IQuackLocationFunctions {
   ///
   //region Properties
 
-  Position? get locationTypeUpdatePerimeterCenterPosition =>
-      _locationTypeUpdatePerimeterCenterPosition;
-
   @override
   QuackLocationType get locationType => _locationType;
 
   @override
-  List<HighestDistancePerimeter> get highestDistancePerimeters =>
-      _highestDistancePerimeters;
+  List<FurthestDistancePerimeter> get furthestDistancePerimeters =>
+      _furthestDistancePerimeters;
 
   //endregion
 
@@ -184,9 +160,9 @@ class QuackLocationService implements IQuackLocationFunctions {
 
       // Add highest distance perimeter first in the list. This is done because the
       // user is most likely to be in this perimeter and it is checked first
-      _highestDistancePerimeters.insert(
+      _furthestDistancePerimeters.insert(
           0,
-          HighestDistancePerimeter(
+          FurthestDistancePerimeter(
               center: position, radius: furthestDistancePerimeterRadius));
       // Go through all places to get a QuackLocationType
       return getQuackLocationTypeFromAllPlaces(position);
@@ -210,7 +186,7 @@ class QuackLocationService implements IQuackLocationFunctions {
   }
 
   bool _isWithinUpdatePlacesPerimeters(Position position) {
-    for (var perimeter in _highestDistancePerimeters) {
+    for (var perimeter in _furthestDistancePerimeters) {
       var distanceBetween = Geolocator.distanceBetween(
           perimeter.center.latitude,
           perimeter.center.longitude,
