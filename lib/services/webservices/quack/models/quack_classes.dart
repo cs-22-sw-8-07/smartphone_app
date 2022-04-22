@@ -66,9 +66,9 @@ class QuackResponse {
           return errorMessage;
       }
       // Get localized error message
-      String? waspError = await LocalizationHelper.getInstance()
+      String? quackError = await LocalizationHelper.getInstance()
           .getLocalizedResponseError(errorNo);
-      if (waspError != null) return waspError;
+      if (quackError != null) return quackError;
       return "Quack error: ${errorNo.toString()}";
     } else if (errorMessage != null) {
       return errorMessage;

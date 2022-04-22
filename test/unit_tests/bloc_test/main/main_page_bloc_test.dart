@@ -85,16 +85,17 @@ Future<void> main() async {
         },
         build: (w) => w.bloc,
         act: (bloc) => bloc.positionReceived(getMockPosition(0, 0)),
-        expect: (bloc) => [
-              bloc.state.copyWith(quackLocationType: QuackLocationType.cemetery)
-            ]);
+        expect: (bloc) =>
+        [
+          bloc.state.copyWith(quackLocationType: QuackLocationType.cemetery)
+        ]);
 
     blocTestWidget<MainPage, MainPageBloc, MainPageState>(
         "PositionReceived method -> Position is not null -> Playlist is not null and the current QuackLocationType does not match the one from QuackLocationService",
         buildWidget: () => mainPage,
         setUp: () async {
           playlistFromQuackService = (await QuackService.getInstance()
-                  .getPlaylist(QuackLocationType.beach))
+              .getPlaylist(QuackLocationType.beach))
               .quackResponse!
               .result;
 
@@ -135,26 +136,142 @@ Future<void> main() async {
     blocTest<MainPageBloc, MainPageState>(
         "ButtonPressed -> Select manual location",
         build: () => bloc,
-        act: (bloc) => bloc.add(const ButtonPressed(
-            buttonEvent: MainButtonEvent.selectManualLocation)),
+        act: (bloc) =>
+            bloc.add(const ButtonPressed(
+                buttonEvent: MainButtonEvent.selectManualLocation)),
         expect: () => [bloc.state.copyWith(isLocationListShown: true)]);
 
     blocTest<MainPageBloc, MainPageState>("ButtonPressed -> Resize playlist",
         build: () => bloc,
-        act: (bloc) => bloc.add(
-            const ButtonPressed(buttonEvent: MainButtonEvent.viewPlaylist)),
+        act: (bloc) =>
+            bloc.add(
+                const ButtonPressed(buttonEvent: MainButtonEvent.viewPlaylist)),
         expect: () => [bloc.state.copyWith(isPlaylistShown: true)]);
 
-    blocTest<MainPageBloc, MainPageState>("LocationSelected",
+    blocTest<MainPageBloc, MainPageState>(
+        "LocationSelected -> From forest to forest",
         build: () => bloc,
-        setUp: () => bloc.state.isLocationListShown = true,
-        act: (bloc) => bloc.add(const LocationSelected(
-            quackLocationType: QuackLocationType.cemetery)),
-        expect: () => [
-              bloc.state.copyWith(
-                  lockedQuackLocationType: QuackLocationType.cemetery,
-                  isLocationListShown: false)
-            ]);
+        setUp: () async {
+          playlistFromQuackService = (await QuackService.getInstance()
+              .getPlaylist(QuackLocationType.cemetery))
+              .quackResponse!
+              .result!;
+          bloc.state.isLocationListShown = true;
+          bloc.state.quackLocationType = QuackLocationType.forest;
+        },
+        act: (bloc) =>
+            bloc.add(const LocationSelected(
+                quackLocationType: QuackLocationType.forest)),
+        expect: () {
+          return [
+            bloc.state.copyWith(
+                isLocationListShown: false,
+                lockedQuackLocationType: QuackLocationType.forest)
+          ];
+        });
+
+    blocTest<MainPageBloc, MainPageState>(
+        "LocationSelected -> From church to cemetery",
+        build: () => bloc,
+        setUp: () async {
+          playlistFromQuackService = (await QuackService.getInstance()
+              .getPlaylist(QuackLocationType.cemetery))
+              .quackResponse!
+              .result!;
+          bloc.state.isLocationListShown = true;
+          bloc.state.quackLocationType = QuackLocationType.church;
+          bloc.state.currentTrack = QuackTrack(id: "2");
+        },
+        act: (bloc) =>
+            bloc.add(const LocationSelected(
+                quackLocationType: QuackLocationType.cemetery)),
+        expect: () {
+          var newState = bloc.state.copyWith(
+              lockedQuackLocationType: QuackLocationType.cemetery,
+              isLocationListShown: false,
+              hasJustPerformedAction: false,
+              isLoading: false);
+          newState.updatedItemHashCode = null;
+          newState.playlist = null;
+
+          return [
+            newState.copyWith(currentTrack: QuackTrack(id: "2")),
+            newState.copyWith(
+                isLoading: true, currentTrack: QuackTrack(id: "2")),
+            newState.copyWith(
+                hasJustPerformedAction: true,
+                isLoading: true,
+                currentTrack: QuackTrack(id: "2")),
+            newState.copyWith(
+                hasJustPerformedAction: true,
+                currentTrack: playlistFromQuackService!.tracks!.first,
+                isLoading: true),
+            newState.copyWith(
+                hasJustPerformedAction: true,
+                currentTrack: playlistFromQuackService!.tracks!.first,
+                isLoading: true,
+                updatedItemHashCode: playlistFromQuackService.hashCode,
+                playlist: playlistFromQuackService),
+            newState.copyWith(
+                hasJustPerformedAction: true,
+                currentTrack: playlistFromQuackService!.tracks!.first,
+                isLoading: false,
+                updatedItemHashCode: playlistFromQuackService.hashCode,
+                playlist: playlistFromQuackService),
+          ];
+        });
+
+    blocTest<MainPageBloc, MainPageState>(
+        "LocationSelected -> Set LockedQuackLocationType to null",
+        build: () => bloc,
+        setUp: () async {
+          playlistFromQuackService = (await QuackService.getInstance()
+              .getPlaylist(QuackLocationType.cemetery))
+              .quackResponse!
+              .result!;
+          bloc.state.isLocationListShown = true;
+          bloc.state.lockedQuackLocationType = QuackLocationType.church;
+          bloc.state.quackLocationType = QuackLocationType.cemetery;
+          bloc.state.currentTrack = QuackTrack(id: "2");
+        },
+        act: (bloc) =>
+            bloc.add(const LocationSelected(quackLocationType: null)),
+        expect: () {
+          var newState = bloc.state.copyWith(
+              isLocationListShown: false,
+              quackLocationType: QuackLocationType.cemetery,
+              hasJustPerformedAction: false,
+              isLoading: false);
+          newState.lockedQuackLocationType = null;
+          newState.updatedItemHashCode = null;
+          newState.playlist = null;
+
+          return [
+            newState.copyWith(currentTrack: QuackTrack(id: "2")),
+            newState.copyWith(
+                isLoading: true, currentTrack: QuackTrack(id: "2")),
+            newState.copyWith(
+                hasJustPerformedAction: true,
+                isLoading: true,
+                currentTrack: QuackTrack(id: "2")),
+            newState.copyWith(
+                hasJustPerformedAction: true,
+                currentTrack: playlistFromQuackService!.tracks!.first,
+                isLoading: true),
+            newState.copyWith(
+                hasJustPerformedAction: true,
+                currentTrack: playlistFromQuackService!.tracks!.first,
+                isLoading: true,
+                updatedItemHashCode: playlistFromQuackService.hashCode,
+                playlist: playlistFromQuackService),
+            newState.copyWith(
+                hasJustPerformedAction: true,
+                currentTrack: playlistFromQuackService!.tracks!.first,
+                isLoading: false,
+                updatedItemHashCode: playlistFromQuackService.hashCode,
+                playlist: playlistFromQuackService),
+          ];
+        });
 
     blocTest<MainPageBloc, MainPageState>("TouchEvent -> Go to next track",
         build: () => bloc,
@@ -169,8 +286,10 @@ Future<void> main() async {
                 QuackTrack(id: "3")
               ]);
         },
-        act: (bloc) => bloc
-            .add(const TouchEvent(touchEvent: MainTouchEvent.goToNextTrack)),
+        act: (bloc) =>
+            bloc
+                .add(
+                const TouchEvent(touchEvent: MainTouchEvent.goToNextTrack)),
         expect: () {
           return [
             bloc.state.copyWith(
@@ -182,11 +301,33 @@ Future<void> main() async {
         });
 
     blocTest<MainPageBloc, MainPageState>(
+        "TouchEvent -> Go to next track -> Current track is the last track in the playlist",
+        build: () => bloc,
+        setUp: () {
+          bloc.state.currentTrack = QuackTrack(id: "3");
+          bloc.state.playlist = QuackPlaylist(
+              id: "test",
+              locationType: 1,
+              tracks: [
+                QuackTrack(id: "1"),
+                QuackTrack(id: "2"),
+                QuackTrack(id: "3")
+              ]);
+        },
+        act: (bloc) =>
+            bloc
+                .add(
+                const TouchEvent(touchEvent: MainTouchEvent.goToNextTrack)),
+        expect: () {
+          return [];
+        });
+
+    blocTest<MainPageBloc, MainPageState>(
         "TouchEvent -> Go to next track -> Last track so also append to existing playlist",
         build: () => bloc,
         setUp: () async {
           playlistFromQuackService = (await QuackService.getInstance()
-                  .getPlaylist(QuackLocationType.beach))
+              .getPlaylist(QuackLocationType.beach))
               .quackResponse!
               .result!;
           bloc.state.quackLocationType = QuackLocationType.beach;
@@ -194,8 +335,10 @@ Future<void> main() async {
           bloc.state.playlist = QuackPlaylist(
               id: "test", tracks: [QuackTrack(id: "1"), QuackTrack(id: "2")]);
         },
-        act: (bloc) => bloc
-            .add(const TouchEvent(touchEvent: MainTouchEvent.goToNextTrack)),
+        act: (bloc) =>
+            bloc
+                .add(
+                const TouchEvent(touchEvent: MainTouchEvent.goToNextTrack)),
         expect: () {
           var newState = bloc.state.copyWith(
               hasJustPerformedAction: true,
@@ -237,8 +380,9 @@ Future<void> main() async {
               locationType: 1,
               tracks: [QuackTrack(id: "1"), QuackTrack(id: "2")]);
         },
-        act: (bloc) => bloc.add(
-            const TouchEvent(touchEvent: MainTouchEvent.goToPreviousTrack)),
+        act: (bloc) =>
+            bloc.add(
+                const TouchEvent(touchEvent: MainTouchEvent.goToPreviousTrack)),
         expect: () {
           return [
             bloc.state.copyWith(
@@ -250,12 +394,32 @@ Future<void> main() async {
         });
 
     blocTest<MainPageBloc, MainPageState>(
+        "TouchEvent -> Go to previous track -> Current track is the first track in the playlist",
+        build: () => bloc,
+        setUp: () {
+          bloc.state.currentTrack = QuackTrack(id: "1");
+          bloc.state.playlist = QuackPlaylist(
+              id: "test",
+              locationType: 1,
+              tracks: [QuackTrack(id: "1"), QuackTrack(id: "2")]);
+        },
+        act: (bloc) =>
+            bloc.add(
+                const TouchEvent(touchEvent: MainTouchEvent.goToPreviousTrack)),
+        expect: () {
+          return [
+            bloc.state.copyWith(hasJustPerformedAction: true),
+          ];
+        });
+
+    blocTest<MainPageBloc, MainPageState>(
         "MainPageValueChanged -> All values changed",
         build: () => bloc,
-        act: (bloc) => bloc.add(MainPageValueChanged(
-            currentTrack: QuackTrack(id: "1"),
-            quackLocationType: QuackLocationType.nightLife,
-            isLoading: false)),
+        act: (bloc) =>
+            bloc.add(MainPageValueChanged(
+                currentTrack: QuackTrack(id: "1"),
+                quackLocationType: QuackLocationType.nightLife,
+                isLoading: false)),
         expect: () {
           return [
             bloc.state.copyWith(
@@ -276,8 +440,9 @@ Future<void> main() async {
     blocTest<MainPageBloc, MainPageState>(
         "MainPageValueChanged -> QuackLocationType changed",
         build: () => bloc,
-        act: (bloc) => bloc.add(const MainPageValueChanged(
-            quackLocationType: QuackLocationType.beach)),
+        act: (bloc) =>
+            bloc.add(const MainPageValueChanged(
+                quackLocationType: QuackLocationType.beach)),
         expect: () {
           return [
             bloc.state.copyWith(quackLocationType: QuackLocationType.beach)
@@ -314,7 +479,8 @@ Future<void> main() async {
         });
 
     blocTest<MainPageBloc, MainPageState>("TrackSelected",
-        setUp: () => bloc.state.playlist = QuackPlaylist(
+        setUp: () =>
+        bloc.state.playlist = QuackPlaylist(
             id: "1", tracks: [QuackTrack(id: "1"), QuackTrack(id: "2")]),
         build: () => bloc,
         act: (bloc) => bloc.add(TrackSelected(quackTrack: QuackTrack(id: "1"))),
@@ -335,7 +501,7 @@ Future<void> main() async {
         "TrackSelected -> Append to existing playlist",
         setUp: () async {
           trackSelectedQuackPlaylist = (await QuackService.getInstance()
-                  .getPlaylist(QuackLocationType.beach))
+              .getPlaylist(QuackLocationType.beach))
               .quackResponse!
               .result!;
           bloc.state.quackLocationType = QuackLocationType.beach;
@@ -379,7 +545,7 @@ Future<void> main() async {
         "ButtonPressed -> Refresh playlist -> Picked yes",
         setUp: () async {
           playlistFromQuackService = (await QuackService.getInstance()
-                  .getPlaylist(QuackLocationType.beach))
+              .getPlaylist(QuackLocationType.beach))
               .quackResponse!
               .result;
           QuestionDialog.setInstance(MockQuestionDialogYes());
@@ -391,8 +557,10 @@ Future<void> main() async {
           w.bloc.state.quackLocationType = QuackLocationType.beach;
           return w.bloc;
         },
-        act: (bloc) => bloc.add(
-            const ButtonPressed(buttonEvent: MainButtonEvent.refreshPlaylist)),
+        act: (bloc) =>
+            bloc.add(
+                const ButtonPressed(
+                    buttonEvent: MainButtonEvent.refreshPlaylist)),
         expect: (bloc) async {
           var newState = bloc.state.copyWith(hasJustPerformedAction: false);
           newState.currentTrack = null;
@@ -425,7 +593,7 @@ Future<void> main() async {
         "ButtonPressed -> Refresh playlist -> Picked yes and player is not paused",
         setUp: () async {
           playlistFromQuackService = (await QuackService.getInstance()
-                  .getPlaylist(QuackLocationType.beach))
+              .getPlaylist(QuackLocationType.beach))
               .quackResponse!
               .result;
           QuestionDialog.setInstance(MockQuestionDialogYes());
@@ -437,8 +605,10 @@ Future<void> main() async {
           w.bloc.state.quackLocationType = QuackLocationType.beach;
           return w.bloc;
         },
-        act: (bloc) => bloc.add(
-            const ButtonPressed(buttonEvent: MainButtonEvent.refreshPlaylist)),
+        act: (bloc) =>
+            bloc.add(
+                const ButtonPressed(
+                    buttonEvent: MainButtonEvent.refreshPlaylist)),
         expect: (bloc) async {
           var newState = bloc.state.copyWith(hasJustPerformedAction: false);
           newState.currentTrack = null;
@@ -474,8 +644,10 @@ Future<void> main() async {
         },
         buildWidget: () => mainPage,
         build: (w) => w.bloc,
-        act: (bloc) => bloc.add(
-            const ButtonPressed(buttonEvent: MainButtonEvent.refreshPlaylist)),
+        act: (bloc) =>
+            bloc.add(
+                const ButtonPressed(
+                    buttonEvent: MainButtonEvent.refreshPlaylist)),
         expect: (bloc) => []);
 
     blocTest<MainPageBloc, MainPageState>("HasPerformedSpotifyPlayerAction",
@@ -492,7 +664,7 @@ Future<void> main() async {
         setUp: () async {
           expandedPlaylist = QuackPlaylist(tracks: List.of([], growable: true));
           var playlistFromQuackAppend = (await QuackService.getInstance()
-                  .getPlaylist(QuackLocationType.beach))
+              .getPlaylist(QuackLocationType.beach))
               .quackResponse!
               .result;
 
@@ -511,8 +683,10 @@ Future<void> main() async {
           w.bloc.state.quackLocationType = QuackLocationType.beach;
           return w.bloc;
         },
-        act: (bloc) => bloc.add(
-            const ButtonPressed(buttonEvent: MainButtonEvent.appendToPlaylist)),
+        act: (bloc) =>
+            bloc.add(
+                const ButtonPressed(
+                    buttonEvent: MainButtonEvent.appendToPlaylist)),
         expect: (bloc) {
           var newState = bloc.state
               .copyWith(playlist: notExpandedPlaylist, isLoading: true);
@@ -534,14 +708,15 @@ Future<void> main() async {
         "ButtonPressed -> Start/Stop recommendation -> Playlist is null",
         setUp: () async {
           playlistFromQuackService = (await QuackService.getInstance()
-                  .getPlaylist(QuackLocationType.beach))
+              .getPlaylist(QuackLocationType.beach))
               .quackResponse!
               .result;
           bloc.state.quackLocationType = QuackLocationType.beach;
         },
         build: () => bloc,
-        act: (bloc) => bloc.add(const ButtonPressed(
-            buttonEvent: MainButtonEvent.startStopRecommendation)),
+        act: (bloc) =>
+            bloc.add(const ButtonPressed(
+                buttonEvent: MainButtonEvent.startStopRecommendation)),
         expect: () {
           var newState = bloc.state
               .copyWith(isLoading: true, hasJustPerformedAction: false);
@@ -571,11 +746,13 @@ Future<void> main() async {
 
     blocTest<MainPageBloc, MainPageState>(
         "ButtonPressed -> Start/Stop recommendation -> Playlist is not null",
-        setUp: () => bloc.state.playlist = QuackPlaylist(
+        setUp: () =>
+        bloc.state.playlist = QuackPlaylist(
             id: "1", tracks: [QuackTrack(id: "1"), QuackTrack(id: "2")]),
         build: () => bloc,
-        act: (bloc) => bloc.add(const ButtonPressed(
-            buttonEvent: MainButtonEvent.startStopRecommendation)),
+        act: (bloc) =>
+            bloc.add(const ButtonPressed(
+                buttonEvent: MainButtonEvent.startStopRecommendation)),
         expect: () {
           return [];
         });
@@ -583,10 +760,11 @@ Future<void> main() async {
     blocTest<MainPageBloc, MainPageState>(
         "ButtonPressed -> Resume/Pause player",
         setUp: () =>
-            bloc.state.playerState = MockSpotifyService.getMockPlayerState(),
+        bloc.state.playerState = MockSpotifyService.getMockPlayerState(),
         build: () => bloc,
-        act: (bloc) => bloc.add(const ButtonPressed(
-            buttonEvent: MainButtonEvent.resumePausePlayer)),
+        act: (bloc) =>
+            bloc.add(const ButtonPressed(
+                buttonEvent: MainButtonEvent.resumePausePlayer)),
         expect: () {
           return [bloc.state.copyWith(hasJustPerformedAction: true)];
         });
@@ -595,7 +773,9 @@ Future<void> main() async {
         setUp: () async {
           SharedPreferences.setMockInitialValues({});
           var sharedPreferences = await SharedPreferences.getInstance();
-          AppValuesHelper.getInstance().sharedPreferences = sharedPreferences;
+          AppValuesHelper
+              .getInstance()
+              .sharedPreferences = sharedPreferences;
           AppValuesHelper.getInstance()
               .saveString(AppValuesKey.accessToken, "1234");
         },
@@ -616,8 +796,9 @@ Future<void> main() async {
           w.bloc.state.quackLocationType = QuackLocationType.nightLife;
           return w.bloc;
         },
-        act: (bloc) => bloc.add(const ButtonPressed(
-            buttonEvent: MainButtonEvent.lockUnlockQuackLocationType)),
+        act: (bloc) =>
+            bloc.add(const ButtonPressed(
+                buttonEvent: MainButtonEvent.lockUnlockQuackLocationType)),
         expect: (bloc) {
           return [
             bloc.state.copyWith(quackLocationType: QuackLocationType.nightLife)
@@ -627,16 +808,44 @@ Future<void> main() async {
     blocTestWidget<MainPage, MainPageBloc, MainPageState>(
         "ButtonPressed -> Lock/Unlock QuackLocationType -> LockedQuackLocationType is not null",
         buildWidget: () => mainPage,
-        build: (w) {
+        build: (w) async {
+          playlistFromQuackService = (await QuackService.getInstance()
+              .getPlaylist(QuackLocationType.beach))
+              .quackResponse!
+              .result;
+
+          w.bloc.state.quackLocationType = QuackLocationType.beach;
           w.bloc.state.lockedQuackLocationType = QuackLocationType.cemetery;
           return w.bloc;
         },
-        act: (bloc) => bloc.add(const ButtonPressed(
-            buttonEvent: MainButtonEvent.lockUnlockQuackLocationType)),
+        act: (bloc) =>
+            bloc.add(const ButtonPressed(
+                buttonEvent: MainButtonEvent.lockUnlockQuackLocationType)),
         expect: (bloc) {
-          var newState = bloc.state.copyWith();
+          var newState = bloc.state
+              .copyWith(isLoading: false, hasJustPerformedAction: false);
+          newState.currentTrack = null;
+          newState.playlist = null;
+          newState.updatedItemHashCode = null;
           newState.lockedQuackLocationType = null;
-          return [newState];
+          return [
+            newState,
+            newState.copyWith(isLoading: true),
+            newState.copyWith(isLoading: true, hasJustPerformedAction: true),
+            newState.copyWith(isLoading: true,
+                hasJustPerformedAction: true,
+                currentTrack: playlistFromQuackService!.tracks!.first),
+            newState.copyWith(isLoading: true,
+                hasJustPerformedAction: true,
+                currentTrack: playlistFromQuackService!.tracks!.first,
+            playlist: playlistFromQuackService,
+            updatedItemHashCode: playlistFromQuackService.hashCode),
+            newState.copyWith(isLoading: false,
+                hasJustPerformedAction: true,
+                currentTrack: playlistFromQuackService!.tracks!.first,
+                playlist: playlistFromQuackService,
+                updatedItemHashCode: playlistFromQuackService.hashCode)
+          ];
         });
 
     var playerState1 = MockSpotifyService.getMockPlayerState(trackId: "1");
@@ -673,7 +882,7 @@ Future<void> main() async {
         });
 
     blocTest<MainPageBloc, MainPageState>(
-        "SpotifyPlayerStateChanged ->  Previous player state is null",
+        "SpotifyPlayerStateChanged ->  Current player state is null",
         build: () => bloc,
         act: (bloc) =>
             bloc.add(SpotifyPlayerStateChanged(playerState: playerState1)),
@@ -682,7 +891,7 @@ Future<void> main() async {
         });
 
     blocTest<MainPageBloc, MainPageState>(
-        "SpotifyPlayerStateChanged ->  Same track in previous player state and event player state",
+        "SpotifyPlayerStateChanged ->  Same track in current player state and event player state",
         setUp: () => bloc.state.playerState = playerState1,
         build: () => bloc,
         act: (bloc) =>
@@ -724,7 +933,7 @@ Future<void> main() async {
         });
 
     blocTest<MainPageBloc, MainPageState>(
-        "SpotifyPlayerStateChanged -> Track is null in the previous player state",
+        "SpotifyPlayerStateChanged -> Track is null in the current player state",
         setUp: () async {
           bloc.state.playerState = playerState3;
         },
@@ -778,10 +987,10 @@ Future<void> main() async {
 
     blocTest<MainPageBloc, MainPageState>(
         "SpotifyPlayerStateChanged -> Playlist is not null and current track is not null "
-        "-> The next track is the last one in the playlist",
+            "-> The next track is the last one in the playlist",
         setUp: () async {
           playlistFromQuackService = (await QuackService.getInstance()
-                  .getPlaylist(QuackLocationType.nightLife))
+              .getPlaylist(QuackLocationType.nightLife))
               .quackResponse!
               .result;
 

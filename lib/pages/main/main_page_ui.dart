@@ -556,14 +556,23 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                     values.mainPagePlayPauseButtonSize /
                                         2 /
                                         2)),
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.skip_previous,
-                              color: custom_colors.darkBlue,
+                              color: state.playlist == null
+                                  ? custom_colors.darkGrey2
+                                  : custom_colors.darkBlue,
                               size: values.mainPagePlayPauseButtonSize / 3,
                             ),
-                            onPressed: () => bloc.add(const TouchEvent(
-                                touchEvent: MainTouchEvent.goToPreviousTrack)),
-                            pressedBackground: custom_colors.greyGradient,
+                            onPressed: () {
+                              if (state.playlist != null) {
+                                bloc.add(const TouchEvent(
+                                    touchEvent:
+                                        MainTouchEvent.goToPreviousTrack));
+                              }
+                            },
+                            pressedBackground: state.playlist == null
+                                ? custom_colors.transparentGradient
+                                : custom_colors.greyGradient,
                             defaultBackground:
                                 custom_colors.transparentGradient),
                         PlayButton(
@@ -602,14 +611,22 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                     values.mainPagePlayPauseButtonSize /
                                         2 /
                                         2)),
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.skip_next,
-                              color: custom_colors.darkBlue,
+                              color: state.playlist == null
+                                  ? custom_colors.darkGrey2
+                                  : custom_colors.darkBlue,
                               size: values.mainPagePlayPauseButtonSize / 3,
                             ),
-                            onPressed: () => bloc.add(const TouchEvent(
-                                touchEvent: MainTouchEvent.goToNextTrack)),
-                            pressedBackground: custom_colors.greyGradient,
+                            onPressed: () {
+                              if (state.playlist != null) {
+                                bloc.add(const TouchEvent(
+                                    touchEvent: MainTouchEvent.goToNextTrack));
+                              }
+                            },
+                            pressedBackground: state.playlist == null
+                                ? custom_colors.transparentGradient
+                                : custom_colors.greyGradient,
                             defaultBackground:
                                 custom_colors.transparentGradient),
                         const Expanded(child: SizedBox()),
@@ -905,7 +922,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   }
 
   Widget _getLocationListTile(
-      MainPageState state, QuackLocationType quackLocation) {
+      MainPageState state, QuackLocationType locationType,
+      {bool useAutomaticTitle = false, bool isSelected = false}) {
     return CustomListTile(
         pressedBackground: custom_colors.transparentGradient,
         defaultBackground: custom_colors.transparentGradient,
@@ -926,7 +944,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 child: ClipRRect(
                     borderRadius: const BorderRadius.all(Radius.circular(5)),
                     child: Image.asset(LocalizationHelper.getInstance()
-                        .getQuackLocationTypeSmallImagePath(quackLocation))), //
+                        .getQuackLocationTypeSmallImagePath(locationType))), //
               ),
               CustomLabel(
                   height: values.mainPageOverlayHeight / 2,
@@ -935,30 +953,44 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   softWrap: false,
                   useOverflowReplacement: true,
                   fontWeight: FontWeight.w700,
-                  title: LocalizationHelper.getInstance()
-                      .getLocalizedQuackLocationType(context, quackLocation),
-                  textColor: Colors.white,
+                  title: useAutomaticTitle
+                      ? AppLocalizations.of(context)!.automatic
+                      : LocalizationHelper.getInstance()
+                          .getLocalizedQuackLocationType(context, locationType),
+                  textColor: isSelected ? custom_colors.orange_1 : Colors.white,
                   alignmentGeometry: Alignment.centerLeft,
                   padding: const EdgeInsets.only(
                       left: 0, top: 0, bottom: 0, right: values.padding),
                   margin: const EdgeInsets.all(0))
             ])),
-        onPressed: () => {
-              bloc.add(LocationSelected(quackLocationType: quackLocation)),
-              bloc.state.isLocationListShown!
-                  ? locationListAnimationController.reverse()
-                  : locationListAnimationController.forward()
-            });
+        onPressed: () {
+          bloc.add(LocationSelected(
+              quackLocationType: useAutomaticTitle ? null : locationType));
+          bloc.state.isLocationListShown!
+              ? locationListAnimationController.reverse()
+              : locationListAnimationController.forward();
+        });
   }
 
   Widget _getLocationList(MainPageState state) {
-    List<Widget> children = [];
+    List<Widget> children = [
+      _getLocationListTile(state, state.quackLocationType!,
+          useAutomaticTitle: true,
+          isSelected: state.lockedQuackLocationType == null),
+      Container(
+        margin:
+            const EdgeInsets.only(left: values.padding, right: values.padding),
+        color: custom_colors.lightDarkBlue,
+        height: 2,
+      )
+    ];
 
-    for (var quackLocation in QuackLocationType.values) {
-      if (quackLocation == QuackLocationType.unknown) {
+    for (var locationType in QuackLocationType.values) {
+      if (locationType == QuackLocationType.unknown) {
         continue;
       }
-      children.add(_getLocationListTile(state, quackLocation));
+      children.add(_getLocationListTile(state, locationType,
+          isSelected: state.lockedQuackLocationType == locationType));
     }
 
     return Expanded(
