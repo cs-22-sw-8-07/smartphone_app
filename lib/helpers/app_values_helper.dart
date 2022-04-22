@@ -74,7 +74,7 @@ class AppValuesHelper {
   setup() async {
     _sharedPreferences = await SharedPreferences.getInstance();
 
-    _sharedPreferences.setString(AppValuesKey.playlists.toString(),
+    _sharedPreferences!.setString(AppValuesKey.playlists.toString(),
         await rootBundle.loadString('assets/mock_data/playlists_mock.json'));
   }
 
