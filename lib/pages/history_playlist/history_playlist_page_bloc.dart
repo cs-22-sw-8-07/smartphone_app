@@ -13,10 +13,12 @@ class HistoryPlaylistPageBloc
   ///
   //region Variables
 
+  /// A [BuildContext] set in the constructor, in order to access UI functionality
+  /// such as localization and navigation
   late BuildContext context;
+
+  /// A [QuackPlaylist] set in the constructor.
   final QuackPlaylist playlist;
-  late PermissionHelper permissionHelper;
-  static const List<PermissionWithService> permissions = [Permission.location];
 
   //endregion
 

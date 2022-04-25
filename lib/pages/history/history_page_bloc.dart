@@ -12,9 +12,9 @@ class HistoryPageBloc extends Bloc<HistoryPageEvent, HistoryPageState> {
   ///
   //region Variables
 
+  /// A [BuildContext] set in the constructor, in order to access UI functionality
+  /// such as localization and navigation
   late BuildContext context;
-  late PermissionHelper permissionHelper;
-  static const List<PermissionWithService> permissions = [Permission.location];
 
   //endregion
 

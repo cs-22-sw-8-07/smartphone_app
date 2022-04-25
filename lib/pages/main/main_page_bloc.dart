@@ -36,7 +36,8 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
   /// QuackLocationService at a time
   bool _gettingLocationType = false;
 
-  /// [context] set from the page
+  /// A [BuildContext] set in the constructor, in order to access UI functionality
+  /// such as localization and navigation
   late BuildContext context;
 
   /// The current [positionHelper] set for the BLoC

@@ -19,8 +19,14 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
   ///
   //region Variables
 
+  /// A [BuildContext] set in the constructor, in order to access UI functionality
+  /// such as localization and navigation
   late BuildContext context;
+
+  /// Helper used to ask the user for the [permissions]
   late PermissionHelper permissionHelper;
+
+  /// List of permissions that the app needs in order to fully function
   static const List<PermissionWithService> permissions = [Permission.location];
 
   //endregion
