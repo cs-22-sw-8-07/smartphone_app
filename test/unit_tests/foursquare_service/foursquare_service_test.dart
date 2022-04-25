@@ -7,7 +7,6 @@
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:smartphone_app/services/webservices/foursquare/models/foursquare_classes.dart';
 import 'package:smartphone_app/services/webservices/foursquare/services/foursquare_service.dart';
 
 import '../../mocks/foursquare_service.dart';
@@ -21,9 +20,7 @@ void main() async {
   });
 
   group("getNearbyPlaces", () {
-    test(
-        "Latitude: 0, Longitude: 0 -> Check correct deserialize",
-        () async {
+    test("Latitude: 0, Longitude: 0 -> Check correct deserialize", () async {
       var resp = await FoursquareService.getInstance()
           .getNearbyPlaces(latitude: 0, longitude: 0);
 

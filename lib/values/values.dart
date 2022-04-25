@@ -57,6 +57,4 @@ const String qltNightLifeSmall = "assets/quack_locationtypes_small/nightLife_64x
 const String qltUnknownSmall = "assets/quack_locationtypes_small/unknown_64x64.jpeg";
 const String qltUrbanSmall = "assets/quack_locationtypes_small/urban_64x64.jpg";
 
-
-
 //endregion

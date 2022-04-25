@@ -19,10 +19,14 @@ enum LoginButtonEvent {
 ///
 //region Event
 
+/// Base event class
 abstract class LoginPageEvent extends Equatable {
   const LoginPageEvent();
 }
 
+/// Event for when a button is pressed
+///
+/// [buttonEvent] tells which button is pressed
 class ButtonPressed extends LoginPageEvent {
   final LoginButtonEvent buttonEvent;
 
@@ -32,6 +36,7 @@ class ButtonPressed extends LoginPageEvent {
   List<Object?> get props => [buttonEvent];
 }
 
+/// Event for when the page is resumed
 class Resumed extends LoginPageEvent {
   const Resumed();
 
@@ -39,6 +44,7 @@ class Resumed extends LoginPageEvent {
   List<Object?> get props => [];
 }
 
+/// Event for when the [permissionState] changes
 class PermissionStateChanged extends LoginPageEvent {
   final PermissionState permissionState;
 
@@ -55,6 +61,10 @@ class PermissionStateChanged extends LoginPageEvent {
 ///
 //region State
 
+/// The state for the Login page
+///
+/// [permissionState] is used to tell whether the app have gotten all
+/// permissions e.g. permission to location
 // ignore: must_be_immutable
 class LoginPageState extends Equatable {
   PermissionState? permissionState;

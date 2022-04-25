@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:smartphone_app/services/quack_location_service/service/quack_location_service.dart';
 import 'package:spotify_sdk/models/track.dart';
 
 import '../../../../localization/localization_helper.dart';
@@ -19,6 +18,7 @@ enum QuackLocationType {
   church
 }
 
+/// Get the integer representation of a given [QuackLocationType]
 int getQuackLocationTypeInt(QuackLocationType qlt) {
   switch (qlt) {
     case QuackLocationType.unknown:
@@ -135,6 +135,10 @@ class QuackPlaylist extends Equatable {
       }
     }
     return null;
+  }
+
+  String get fullId {
+    return "${locationType}_$offset";
   }
 
   void appendPlaylist(QuackPlaylist playlist) {

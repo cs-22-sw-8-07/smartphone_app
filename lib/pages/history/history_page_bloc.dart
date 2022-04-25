@@ -1,15 +1,12 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
 import 'package:smartphone_app/pages/history/history_page_events_states.dart';
-import 'package:smartphone_app/pages/history/history_playlist/history_playlist_page_ui.dart';
-import 'package:smartphone_app/values/colors.dart' as custom_colors;
 import '../../helpers/permission_helper.dart';
-import '../../utilities/general_util.dart';
+import '../history_playlist/history_playlist_page_ui.dart';
 
-class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
+class HistoryPageBloc extends Bloc<HistoryPageEvent, HistoryPageState> {
   ///
   /// VARIABLES
   ///
@@ -26,15 +23,19 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
   ///
   //region Constructor
 
-  HistoryBloc({required this.context})
-      : super(HistoryState(
+  HistoryPageBloc({required this.context})
+      : super(HistoryPageState(
             playlists: AppValuesHelper.getInstance().getPlaylists())) {
-    // ButtonPressed
+    /// ButtonPressed
     on<ButtonPressed>((event, emit) async {
       switch (event.buttonEvent) {
+
+        /// Back
         case HistoryButtonEvent.back:
           Navigator.of(context).pop(null);
           break;
+
+        /// Open with Spotify
         case HistoryButtonEvent.openWithSpotify:
           // TODO: Handle this case.
           break;
@@ -42,25 +43,16 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
     });
 
     /// After selecting a playlist in history page,
-    /// show dialog of history playlist screen with selected playlist 
+    /// show dialog of history playlist screen with selected playlist
     on<PlaylistSelected>((event, emit) async {
       showDialog(
           context: context,
           builder: (context) {
-            return HistoryPlaylistPage(playlist: event.selectedPlaylist);
+            return HistoryPlaylistPage(playlist: event.playlist);
           });
     });
   }
-//endregion
-
-  ///
-  /// METHODS
-  ///
-//region Methods
-
-  void acquireHistory() {
-    //TODO: Get the list of previously recommended playlists
-  }
 
 //endregion
+
 }

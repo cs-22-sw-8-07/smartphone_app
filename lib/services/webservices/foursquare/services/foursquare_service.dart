@@ -76,6 +76,7 @@ class FoursquareService implements IFoursquareFunctions {
   ///
   //region Methods
 
+  /// Converts integer list into a comma separated string e.g. "1,2,3,4"
   String _getIntegerListAsCommaSeparatedString(List<int> list) {
     if (list.isEmpty) {
       return "";

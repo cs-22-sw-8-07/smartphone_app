@@ -16,14 +16,15 @@ enum HistoryButtonEvent { back, openWithSpotify }
 ///
 //region Event
 
-abstract class HistoryEvent extends Equatable {
-  const HistoryEvent();
-
-  @override
-  List<Object?> get props => [];
+/// Base event class
+abstract class HistoryPageEvent extends Equatable {
+  const HistoryPageEvent();
 }
 
-class ButtonPressed extends HistoryEvent {
+/// Event for when a button is pressed
+///
+/// [buttonEvent] tells which button is pressed
+class ButtonPressed extends HistoryPageEvent {
   final HistoryButtonEvent buttonEvent;
 
   const ButtonPressed({required this.buttonEvent});
@@ -32,13 +33,14 @@ class ButtonPressed extends HistoryEvent {
   List<Object?> get props => [buttonEvent];
 }
 
-class PlaylistSelected extends HistoryEvent {
-  final QuackPlaylist selectedPlaylist;
+/// Event for when a [playlist] is selected
+class PlaylistSelected extends HistoryPageEvent {
+  final QuackPlaylist playlist;
 
-  const PlaylistSelected({required this.selectedPlaylist});
+  const PlaylistSelected({required this.playlist});
 
   @override
-  List<Object?> get props => [selectedPlaylist];
+  List<Object?> get props => [playlist];
 }
 
 //endregion
@@ -48,14 +50,17 @@ class PlaylistSelected extends HistoryEvent {
 ///
 //region State
 
+/// State for the History page
+///
+/// [playlists] specifies the current list of playlists shown on the page
 // ignore: must_be_immutable
-class HistoryState extends Equatable {
+class HistoryPageState extends Equatable {
   List<QuackPlaylist>? playlists;
 
-  HistoryState({this.playlists});
+  HistoryPageState({this.playlists});
 
-  HistoryState copyWith({List<QuackPlaylist>? playlists}) {
-    return HistoryState(playlists: playlists ?? this.playlists);
+  HistoryPageState copyWith({List<QuackPlaylist>? playlists}) {
+    return HistoryPageState(playlists: playlists ?? this.playlists);
   }
 
   @override

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smartphone_app/values/colors.dart' as custom_colors;
 import 'package:smartphone_app/values/values.dart' as values;

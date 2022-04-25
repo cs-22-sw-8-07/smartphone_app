@@ -13,21 +13,21 @@ Future<void> main() async {
   await dotenv.load();
 
   group("HistoryPage", () {
-    late HistoryBloc bloc;
+    late HistoryPageBloc bloc;
 
     setUp(() {
       AppValuesHelper.init(MockAppValuesHelper());
-      bloc = HistoryBloc(context: MockBuildContext());
+      bloc = HistoryPageBloc(context: MockBuildContext());
     });
 
     test("Initial state is correct", () {
       expect(
           bloc.state,
-          HistoryState(
+          HistoryPageState(
               playlists: AppValuesHelper.getInstance().getPlaylists()));
     });
 
-    blocTest<HistoryBloc, HistoryState>("ButtonPressed -> Open with Spotifiy",
+    blocTest<HistoryPageBloc, HistoryPageState>("ButtonPressed -> Open with Spotifiy",
         build: () => bloc,
         act: (bloc) => bloc.add(const ButtonPressed(
             buttonEvent: HistoryButtonEvent.openWithSpotify)),

@@ -13,6 +13,7 @@ import 'package:smartphone_app/widgets/question_dialog.dart';
 import 'package:spotify_sdk/models/connection_status.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:uuid/uuid.dart';
 
 // ignore: unnecessary_import, implementation_imports
 
@@ -506,13 +507,6 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     });
   }
 
-  /// Get player state stream
-  /// It has to be refreshed every time you connect to Spotify remote
-  Stream<PlayerState>? getPlayerState() {
-    var response = SpotifyService.getInstance().subscribePlayerState();
-    return response.resultType;
-  }
-
   //endregion
 
   //region Helper methods
@@ -613,9 +607,10 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
   /// Get playlist from Quack API
   ///
-  /// Returns: The response from the Quack API
+  /// [showLoadingBefore] is used to set the isLoading flag in the state before
+  /// getting a playlist from the Quack API
   Future<QuackServiceResponse<GetPlaylistResponse>> _getPlaylist(
-      {bool showLoadingBefore = false, bool removeLoadingAfter = false}) async {
+      {bool showLoadingBefore = false}) async {
     if (showLoadingBefore) {
       // Show loading animation
       add(const MainPageValueChanged(isLoading: true));
@@ -636,7 +631,8 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       if (kDebugMode) {
         print("Playlist received");
       }
-
+      // Set unique keys for every track in order to support tracks with the
+      // same Spotify ID
       for (var track in getPlaylistResponse.quackResponse!.result!.tracks!) {
         track.key = KeyHelper.uniqueKey;
       }
@@ -644,11 +640,6 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       if (kDebugMode) {
         print("Playlist received with errors");
       }
-    }
-
-    if (removeLoadingAfter) {
-      // Remove loading animation
-      add(const MainPageValueChanged(isLoading: false));
     }
 
     // Return response

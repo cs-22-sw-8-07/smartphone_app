@@ -17,7 +17,7 @@ import 'history_page_bloc.dart';
 
 // ignore: must_be_immutable
 class HistoryPage extends StatelessWidget {
-  late HistoryBloc bloc;
+  late HistoryPageBloc bloc;
 
   HistoryPage({Key? key}) : super(key: key);
 
@@ -25,7 +25,7 @@ class HistoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     LocalizationHelper.init(context: context);
     // Create bloc
-    bloc = HistoryBloc(context: context);
+    bloc = HistoryPageBloc(context: context);
 
     return WillPopScope(
         onWillPop: () async {
@@ -39,7 +39,7 @@ class HistoryPage extends StatelessWidget {
                     child: Container(
                         constraints: const BoxConstraints.expand(),
                         decoration: const BoxDecoration(),
-                        child: BlocBuilder<HistoryBloc, HistoryState>(
+                        child: BlocBuilder<HistoryPageBloc, HistoryPageState>(
                           builder: (context, state) {
                             return Scaffold(
                               backgroundColor: Colors.white,
@@ -63,8 +63,10 @@ class HistoryPage extends StatelessWidget {
                         ))))));
   }
 
+  /// Builds the content of the page. It is called directly in the [build]
+  /// method
   Widget _getContent(
-      BuildContext context, HistoryBloc bloc, HistoryState state) {
+      BuildContext context, HistoryPageBloc bloc, HistoryPageState state) {
     return ClipRect(
         child: Container(
             constraints: const BoxConstraints.expand(),
@@ -77,9 +79,9 @@ class HistoryPage extends StatelessWidget {
                 ))));
   }
 
-  /// Creates the listview, appended with prior playlists through [_getPlaylist]
+  /// Creates the list, where each item is built through [_getPlaylist]
   Widget _getHistory(
-      HistoryState state, BuildContext context, HistoryBloc bloc) {
+      HistoryPageState state, BuildContext context, HistoryPageBloc bloc) {
     return ListView.builder(
       itemCount: state.playlists!.length,
       itemBuilder: (context, index) =>
@@ -87,16 +89,16 @@ class HistoryPage extends StatelessWidget {
     );
   }
 
-  /// Creates card(s) with Playlist; contains the [quackLocationType],
-  /// Current Date & Time and Spotify Button
+  /// Creates a card with for a given [playlist]. It contains an image for
+  /// [quackLocationType], along side the date it was saved and a Spotify button
   Card _getPlaylist(
-      QuackPlaylist playlist, BuildContext context, HistoryBloc bloc) {
+      QuackPlaylist playlist, BuildContext context, HistoryPageBloc bloc) {
     return Card(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(values.borderRadius)),
       child: CustomListTile(
           defaultBackground: custom_colors.appButtonGradient,
-          pressedBackground: custom_colors.buttonPressedGradient,
+          pressedBackground: custom_colors.appButtonGradient,
           widget: ListTile(
             contentPadding: const EdgeInsets.only(
                 left: values.padding - 1, right: values.padding),
@@ -134,13 +136,13 @@ class HistoryPage extends StatelessWidget {
                   )),
               onTap: () {
                 if (kDebugMode) {
-                  print("Not yet implemented");
+                  print("Not functionality");
                 }
               },
             ),
           ),
           onPressed: () {
-            bloc.add(PlaylistSelected(selectedPlaylist: playlist));
+            bloc.add(PlaylistSelected(playlist: playlist));
           }),
     );
   }

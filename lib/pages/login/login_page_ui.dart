@@ -24,14 +24,21 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
   LoginPageBloc? bloc;
 
+  ///
+  /// OVERRIDE METHODS
+  ///
+  //region Override methods
+
   @override
   void initState() {
     super.initState();
+    // Add observer in order to get App lifecycle state updates
     WidgetsBinding.instance!.addObserver(this);
   }
 
   @override
   void dispose() {
+    // Remove the observer to clean up
     WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }
@@ -42,7 +49,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     switch (state) {
       case AppLifecycleState.resumed:
         if (bloc != null) {
-          bloc!.add(Resumed());
+          bloc!.add(const Resumed());
         }
         break;
     }
@@ -50,6 +57,7 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    // Create BLoC
     bloc =
         LoginPageBloc(context: context, permissionHelper: PermissionHelper());
 
@@ -74,6 +82,15 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
             }));
   }
 
+  //endregion
+
+  ///
+  /// BUILD METHODS
+  ///
+  //region Build methods
+
+  /// Specifies the body of the page. It is called directly in the [build]
+  /// method
   Widget _getBody(BuildContext context, LoginPageBloc bloc,
       LoginPageState state, AsyncSnapshot<PermissionState> snapshot) {
     /// Content shown while asking then user for OS permissions like
@@ -99,8 +116,8 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
                   .please_go_to_settings_and_give_the_app_all_the_necessary_permissions,
             ),
             CustomButton(
-              defaultBackground: custom_colors.blackGradient,
-              pressedBackground: custom_colors.blackPressedGradient,
+              defaultBackground: custom_colors.appButtonGradient,
+              pressedBackground: custom_colors.appButtonPressedGradient,
               onPressed: () => bloc.add(const ButtonPressed(
                   buttonEvent: LoginButtonEvent.goToSettings)),
               text: AppLocalizations.of(context)!.go_to_settings,
@@ -122,6 +139,8 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
     );
   }
 
+  /// Specifies the content of the page. It is called directly in the [_getBody]
+  /// method
   Widget _getContent(BuildContext context, LoginPageBloc bloc) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -156,4 +175,6 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
       ],
     );
   }
+
+//endregion
 }

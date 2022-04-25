@@ -8,7 +8,6 @@ import 'package:smartphone_app/values/colors.dart' as custom_colors;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:smartphone_app/widgets/custom_label.dart';
 import 'package:smartphone_app/widgets/custom_list_tile.dart';
-import 'package:spotify_sdk/models/track.dart';
 
 import '../../helpers/position_helper/position_helper.dart';
 import '../../services/webservices/quack/models/quack_classes.dart';
@@ -65,10 +64,11 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
 
+    // Get url to the user's profile image on Spotify
     var url =
         AppValuesHelper.getInstance().getString(AppValuesKey.userImageUrl) ??
             "";
-
+    // If the user has no profile image show a placeholder instead
     if (url.isEmpty) {
       userImageWidget = Container(
           height: 60,
@@ -85,6 +85,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       userImageWidget = userImage;
     }
 
+    // Setup animation controllers
     playlistAnimationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 200));
     locationListAnimationController = AnimationController(
@@ -95,11 +96,13 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
+    // Precache user image
     if (userImage != null) precacheImage(userImage!.image, context);
   }
 
   @override
   void dispose() {
+    // Remember to dispose controllers
     playlistAnimationController.dispose();
     locationListAnimationController.dispose();
     super.dispose();
@@ -107,22 +110,26 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    // Create BLoC
     bloc = MainPageBloc(
         context: context,
         positionHelper:
             PositionHelper.getInstanceWithContext(context: context));
 
+    // Get available width
     availableWidth = MediaQuery.of(context).size.width;
-
+    // Get available height
     availableHeight = MediaQuery.of(context).size.height -
         MediaQuery.of(context).padding.top -
         MediaQuery.of(context).padding.bottom;
 
+    // Calculate height of the playlist overlay
     playlistHeight = availableHeight - values.actionBarHeight;
-
+    // Create playlist overlay height animation
     playlistSizeAnimation ??=
         Tween<double>(begin: values.mainPageOverlayHeight, end: playlistHeight)
             .animate(playlistAnimationController);
+    // Create location overlay height animation
     locationListSizeAnimation ??= Tween<double>(begin: 0, end: availableHeight)
         .animate(locationListAnimationController);
 
@@ -133,8 +140,17 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         child: FutureBuilder<bool>(
             future: bloc.getValues(),
             builder: (context, snapshot) {
+              // Show a progress indicator while getting values for page
               if (snapshot.connectionState != ConnectionState.done) {
-                return Container(color: Colors.white);
+                return Container(
+                    color: Colors.white,
+                    child: const Center(
+                        child: SizedBox(
+                      child: CircularProgressIndicator(
+                          color: custom_colors.darkBlue),
+                      height: 60,
+                      width: 60,
+                    )));
               }
 
               return BlocProvider(
@@ -156,20 +172,38 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   ///
   //region Methods
 
+  //region Helper methods
+
+  /// Compare the [current] and [previous] state in order to determine if the
+  /// QuackLocationType has changed. This method is used in order to avoid
+  /// unnecessary animation updates when the image shown for a QuackLocationType
+  /// should not change
   bool _shouldUpdateQuackLocationType(
       MainPageState previous, MainPageState current) {
+    // Same QuackLocationType in both states and
+    // LockedQuackLocationType is null in both states
     if (previous.quackLocationType == current.quackLocationType &&
         previous.lockedQuackLocationType == null &&
         current.lockedQuackLocationType == null) {
       return false;
     }
 
+    // LockedQuackLocationType is not null in both states and
+    // same LockedQuackLocationType in both states
     if (previous.lockedQuackLocationType != null &&
         current.lockedQuackLocationType != null &&
         previous.lockedQuackLocationType == current.lockedQuackLocationType) {
       return false;
     }
 
+    // Different QuackLocationTypes in the states or
+    //
+    // LockedQuackLocationType in the current state is not null and it is
+    // different from the QuackLocationType in the previous state or
+    //
+    // LockedQuackLocationType in the current state is null and
+    // QuackLocationType in the current state is different from the
+    // LockedQuackLocationType in the previous state
     return previous.quackLocationType != current.quackLocationType ||
         (current.lockedQuackLocationType != null &&
             current.lockedQuackLocationType != previous.quackLocationType) ||
@@ -177,6 +211,12 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             current.quackLocationType != previous.lockedQuackLocationType);
   }
 
+  //endregion
+
+  //region Build methods
+
+  /// Specifies the content on the page. It is called directly in the [build]
+  /// method
   Widget _getContent(MainPageBloc bloc) {
     return Stack(
       children: [
@@ -187,6 +227,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     );
   }
 
+  /// Builds the drawer shown on the page
   Widget _getDrawer(MainPageBloc bloc) {
     return Drawer(
       child: Container(
@@ -269,12 +310,17 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     );
   }
 
+  /// Build the playlist overlay
   Widget _getPlaylistContent(MainPageBloc bloc) {
     return BlocBuilder<MainPageBloc, MainPageState>(builder: (context, state) {
+      // When the playlist is not shown, the track currently being played is
+      // shown in the bottom
       var overlayContent = state.isPlaylistShown!
           ? _getPlaylist(state)
           : _getCurrentlyPlayingTrack(state);
 
+      // An expand/collapse button is always shown above the playlist or the
+      // track currently being played
       return Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -307,7 +353,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       ),
                       margin: const EdgeInsets.all(0),
                       textColor: custom_colors.black,
-                      pressedBackground: custom_colors.appButtonPressedGradient,
+                      pressedBackground: custom_colors.appButtonGradient,
                       defaultBackground: custom_colors.appButtonGradient),
                   // Only show the refresh button when the playlist is shown
                   // and there is no loading of playlists
@@ -342,6 +388,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                 custom_colors.transparentGradient),
                       ),
                     ),
+                  // Only show the Spotify icon when the playlist is shown
+                  // and there is no loading of playlists
                   if (state.isPlaylistShown! && !state.isLoading!)
                     Align(
                       alignment: Alignment.centerLeft,
@@ -375,17 +423,21 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     });
   }
 
+  /// Builds the overlay that allows the user to select a QuackLocationType
+  /// manually
   Widget _getLocationContent(MainPageBloc bloc) {
     return BlocBuilder<MainPageBloc, MainPageState>(builder: (context, state) {
       return AnimatedBuilder(
           animation: locationListAnimationController,
           builder: (context, _) {
             Widget child;
-
+            // If the flag is not set to show the location list or the height
+            // animation has not completed, show a placeholder container
             if (!state.isLocationListShown! &&
                 !locationListSizeAnimation!.isCompleted) {
               child = Container();
             } else {
+              // List with a collapse button below
               child =
                   Column(mainAxisAlignment: MainAxisAlignment.end, children: [
                 _getLocationList(state),
@@ -410,11 +462,12 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     ),
                     margin: const EdgeInsets.all(0),
                     textColor: custom_colors.black,
-                    pressedBackground: custom_colors.appButtonPressedGradient,
+                    pressedBackground: custom_colors.appButtonGradient,
                     defaultBackground: custom_colors.appButtonGradient)
               ]);
             }
 
+            // This is the overlay container, which height is being animated
             return Container(
                 decoration: BoxDecoration(
                     color: custom_colors.darkBlue,
@@ -426,6 +479,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     });
   }
 
+  /// Builds the main content on the page
   Widget _getMainContent(MainPageBloc bloc) {
     return Container(
         decoration: const BoxDecoration(color: custom_colors.transparent),
@@ -435,6 +489,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 buildWhen: (previous, current) {
               return _shouldUpdateQuackLocationType(previous, current);
             }, builder: (context, state) {
+              // Background image, displaying the currently assigned
+              // QuackLocationType
               return AnimatedSwitcher(
                   duration: const Duration(milliseconds: 200),
                   child: Image.asset(
@@ -559,7 +615,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                             icon: Icon(
                               Icons.skip_previous,
                               color: state.playlist == null
-                                  ? custom_colors.darkGrey2
+                                  ? custom_colors.darkGrey_2
                                   : custom_colors.darkBlue,
                               size: values.mainPagePlayPauseButtonSize / 3,
                             ),
@@ -614,7 +670,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                             icon: Icon(
                               Icons.skip_next,
                               color: state.playlist == null
-                                  ? custom_colors.darkGrey2
+                                  ? custom_colors.darkGrey_2
                                   : custom_colors.darkBlue,
                               size: values.mainPagePlayPauseButtonSize / 3,
                             ),
@@ -641,11 +697,15 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         ));
   }
 
+  /// Builds the overlay that shows the track currently being played
   Widget _getCurrentlyPlayingTrack(MainPageState state) {
+    // When the playlist is shown the background is becoming darker in order to
+    // create a contrast between this widget and the playlist
     Color backgroundColor = state.isPlaylistShown!
         ? custom_colors.darkerBlue
         : custom_colors.darkBlue;
-
+    // If the player state is null or no track is currently being played show a
+    // placeholder container
     if (state.playerState == null || state.playerState!.track == null) {
       return Container(
         decoration: BoxDecoration(
@@ -654,9 +714,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         height: values.mainPageOverlayHeight,
       );
     }
-    Track? track = state.playerState!.track;
 
-    QuackTrack quackTrack = QuackTrack.trackToQuackTrack(track)!;
+    // Get track currently being played as a QuackTrack
+    QuackTrack quackTrack =
+        QuackTrack.trackToQuackTrack(state.playerState!.track)!;
 
     return Container(
       decoration: BoxDecoration(
@@ -752,6 +813,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                           )
                         ],
                       )))),
+          // Only show when the playlist is shown
           if (state.isPlaylistShown!)
             Container(
               decoration: BoxDecoration(
@@ -779,6 +841,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                           custom_colors.backButtonGradientPressedDefault,
                       defaultBackground: custom_colors.transparentGradient)),
             ),
+          // Only show when the playlist is not shown
           if (!state.isPlaylistShown!)
             const SizedBox(
                 width: 60,
@@ -794,6 +857,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     );
   }
 
+  /// Builds a list item in the playlist for a given [quackTrack]
   Widget _getTrack(MainPageState state, QuackTrack? quackTrack) {
     return CustomListTile(
         pressedBackground: custom_colors.transparentGradient,
@@ -870,7 +934,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         onPressed: () => bloc.add(TrackSelected(quackTrack: quackTrack)));
   }
 
+  /// Builds the playlist shown in the playlist overlay
   Widget _getPlaylist(MainPageState state) {
+    // If the isLoading flag is set, then show a process indicator
     if (state.isLoading!) {
       return const Center(
           child: SizedBox(
@@ -880,15 +946,17 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       ));
     } else {
       List<QuackTrack>? tracks = state.playlist!.tracks;
+      // If there are no tracks shown a placeholder container
       if (tracks == null) {
         return Container();
       }
-      List<Widget> children = [];
 
+      List<Widget> children = [];
+      // Add the list items for each track
       for (var track in tracks) {
         children.add(_getTrack(state, track));
       }
-
+      // Add retrieve button as the last item in the list
       children.add(CustomButton(
         onPressed: () => bloc.add(
             const ButtonPressed(buttonEvent: MainButtonEvent.appendToPlaylist)),
@@ -905,7 +973,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             right: values.padding,
             bottom: values.padding),
       ));
-
+      // The list is shown with a scrollbar that is always visible
       return Column(
         children: [
           Expanded(
@@ -921,6 +989,13 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     }
   }
 
+  /// Builds a list tile used in the list in location overlay
+  ///
+  /// [locationType] is used to identicate the image shown in the list tile
+  /// If [useAutomaticTitle] is set, the title will become 'Automatic' instead
+  /// of the name of the [locationType]
+  /// If [isSelected] is set the title will be highlighted e.g. with an orange
+  /// color
   Widget _getLocationListTile(
       MainPageState state, QuackLocationType locationType,
       {bool useAutomaticTitle = false, bool isSelected = false}) {
@@ -972,6 +1047,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         });
   }
 
+  /// Builds the list shown in the location overlay
   Widget _getLocationList(MainPageState state) {
     List<Widget> children = [
       _getLocationListTile(state, state.quackLocationType!,
@@ -985,14 +1061,17 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       )
     ];
 
+    // Go through every QuackLocationType
     for (var locationType in QuackLocationType.values) {
+      // Skip the 'Unknown' QuackLocationType
       if (locationType == QuackLocationType.unknown) {
         continue;
       }
+      // Add items to the list
       children.add(_getLocationListTile(state, locationType,
           isSelected: state.lockedQuackLocationType == locationType));
     }
-
+    // The list is shown with a scrollbar that is always visible
     return Expanded(
         child: RawScrollbar(
             isAlwaysShown:
@@ -1004,6 +1083,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               shrinkWrap: true,
             )));
   }
+
+//endregion
 
 //endregion
 }

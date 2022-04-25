@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:location/location.dart' as location;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
 import 'package:smartphone_app/pages/login/login_page_events_states.dart';
@@ -36,6 +35,8 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
     /// ButtonPressed
     on<ButtonPressed>((event, emit) async {
       switch (event.buttonEvent) {
+
+        /// Continue with Spotify
         case LoginButtonEvent.continueWithSpotify:
           SpotifySdkResponseWithResult<String> response =
               await SpotifyService.getInstance().getAuthenticationToken();
@@ -59,11 +60,16 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
               getCurrentUsersProfileResponse.spotifyResponse!.email);
           AppValuesHelper.getInstance().saveString(AppValuesKey.displayName,
               getCurrentUsersProfileResponse.spotifyResponse!.displayName);
-          AppValuesHelper.getInstance().saveString(AppValuesKey.userImageUrl,
-              getCurrentUsersProfileResponse.spotifyResponse!.images!.isEmpty ? "" :
-              getCurrentUsersProfileResponse.spotifyResponse!.images![0].url);
+          AppValuesHelper.getInstance().saveString(
+              AppValuesKey.userImageUrl,
+              getCurrentUsersProfileResponse.spotifyResponse!.images!.isEmpty
+                  ? ""
+                  : getCurrentUsersProfileResponse
+                      .spotifyResponse!.images![0].url);
           GeneralUtil.goToPage(context, MainPage());
           break;
+
+        /// Go to settings
         case LoginButtonEvent.goToSettings:
           await permissionHelper.openAppSettings();
           break;
@@ -97,34 +103,25 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
   ///
 //region Methods
 
+  /// Get permissions for the app
+  /// Used when starting the app, and when navigating to the login page
   Future<PermissionState> getPermissions() async {
+    // On iOS the permissions are granted automatically
     if (Platform.isIOS) {
       return PermissionState.granted;
     }
-
+    // Request permissions
     Map<Permission, PermissionStatus> statuses =
         await permissionHelper.requestPermissions(permissions);
-
+    // Check if all the permissions were granted
     PermissionState permissionState =
         statuses.values.any((element) => !element.isGranted)
             ? PermissionState.denied
             : PermissionState.granted;
 
-    /*location.Location loc = location.Location();
-
-    var _permissionGranted = await loc.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await loc.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        return PermissionState.denied;
-      }
-    }
-    var enabledBackgroundMode = await loc.enableBackgroundMode(enable: true);
-    if (!enabledBackgroundMode) {
-      return PermissionState.denied;
-    }*/
-
+    // Update the permission state
     add(PermissionStateChanged(permissionState: permissionState));
+    // Return the overall permission state to the caller
     return permissionState;
   }
 

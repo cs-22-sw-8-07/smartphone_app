@@ -1,7 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:smartphone_app/pages/history/history_playlist/history_playlist_page_events_states.dart';
-import 'package:smartphone_app/services/webservices/quack/models/quack_classes.dart';
-import 'package:smartphone_app/utilities/general_util.dart';
+import 'package:smartphone_app/pages/history_playlist/history_playlist_page_events_states.dart';
 
 void main() {
   group("HistoryPageEvent", () {

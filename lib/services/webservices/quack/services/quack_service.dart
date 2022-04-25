@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:smartphone_app/helpers/app_values_helper.dart';
-import 'package:smartphone_app/services/quack_location_service/service/quack_location_service.dart';
 
 import '../../../../helpers/rest_helper.dart';
 import '../interfaces/quack_functions.dart';
@@ -31,7 +30,7 @@ class QuackServiceResponse<Response extends QuackResponse> {
   }
 }
 
-List<int> getCurrentOffsets(
+List<int> getPreviousOffsets(
     {required List<QuackPlaylist> playlists,
     required QuackLocationType quackLocationType}) {
   List<int> currentOffsets = [];
@@ -98,15 +97,15 @@ class QuackService implements IQuackFunctions {
       {required QuackLocationType qlt,
       required List<QuackPlaylist> playlists}) async {
     try {
-      List<int> currentOffsets =
-          getCurrentOffsets(playlists: playlists, quackLocationType: qlt);
+      List<int> previousOffsets =
+          getPreviousOffsets(playlists: playlists, quackLocationType: qlt);
       String accessToken =
           AppValuesHelper.getInstance().getString(AppValuesKey.accessToken)!;
 
       // Send GET request
       RestResponse restResponse = await restHelper.sendPostRequest(
           recommenderControllerPath + "GetPlaylist",
-          body: json.encode(currentOffsets),
+          body: json.encode(previousOffsets),
           parameters: {
             "accessToken": accessToken,
             "location": getQuackLocationTypeInt(qlt).toString()

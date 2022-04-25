@@ -1,8 +1,6 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
 import 'package:smartphone_app/pages/login/login_page_bloc.dart';
 import 'package:smartphone_app/pages/login/login_page_events_states.dart';
@@ -33,6 +31,13 @@ Future<void> main() async {
       expect(
           bloc.state, LoginPageState(permissionState: PermissionState.denied));
     });
+
+    blocTest<LoginPageBloc, LoginPageState>(
+        "getPermissions method",
+        build: () => bloc,
+        act: (bloc) async => await bloc.getPermissions(),
+        expect: () =>
+        [bloc.state.copyWith(permissionState: PermissionState.granted)]);
 
     blocTest<LoginPageBloc, LoginPageState>(
         "ButtonPressed -> Continue with Spotify",

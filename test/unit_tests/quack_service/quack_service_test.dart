@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -35,7 +33,7 @@ void main() async {
     });
   });
 
-  group("getCurrentOffsets", () {
+  group("getPreviousOffsets", () {
     setUp(() async {
       playlistsJson ??=
           (await rootBundle.loadString('assets/mock_data/playlists_mock.json'));
@@ -46,7 +44,7 @@ void main() async {
     });
 
     test("QuackLocationType.forest -> Correct values", () async {
-      var currentOffsets = getCurrentOffsets(
+      var currentOffsets = getPreviousOffsets(
           playlists: AppValuesHelper.getInstance().getPlaylists(),
           quackLocationType: QuackLocationType.education);
       expect(currentOffsets, [2, 3, 9, 10, 11]);
