@@ -38,7 +38,7 @@ const String appFeatureImage = "assets/feature_image.svg";
 const String appFeatureImage2 = "assets/feature_image2.svg";
 const String spotifyWhiteIcon = "assets/spotify_white_icon.png";
 
-/// Quack Location Type Images
+/// Quack Location Type background images
 const String qltBeach = "assets/quack_locationtypes/beach.jpg";
 const String qltEducation = "assets/quack_locationtypes/education.jpg";
 const String qltCemetery = "assets/quack_locationtypes/cemetery.jpg";
@@ -48,6 +48,7 @@ const String qltNightLife = "assets/quack_locationtypes/nightLife.jpg";
 const String qltUnknown = "assets/quack_locationtypes/unknown.jpeg";
 const String qltUrban = "assets/quack_locationtypes/urban.jpg";
 
+/// Quack Location Type small images
 const String qltBeachSmall = "assets/quack_locationtypes_small/beach_64x64.jpg";
 const String qltEducationSmall = "assets/quack_locationtypes_small/education_64x64.jpg";
 const String qltCemeterySmall = "assets/quack_locationtypes_small/cemetery_64x64.jpg";
