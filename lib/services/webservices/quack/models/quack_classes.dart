@@ -117,6 +117,7 @@ class QuackPlaylist extends Equatable {
     if (offset != null) {
       allOffsets ??= [offset!];
     }
+    id ??= "${locationType}_${offset}_${tracks == null ? 0 : tracks.hashCode}";
   }
 
   factory QuackPlaylist.fromJson(Map<String, dynamic> json) =>
@@ -135,10 +136,6 @@ class QuackPlaylist extends Equatable {
       }
     }
     return null;
-  }
-
-  String get fullId {
-    return "${locationType}_$offset";
   }
 
   void appendPlaylist(QuackPlaylist playlist) {

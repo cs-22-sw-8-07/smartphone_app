@@ -27,6 +27,10 @@
   "@are_you_sure_you_want_to_refresh_the_playlist": {
     "description": "Dialog text"
   },
+  "could_not_get_a_playlist": "Could not get a playlist",
+  "@could_not_get_a_playlist": {
+    "description": "Error message"
+  },
   "go_to_settings": "Go to settings",
   "@go_to_settings": {
     "description": "Button text"
@@ -37,10 +41,6 @@
   },
   "continue_with_spotify": "Continue with Spotify",
   "@continue_with_spotify": {
-    "description": "Button text"
-  },
-  "history": "History",
-  "@history": {
     "description": "Button text"
   },
   "settings": "Settings",

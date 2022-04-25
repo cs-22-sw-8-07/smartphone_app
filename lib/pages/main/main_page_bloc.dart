@@ -617,9 +617,6 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       add(const MainPageValueChanged(isLoading: true));
     }
 
-    // Test delay when using mock service
-    //await Future.delayed(const Duration(seconds: 2));
-
     // Get playlist from Quack API
     QuackServiceResponse<GetPlaylistResponse> getPlaylistResponse =
         await QuackService.getInstance().getPlaylist(
@@ -655,7 +652,9 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     // If not success
     if (!getPlaylistResponse.isSuccess) {
       GeneralUtil.showSnackBar(
-          context: context, message: "Could not get a playlist");
+          context: context,
+          message: "${AppLocalizations.of(context)!.could_not_get_a_playlist}, "
+              "error: ${getPlaylistResponse.quackResponse!.errorNo}");
       add(const MainPageValueChanged(isLoading: false));
       return;
     }
@@ -681,7 +680,9 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     // If not success
     if (!getPlaylistResponse.isSuccess) {
       GeneralUtil.showSnackBar(
-          context: context, message: "Could not get a playlist");
+          context: context,
+          message: "${AppLocalizations.of(context)!.could_not_get_a_playlist}, "
+              "error: ${getPlaylistResponse.quackResponse!.errorNo}");
       add(const MainPageValueChanged(isLoading: false));
       return;
     }
@@ -707,7 +708,6 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     if (!(await _connectToSpotifyRemote())) {
       return false;
     }
-
     return true;
   }
 
