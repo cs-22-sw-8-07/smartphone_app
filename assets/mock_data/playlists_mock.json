@@ -1,7 +1,10 @@
 [
   {
-    "id": "1",
+    "id": "34534534534",
     "location_type": 1,
+    "offset": 1,
+    "all_offsets": [1],
+    "save_date": "2022-04-25T11:13:46.524090",
     "tracks": [
       {
         "id": "2GNEJcmdJuQK97mWea637Y",
@@ -66,9 +69,72 @@
     ]
   },
   {
-    "id": "2",
+    "id": "3453453434543",
     "location_type": 2,
+    "offset": 2,
+    "all_offsets": [2,3],
+    "save_date": "2022-04-25T11:13:46.524090",
     "tracks": [
+      {
+        "id": "2GNEJcmdJuQK97mWea637Y",
+        "name": "middle part",
+        "artist": "Leo Lind",
+        "image": "https://i.scdn.co/image/ab67616d00004851fb0737c7e8fa35270ffbac69"
+      },
+      {
+        "id": "1chT7Yo3zSvjFPRQ20fWFH",
+        "name": "both sides of the coin",
+        "artist": "Electric Rivers",
+        "image": "https://i.scdn.co/image/ab67616d00004851b608dab053b2509e8c08b25a"
+      },
+      {
+        "id": "5iR4ziuzYZO1VondRmrvsc",
+        "name": "taming the tiger",
+        "artist": "Golden Horses",
+        "image": "https://i.scdn.co/image/ab67616d00004851eb0498ab3953f86bf61a8705"
+      },
+      {
+        "id": "4YhxXaf6Qrn5DrmgEfhwLH",
+        "name": "Look At The Stars",
+        "artist": "The Purple Stripe",
+        "image": "https://i.scdn.co/image/ab67616d000048513f1e4946c556bdf1709113e8"
+      },
+      {
+        "id": "09LGPIStoVjhEWYV5PG9M6",
+        "name": "oh! the view",
+        "artist": "Mayra R",
+        "image": "https://i.scdn.co/image/ab67616d000048517954441d08b8f4431ad624bd"
+      },
+      {
+        "id": "794SxkpLERVaBoag5946LG",
+        "name": "High Up",
+        "artist": "Mirror Inside",
+        "image": "https://i.scdn.co/image/ab67616d00004851321411a8a36a788cbbc014de"
+      },
+      {
+        "id": "6xcD8EbsvMep9ULtidHI2j",
+        "name": "Winter Sun",
+        "artist": "Sun Of They",
+        "image": "https://i.scdn.co/image/ab67616d000048515abeeebfdcb45af5748911f9"
+      },
+      {
+        "id": "7Dxb8siYBoC5rZRPTmhob4",
+        "name": "Slip Away",
+        "artist": "Elementaries",
+        "image": "https://i.scdn.co/image/ab67616d00004851fa3d6674dce3fa1ff392ec9b"
+      },
+      {
+        "id": "0SdF87pVzhydKwygD13H6B",
+        "name": "Gentle Whisper",
+        "artist": "Josef Briem",
+        "image": "https://i.scdn.co/image/ab67616d00004851696ca122c978056882c0a299"
+      },
+      {
+        "id": "4lcT08ARvK8cVjRLJbnKLh",
+        "name": "heels to the heavens",
+        "artist": "Dössell",
+        "image": "https://i.scdn.co/image/ab67616d000048519402e9201b1622a852f66c34"
+      },
       {
         "id": "2GNEJcmdJuQK97mWea637Y",
         "name": "middle part",
@@ -132,8 +198,11 @@
     ]
   },
   {
-    "id": "1",
+    "id": "43654634543",
     "location_type": 3,
+    "offset": 4,
+    "all_offsets": [4],
+    "save_date": "2022-04-25T11:13:46.524090",
     "tracks": [
       {
         "id": "2GNEJcmdJuQK97mWea637Y",
@@ -198,8 +267,11 @@
     ]
   },
   {
-    "id": "2",
+    "id": "98796",
     "location_type": 4,
+    "offset": 5,
+    "all_offsets": [5],
+    "save_date": "2022-04-25T10:00:00",
     "tracks": [
       {
         "id": "1OwBJitJZ9XDId0cFBDrLx",
@@ -264,8 +336,11 @@
     ]
   },
   {
-    "id": "1",
+    "id": "13123123123",
     "location_type": 5,
+    "offset": 6,
+    "all_offsets": [6],
+    "save_date": "2022-04-25T10:00:00",
     "tracks": [
       {
         "id": "2GNEJcmdJuQK97mWea637Y",
@@ -330,8 +405,11 @@
     ]
   },
   {
-    "id": "1",
+    "id": "123213123213",
     "location_type": 6,
+    "offset": 7,
+    "all_offsets": [7],
+    "save_date": "2022-04-25T10:00:00",
     "tracks": [
       {
         "id": "2GNEJcmdJuQK97mWea637Y",
@@ -396,8 +474,11 @@
     ]
   },
   {
-    "id": "1",
+    "id": "25425345234",
     "location_type": 7,
+    "offset": 8,
+    "all_offsets": [8],
+    "save_date": "2022-04-25T10:00:00",
     "tracks": [
       {
         "id": "2GNEJcmdJuQK97mWea637Y",
@@ -462,8 +543,218 @@
     ]
   },
   {
-    "id": "1",
-    "location_type": 0,
+    "id": "543545435345",
+    "location_type": 2,
+    "offset": 9,
+    "all_offsets": [9],
+    "save_date": "2022-04-25T10:00:00",
+    "tracks": [
+      {
+        "id": "2GNEJcmdJuQK97mWea637Y",
+        "name": "middle part",
+        "artist": "Leo Lind",
+        "image": "https://i.scdn.co/image/ab67616d00004851fb0737c7e8fa35270ffbac69"
+      },
+      {
+        "id": "1chT7Yo3zSvjFPRQ20fWFH",
+        "name": "both sides of the coin",
+        "artist": "Electric Rivers",
+        "image": "https://i.scdn.co/image/ab67616d00004851b608dab053b2509e8c08b25a"
+      },
+      {
+        "id": "5iR4ziuzYZO1VondRmrvsc",
+        "name": "taming the tiger",
+        "artist": "Golden Horses",
+        "image": "https://i.scdn.co/image/ab67616d00004851eb0498ab3953f86bf61a8705"
+      },
+      {
+        "id": "4YhxXaf6Qrn5DrmgEfhwLH",
+        "name": "Look At The Stars",
+        "artist": "The Purple Stripe",
+        "image": "https://i.scdn.co/image/ab67616d000048513f1e4946c556bdf1709113e8"
+      },
+      {
+        "id": "09LGPIStoVjhEWYV5PG9M6",
+        "name": "oh! the view",
+        "artist": "Mayra R",
+        "image": "https://i.scdn.co/image/ab67616d000048517954441d08b8f4431ad624bd"
+      },
+      {
+        "id": "794SxkpLERVaBoag5946LG",
+        "name": "High Up",
+        "artist": "Mirror Inside",
+        "image": "https://i.scdn.co/image/ab67616d00004851321411a8a36a788cbbc014de"
+      },
+      {
+        "id": "6xcD8EbsvMep9ULtidHI2j",
+        "name": "Winter Sun",
+        "artist": "Sun Of They",
+        "image": "https://i.scdn.co/image/ab67616d000048515abeeebfdcb45af5748911f9"
+      },
+      {
+        "id": "7Dxb8siYBoC5rZRPTmhob4",
+        "name": "Slip Away",
+        "artist": "Elementaries",
+        "image": "https://i.scdn.co/image/ab67616d00004851fa3d6674dce3fa1ff392ec9b"
+      },
+      {
+        "id": "0SdF87pVzhydKwygD13H6B",
+        "name": "Gentle Whisper",
+        "artist": "Josef Briem",
+        "image": "https://i.scdn.co/image/ab67616d00004851696ca122c978056882c0a299"
+      },
+      {
+        "id": "4lcT08ARvK8cVjRLJbnKLh",
+        "name": "heels to the heavens",
+        "artist": "Dössell",
+        "image": "https://i.scdn.co/image/ab67616d000048519402e9201b1622a852f66c34"
+      }
+    ]
+  },
+  {
+    "id": "2434234",
+    "location_type": 2,
+    "offset": 11,
+    "all_offsets": [11],
+    "save_date": "2022-04-25T10:00:00",
+    "tracks": [
+      {
+        "id": "2GNEJcmdJuQK97mWea637Y",
+        "name": "middle part",
+        "artist": "Leo Lind",
+        "image": "https://i.scdn.co/image/ab67616d00004851fb0737c7e8fa35270ffbac69"
+      },
+      {
+        "id": "1chT7Yo3zSvjFPRQ20fWFH",
+        "name": "both sides of the coin",
+        "artist": "Electric Rivers",
+        "image": "https://i.scdn.co/image/ab67616d00004851b608dab053b2509e8c08b25a"
+      },
+      {
+        "id": "5iR4ziuzYZO1VondRmrvsc",
+        "name": "taming the tiger",
+        "artist": "Golden Horses",
+        "image": "https://i.scdn.co/image/ab67616d00004851eb0498ab3953f86bf61a8705"
+      },
+      {
+        "id": "4YhxXaf6Qrn5DrmgEfhwLH",
+        "name": "Look At The Stars",
+        "artist": "The Purple Stripe",
+        "image": "https://i.scdn.co/image/ab67616d000048513f1e4946c556bdf1709113e8"
+      },
+      {
+        "id": "09LGPIStoVjhEWYV5PG9M6",
+        "name": "oh! the view",
+        "artist": "Mayra R",
+        "image": "https://i.scdn.co/image/ab67616d000048517954441d08b8f4431ad624bd"
+      },
+      {
+        "id": "794SxkpLERVaBoag5946LG",
+        "name": "High Up",
+        "artist": "Mirror Inside",
+        "image": "https://i.scdn.co/image/ab67616d00004851321411a8a36a788cbbc014de"
+      },
+      {
+        "id": "6xcD8EbsvMep9ULtidHI2j",
+        "name": "Winter Sun",
+        "artist": "Sun Of They",
+        "image": "https://i.scdn.co/image/ab67616d000048515abeeebfdcb45af5748911f9"
+      },
+      {
+        "id": "7Dxb8siYBoC5rZRPTmhob4",
+        "name": "Slip Away",
+        "artist": "Elementaries",
+        "image": "https://i.scdn.co/image/ab67616d00004851fa3d6674dce3fa1ff392ec9b"
+      },
+      {
+        "id": "0SdF87pVzhydKwygD13H6B",
+        "name": "Gentle Whisper",
+        "artist": "Josef Briem",
+        "image": "https://i.scdn.co/image/ab67616d00004851696ca122c978056882c0a299"
+      },
+      {
+        "id": "4lcT08ARvK8cVjRLJbnKLh",
+        "name": "heels to the heavens",
+        "artist": "Dössell",
+        "image": "https://i.scdn.co/image/ab67616d000048519402e9201b1622a852f66c34"
+      }
+    ]
+  },
+  {
+    "id": "24234234234",
+    "location_type": 2,
+    "offset": 10,
+    "all_offsets": [10],
+    "save_date": "2022-04-25T10:00:00",
+    "tracks": [
+      {
+        "id": "2GNEJcmdJuQK97mWea637Y",
+        "name": "middle part",
+        "artist": "Leo Lind",
+        "image": "https://i.scdn.co/image/ab67616d00004851fb0737c7e8fa35270ffbac69"
+      },
+      {
+        "id": "1chT7Yo3zSvjFPRQ20fWFH",
+        "name": "both sides of the coin",
+        "artist": "Electric Rivers",
+        "image": "https://i.scdn.co/image/ab67616d00004851b608dab053b2509e8c08b25a"
+      },
+      {
+        "id": "5iR4ziuzYZO1VondRmrvsc",
+        "name": "taming the tiger",
+        "artist": "Golden Horses",
+        "image": "https://i.scdn.co/image/ab67616d00004851eb0498ab3953f86bf61a8705"
+      },
+      {
+        "id": "4YhxXaf6Qrn5DrmgEfhwLH",
+        "name": "Look At The Stars",
+        "artist": "The Purple Stripe",
+        "image": "https://i.scdn.co/image/ab67616d000048513f1e4946c556bdf1709113e8"
+      },
+      {
+        "id": "09LGPIStoVjhEWYV5PG9M6",
+        "name": "oh! the view",
+        "artist": "Mayra R",
+        "image": "https://i.scdn.co/image/ab67616d000048517954441d08b8f4431ad624bd"
+      },
+      {
+        "id": "794SxkpLERVaBoag5946LG",
+        "name": "High Up",
+        "artist": "Mirror Inside",
+        "image": "https://i.scdn.co/image/ab67616d00004851321411a8a36a788cbbc014de"
+      },
+      {
+        "id": "6xcD8EbsvMep9ULtidHI2j",
+        "name": "Winter Sun",
+        "artist": "Sun Of They",
+        "image": "https://i.scdn.co/image/ab67616d000048515abeeebfdcb45af5748911f9"
+      },
+      {
+        "id": "7Dxb8siYBoC5rZRPTmhob4",
+        "name": "Slip Away",
+        "artist": "Elementaries",
+        "image": "https://i.scdn.co/image/ab67616d00004851fa3d6674dce3fa1ff392ec9b"
+      },
+      {
+        "id": "0SdF87pVzhydKwygD13H6B",
+        "name": "Gentle Whisper",
+        "artist": "Josef Briem",
+        "image": "https://i.scdn.co/image/ab67616d00004851696ca122c978056882c0a299"
+      },
+      {
+        "id": "4lcT08ARvK8cVjRLJbnKLh",
+        "name": "heels to the heavens",
+        "artist": "Dössell",
+        "image": "https://i.scdn.co/image/ab67616d000048519402e9201b1622a852f66c34"
+      }
+    ]
+  },
+  {
+    "id": "24234234234",
+    "location_type": 3,
+    "offset": 20,
+    "all_offsets": [20],
+    "save_date": "2022-04-25T10:00:00",
     "tracks": [
       {
         "id": "2GNEJcmdJuQK97mWea637Y",

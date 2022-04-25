@@ -78,7 +78,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
           }
           break;
 
-          /// See previous recommendations
+        /// See previous recommendations
         case MainButtonEvent.seeHistory:
           GeneralUtil.showPageAsDialog(context, HistoryPage());
           break;
@@ -410,7 +410,10 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     });
   }
 
+  /// Method used to set the [position] in QuacklocationService which updates
+  /// the QuackLocationType accordingly
   Future<void> positionReceived(Position? position) async {
+    // Write position to terminal
     if (kDebugMode) {
       print(position != null
           ? (position.latitude.toString().replaceAll(",", ".") +
@@ -419,36 +422,56 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
           : "Unknown");
     }
 
+    // Position is not null and the flag _gettingLocationType is not set
     if (position != null && !_gettingLocationType) {
+      // Set flag
       _gettingLocationType = true;
-      QuackLocationType? qlt = await QuackLocationService.getInstance()
-          .getQuackLocationType(position);
+      // Get QuackLocationType based on position
+      QuackLocationType? quackLocationType =
+          await QuackLocationService.getInstance()
+              .getQuackLocationType(position);
 
+      // Write QuackLocationType to terminal
       if (kDebugMode) {
-        print("QLT: " +
-            (qlt == null
+        print("QuackLocationType: " +
+            (quackLocationType == null
                 ? "null"
                 : LocalizationHelper.getInstance()
-                    .getLocalizedQuackLocationType(context, qlt)));
+                    .getLocalizedQuackLocationType(
+                        context, quackLocationType)));
       }
 
-      if (qlt != null) {
+      if (quackLocationType != null) {
+        // If LockedQuackLocationType is null and
+        // the playlist is not null and
+        // the new QuackLocationType is not equal to the current QuackLocationType
         if (state.lockedQuackLocationType == null &&
             state.playlist != null &&
-            state.quackLocationType != qlt) {
-          add(MainPageValueChanged(quackLocationType: qlt));
+            state.quackLocationType != quackLocationType) {
+          // Set QuackLocationType
+          add(MainPageValueChanged(quackLocationType: quackLocationType));
+          // Get playlist from Quack API
           QuackServiceResponse<GetPlaylistResponse> response =
               await _getPlaylist(showLoadingBefore: true);
+          // Check for success
           if (!response.isSuccess) {
             return;
           }
+
+          // Save playlist to history
+          AppValuesHelper.getInstance()
+              .savePlaylist(response.quackResponse!.result!);
+
+          // Show playlist
           add(PlaylistReceived(playList: response.quackResponse!.result!));
+          // Remove loading animation
           add(const MainPageValueChanged(isLoading: false));
         } else {
-          add(MainPageValueChanged(quackLocationType: qlt));
+          // Set QuackLocationType
+          add(MainPageValueChanged(quackLocationType: quackLocationType));
         }
       }
-
+      // Remove flag
       _gettingLocationType = false;
     }
   }
@@ -496,6 +519,8 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
   /// Get next track in the playlist
   /// It is found through the index of the given [track]
+  ///
+  /// If the [track] is the last in the playlist, null will be returned
   QuackTrack? getNextTrack(QuackTrack track) {
     int index = state.playlist!.tracks!.indexOf(track);
     if (index != -1) {
@@ -507,6 +532,10 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     return null;
   }
 
+  /// Get previous track in the playlist
+  /// It is found through the index of the given [track]
+  ///
+  /// If the [track] is the first in the playlist, null will be returned
   QuackTrack? getPreviousTrack(QuackTrack track) {
     int index = state.playlist!.tracks!.indexOf(state.currentTrack!);
     if (index != -1) {
@@ -598,9 +627,10 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     // Get playlist from Quack API
     QuackServiceResponse<GetPlaylistResponse> getPlaylistResponse =
         await QuackService.getInstance().getPlaylist(
-            state.lockedQuackLocationType == null
+            qlt: state.lockedQuackLocationType == null
                 ? state.quackLocationType!
-                : state.lockedQuackLocationType!);
+                : state.lockedQuackLocationType!,
+            playlists: AppValuesHelper.getInstance().getPlaylists());
     // If response is success then give every track a unique key
     if (getPlaylistResponse.isSuccess) {
       if (kDebugMode) {
@@ -640,8 +670,10 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
     // Add to existing playlist
     var newPlaylist = state.playlist!.copy();
-    newPlaylist.tracks!
-        .addAll(getPlaylistResponse.quackResponse!.result!.tracks!);
+    newPlaylist.appendPlaylist(getPlaylistResponse.quackResponse!.result!);
+
+    // Save playlist to history
+    AppValuesHelper.getInstance().savePlaylist(newPlaylist);
 
     // Show new playlist
     add(PlaylistReceived(playList: newPlaylist));
@@ -662,11 +694,15 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       return;
     }
 
+    // Save playlist to history
+    AppValuesHelper.getInstance()
+        .savePlaylist(getPlaylistResponse.quackResponse!.result!);
+
     // Play the first track
     await _playTrack(getPlaylistResponse.quackResponse!.result!.tracks!.first);
     // Show playlist
     add(PlaylistReceived(playList: getPlaylistResponse.quackResponse!.result!));
-    // Remove loading animation and start recommendation animation
+    // Remove loading animation
     add(const MainPageValueChanged(isLoading: false));
   }
 

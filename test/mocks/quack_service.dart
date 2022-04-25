@@ -36,7 +36,8 @@ class MockQuackService implements IQuackFunctions {
 
   @override
   Future<QuackServiceResponse<GetPlaylistResponse>> getPlaylist(
-      QuackLocationType qlt) async {
+      {required QuackLocationType qlt,
+      required List<QuackPlaylist> playlists}) async {
     if (qlt == QuackLocationType.beach) {
       jsonData1 ??= await getJsonData("get_playlist_response.json");
 

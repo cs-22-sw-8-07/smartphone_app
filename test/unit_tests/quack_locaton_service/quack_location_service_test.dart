@@ -11,10 +11,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:smartphone_app/services/quack_location_service/service/quack_location_service.dart';
 import 'package:smartphone_app/services/webservices/foursquare/services/foursquare_service.dart';
 import 'package:smartphone_app/services/webservices/quack/models/quack_classes.dart';
-import 'package:smartphone_app/services/webservices/quack/services/quack_service.dart';
 
 import '../../mocks/foursquare_service.dart';
-import '../../mocks/quack_service.dart';
 
 void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();

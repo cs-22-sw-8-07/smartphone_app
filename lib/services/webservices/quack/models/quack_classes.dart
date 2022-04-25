@@ -100,8 +100,24 @@ class QuackPlaylist extends Equatable {
   int? locationType;
   @JsonKey(name: "tracks")
   List<QuackTrack>? tracks;
+  @JsonKey(name: "offset")
+  int? offset;
+  @JsonKey(name: "all_offsets")
+  List<int>? allOffsets;
+  @JsonKey(name: "save_date")
+  DateTime? saveDate;
 
-  QuackPlaylist({this.id, this.locationType, this.tracks});
+  QuackPlaylist(
+      {this.id,
+      this.locationType,
+      this.tracks,
+      this.offset,
+      this.allOffsets,
+      this.saveDate}) {
+    if (offset != null) {
+      allOffsets ??= [offset!];
+    }
+  }
 
   factory QuackPlaylist.fromJson(Map<String, dynamic> json) =>
       _$QuackPlaylistFromJson(json);
@@ -119,6 +135,26 @@ class QuackPlaylist extends Equatable {
       }
     }
     return null;
+  }
+
+  void appendPlaylist(QuackPlaylist playlist) {
+    List<QuackTrack>? newList;
+    if (tracks != null) {
+      newList = List.of([], growable: true);
+      for (var track in tracks!) {
+        newList.add(track);
+      }
+    }
+
+    if (playlist.tracks != null) {
+      allOffsets ??= [];
+      allOffsets!.addAll(playlist.allOffsets!);
+      for (var track in playlist.tracks!) {
+        newList!.add(track);
+      }
+    }
+
+    tracks = newList;
   }
 
   QuackPlaylist copy() {

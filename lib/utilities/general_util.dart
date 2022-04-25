@@ -10,7 +10,7 @@ enum PermissionState { granted, denied }
 
 extension DateTimeExtension on DateTime {
   String nowNoSecondsAsString() {
-    return intl.DateFormat('dd-MM-yyyy kk:mm').format(DateTime.now());
+    return intl.DateFormat('dd-MM-yyyy kk:mm').format(this);
   }   
 }
 
