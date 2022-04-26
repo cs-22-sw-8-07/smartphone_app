@@ -35,9 +35,17 @@
   "@go_to_settings": {
     "description": "Button text"
   },
+  "cannot_get_playlist_for_location_type_unknown": "Cannot get playlist for location type 'Unknown'",
+  "@cannot_get_playlist_for_location_type_unknown": {
+    "description": "Error message"
+  },
   "do_you_want_to_save_changes": "You have unsaved changes\nDo you want to save the current changes?",
   "@do_you_want_to_save_changes": {
     "description": "Dialog text"
+  },
+  "you_cannot_lock_the_location_type_unknown": "You cannot lock the location type 'Unknown'",
+  "@you_cannot_lock_the_location_type_unknown": {
+    "description": "Error message"
   },
   "continue_with_spotify": "Continue with Spotify",
   "@continue_with_spotify": {

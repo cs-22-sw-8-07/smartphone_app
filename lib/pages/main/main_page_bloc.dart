@@ -121,9 +121,18 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
           String message = "";
           bool getNewPlaylist = false;
 
+          // QuackLocationType is equal to 'Unknown'
+          if (state.quackLocationType == QuackLocationType.unknown) {
+            // Show message to the user
+            GeneralUtil.showSnackBar(
+                context: context,
+                message: AppLocalizations.of(context)!
+                    .you_cannot_lock_the_location_type_unknown);
+            return;
+          }
           // QuackLocationType is not locked and the user has not selected a
           // QuackLocationType
-          if (state.lockedQuackLocationType == null) {
+          else if (state.lockedQuackLocationType == null) {
             // Set LockedQuackLocationType to QuackLocationType
             emit(state.copyWith(
                 lockedQuackLocationType: state.quackLocationType));
@@ -310,9 +319,11 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
     /// PlaylistReceived
     on<PlaylistReceived>((event, emit) {
-      emit(state.copyWith(
-          playlist: event.playList,
-          updatedItemHashCode: event.playList.hashCode));
+      var newState = state.copyWith(
+          updatedItemHashCode:
+              event.playList == null ? 0 : event.playList.hashCode);
+      newState.playlist = event.playList;
+      emit(newState);
     });
 
     /// TrackSelected
@@ -332,17 +343,47 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
     /// LocationSelected
     on<LocationSelected>((event, emit) async {
-      // Flag is set if the QuackLocationType in the state is not equal to the
-      // one in the event
-      bool getNewPlaylist = state.quackLocationType != event.quackLocationType;
+      bool getNewPlaylist = false;
       // Set IsLocationListShown to false and set LockedQuackLocationType to the
       // one in the event
       var newState = state.copyWith(
         isLocationListShown: false,
       );
+      // If QuackLocationType in the event is and the QuackLocationType in the
+      // state is 'Unknown' then remove the playlist and the current track
+      if (event.quackLocationType == null &&
+          state.quackLocationType == QuackLocationType.unknown) {
+        newState.playlist = null;
+        newState.currentTrack = null;
+        // Stop playing the current track
+        if (state.playerState != null && !state.playerState!.isPaused) {
+          await _resumePausePlayer();
+        }
+      } else {
+        // Set flag if:
+        // QuackLocationType in the event is null and LockedQuackLocationType is
+        // not null and QuackLocationType is not equal to
+        // LockedQuackLocationType
+        // or
+        // QuackLocationType in the event is not null and
+        // LockedQuackLocationType is null && QuackLocationType is not equal
+        // QuackLocationType in the event or
+        // LockedQuackLocationType is not null and LockedQuackLocationType is
+        // not equal QuackLocationType in the event
+        getNewPlaylist = (event.quackLocationType == null &&
+                state.lockedQuackLocationType != null &&
+                state.quackLocationType != state.lockedQuackLocationType) ||
+            (event.quackLocationType != null &&
+                    (state.lockedQuackLocationType == null &&
+                        state.quackLocationType != event.quackLocationType) ||
+                (state.lockedQuackLocationType != null &&
+                    state.lockedQuackLocationType != event.quackLocationType));
+      }
+      // Set LockedQuackLocationType
       newState.lockedQuackLocationType = event.quackLocationType;
+      // Update the state
       emit(newState);
-      // If the flag is set start new recommendation
+      // If the flag is set, start new recommendation
       if (getNewPlaylist) {
         await _startRecommendation();
       }
@@ -675,6 +716,19 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
   /// Start recommendation
   Future<void> _startRecommendation() async {
+    var qlt = state.lockedQuackLocationType == null
+        ? state.quackLocationType!
+        : state.lockedQuackLocationType!;
+
+    // Cannot get playlist when the location type is 'Unknown'
+    if (qlt == QuackLocationType.unknown) {
+      GeneralUtil.showSnackBar(
+          context: context,
+          message: AppLocalizations.of(context)!
+              .cannot_get_playlist_for_location_type_unknown);
+      return;
+    }
+
     // Get playlist from Quack API
     QuackServiceResponse<GetPlaylistResponse> getPlaylistResponse =
         await _getPlaylist(showLoadingBefore: true);
