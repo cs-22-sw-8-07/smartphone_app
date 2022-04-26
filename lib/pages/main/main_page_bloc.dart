@@ -176,6 +176,13 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
           // Append to existing playlist
           await _appendToExistingPlaylist();
           break;
+
+        /// Back
+        case MainButtonEvent.back:
+          if (state.isPlaylistShown!) {
+            emit(state.copyWith(isPlaylistShown: false));
+          }
+          break;
       }
     });
 
@@ -648,10 +655,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     if (!getPlaylistResponse.isSuccess) {
       GeneralUtil.showSnackBar(
           context: context,
-          message: "Exception: ${getPlaylistResponse.errorMessage}" +
-              (getPlaylistResponse.quackResponse == null
-                  ? ""
-                  : ", Error: ${getPlaylistResponse.quackResponse!.errorNo}"));
+          message: "${await getPlaylistResponse.errorMessage}");
       add(const MainPageValueChanged(isLoading: false));
       return;
     }
@@ -678,10 +682,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     if (!getPlaylistResponse.isSuccess) {
       GeneralUtil.showSnackBar(
           context: context,
-          message: "Exception: ${getPlaylistResponse.errorMessage}" +
-              (getPlaylistResponse.quackResponse == null
-                  ? ""
-                  : ", Error: ${getPlaylistResponse.quackResponse!.errorNo}"));
+          message: "${await getPlaylistResponse.errorMessage}");
       add(const MainPageValueChanged(isLoading: false));
       return;
     }

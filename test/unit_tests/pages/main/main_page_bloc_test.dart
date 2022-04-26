@@ -68,6 +68,22 @@ Future<void> main() async {
         expect: () => []);
 
     blocTest<MainPageBloc, MainPageState>(
+        "ButtonPressed -> Back -> isPlaylistShown is true",
+        setUp: () => bloc.state.isPlaylistShown = true,
+        build: () => bloc,
+        act: (bloc) =>
+            bloc.add(const ButtonPressed(buttonEvent: MainButtonEvent.back)),
+        expect: () => [bloc.state.copyWith(isPlaylistShown: false)]);
+
+    blocTest<MainPageBloc, MainPageState>(
+        "ButtonPressed -> Back -> isPlaylistShown is false",
+        setUp: () => bloc.state.isPlaylistShown = false,
+        build: () => bloc,
+        act: (bloc) =>
+            bloc.add(const ButtonPressed(buttonEvent: MainButtonEvent.back)),
+        expect: () => []);
+
+    blocTest<MainPageBloc, MainPageState>(
         "PositionReceived method -> Position is null",
         build: () => bloc,
         act: (bloc) => bloc.positionReceived(null),

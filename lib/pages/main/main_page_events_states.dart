@@ -18,7 +18,8 @@ enum MainButtonEvent {
   lockUnlockQuackLocationType,
   selectManualLocation,
   refreshPlaylist,
-  appendToPlaylist
+  appendToPlaylist,
+  back
 }
 
 enum MainTouchEvent { goToNextTrack, goToPreviousTrack }
