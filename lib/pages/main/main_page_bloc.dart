@@ -114,7 +114,6 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
           }
           // Do resume/pause actions
           await _resumePausePlayer();
-          emit(state.copyWith(hasJustPerformedAction: true));
           break;
 
         /// Lock/Unlock QuackLocationType
@@ -167,11 +166,6 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
           // If not yes, do nothing
           if (reply != DialogQuestionResponse.yes) {
             return;
-          }
-          // The current player state is not null and a track is currently
-          // playing, then pause the track
-          if (state.playerState != null && !state.playerState!.isPaused) {
-            await _resumePausePlayer();
           }
           // Start recommendation
           await _startRecommendation();
@@ -576,6 +570,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
         GeneralUtil.showToast(response.errorMessage);
       }
     }
+    add(const HasPerformedSpotifyPlayerAction());
   }
 
   /// Connect to the Spotify remote
