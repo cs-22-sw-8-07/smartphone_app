@@ -648,8 +648,10 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     if (!getPlaylistResponse.isSuccess) {
       GeneralUtil.showSnackBar(
           context: context,
-          message: "${AppLocalizations.of(context)!.could_not_get_a_playlist}, "
-              "error: ${getPlaylistResponse.quackResponse!.errorNo}");
+          message: "Exception: ${getPlaylistResponse.exception}" +
+              (getPlaylistResponse.quackResponse == null
+                  ? ""
+                  : ", Error: ${getPlaylistResponse.quackResponse!.errorNo}"));
       add(const MainPageValueChanged(isLoading: false));
       return;
     }
@@ -676,8 +678,10 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     if (!getPlaylistResponse.isSuccess) {
       GeneralUtil.showSnackBar(
           context: context,
-          message: "${AppLocalizations.of(context)!.could_not_get_a_playlist}, "
-              "error: ${getPlaylistResponse.quackResponse!.errorNo}");
+          message: "Exception: ${getPlaylistResponse.exception}" +
+              (getPlaylistResponse.quackResponse == null
+                  ? ""
+                  : ", Error: ${getPlaylistResponse.quackResponse!.errorNo}"));
       add(const MainPageValueChanged(isLoading: false));
       return;
     }
