@@ -648,7 +648,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     if (!getPlaylistResponse.isSuccess) {
       GeneralUtil.showSnackBar(
           context: context,
-          message: "Exception: ${getPlaylistResponse.exception}" +
+          message: "Exception: ${getPlaylistResponse.errorMessage}" +
               (getPlaylistResponse.quackResponse == null
                   ? ""
                   : ", Error: ${getPlaylistResponse.quackResponse!.errorNo}"));
@@ -678,7 +678,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     if (!getPlaylistResponse.isSuccess) {
       GeneralUtil.showSnackBar(
           context: context,
-          message: "Exception: ${getPlaylistResponse.exception}" +
+          message: "Exception: ${getPlaylistResponse.errorMessage}" +
               (getPlaylistResponse.quackResponse == null
                   ? ""
                   : ", Error: ${getPlaylistResponse.quackResponse!.errorNo}"));
