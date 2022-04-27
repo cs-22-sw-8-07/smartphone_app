@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
 
 import '../../../../helpers/rest_helper.dart';
@@ -101,6 +102,10 @@ class QuackService implements IQuackFunctions {
           getPreviousOffsets(playlists: playlists, quackLocationType: qlt);
       String accessToken =
           AppValuesHelper.getInstance().getString(AppValuesKey.accessToken)!;
+
+      if (kDebugMode) {
+        print("Previous offsets : ${json.encode(previousOffsets)}");
+      }
 
       // Send GET request
       RestResponse restResponse = await restHelper.sendPostRequest(

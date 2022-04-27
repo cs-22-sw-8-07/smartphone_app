@@ -171,3 +171,97 @@ class MockSpotifyService implements ISpotifyFunctions {
 //endregion
 
 }
+
+class MockSpotifyServiceError implements ISpotifyFunctions {
+
+  ///
+  /// OVERRIDE METHODS
+  ///
+  //region Override methods
+
+  @override
+  Future<SpotifySdkResponseWithResult<bool>> connectToSpotifyRemote() async {
+    return SpotifySdkResponseWithResult.error("");
+  }
+
+  @override
+  Future<SpotifySdkResponseWithResult<bool>> disconnect() async {
+    return SpotifySdkResponseWithResult.error("");
+  }
+
+  @override
+  Future<SpotifySdkResponseWithResult<String>> getAuthenticationToken() async {
+    return SpotifySdkResponseWithResult.error("");
+  }
+
+  @override
+  Future<SpotifyServiceResponse<GetCurrentUsersProfileResponse>>
+  getCurrentUsersProfile({required String token}) async {
+    return SpotifyServiceResponse.error("");
+  }
+
+  @override
+  Future<SpotifySdkResponseWithResult<PlayerState>> getPlayerState() async {
+    return SpotifySdkResponseWithResult.error("");
+  }
+
+  @override
+  Future<SpotifySdkResponseWithResult<bool>> isSpotifyAppActive() async {
+    return SpotifySdkResponseWithResult.error("");
+  }
+
+  @override
+  Future<SpotifySdkResponse> pause() async {
+    return SpotifySdkResponse.error("");
+  }
+
+  @override
+  Future<SpotifySdkResponse> play({required String spotifyUri}) async {
+    return SpotifySdkResponse.error("");
+  }
+
+  @override
+  Future<SpotifySdkResponse> playTrack(String trackId) async {
+    return SpotifySdkResponse.error("");
+  }
+
+  @override
+  Future<SpotifySdkResponse> queue({required String spotifyUri}) async {
+    return SpotifySdkResponse.error("");
+  }
+
+  @override
+  Future<SpotifySdkResponse> queueTrack(String trackId) async {
+    return SpotifySdkResponse.error("");
+  }
+
+  @override
+  Future<SpotifySdkResponse> resume() async {
+    return SpotifySdkResponse.error("");
+  }
+
+  @override
+  Future<SpotifySdkResponse> skipNext() async {
+    return SpotifySdkResponse.error("");
+  }
+
+  @override
+  Future<SpotifySdkResponse> skipPrevious() async {
+    return SpotifySdkResponse.error("");
+  }
+
+  @override
+  SpotifySdkResponseWithResult<Stream<ConnectionStatus>>
+  subscribeConnectionStatus() {
+    return SpotifySdkResponseWithResult.error("");
+  }
+
+  @override
+  SpotifySdkResponseWithResult<Stream<PlayerState>> subscribePlayerState() {
+    return SpotifySdkResponseWithResult.error("");
+  }
+
+//endregion
+
+}
+

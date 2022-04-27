@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 //region Colors
 
 const Color borderColor = Color(0xFFFFFFFF);
-const Color appSafeAreaColor = Color(0xFF202020);
+const Color appSafeAreaColor = Color(0xFF3B3D4D);
 
 const Color darkBlue = Color(0xFF3B3D4D);
 const Color darkerBlue = Color(0xFF2F313D);

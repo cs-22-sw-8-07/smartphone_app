@@ -349,8 +349,8 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       var newState = state.copyWith(
         isLocationListShown: false,
       );
-      // If QuackLocationType in the event is and the QuackLocationType in the
-      // state is 'Unknown' then remove the playlist and the current track
+      // If QuackLocationType in the event is null and the QuackLocationType in
+      // the state is 'Unknown' then remove the playlist and the current track
       if (event.quackLocationType == null &&
           state.quackLocationType == QuackLocationType.unknown) {
         newState.playlist = null;
@@ -374,10 +374,10 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
                 state.lockedQuackLocationType != null &&
                 state.quackLocationType != state.lockedQuackLocationType) ||
             (event.quackLocationType != null &&
-                    (state.lockedQuackLocationType == null &&
+                ((state.lockedQuackLocationType == null &&
                         state.quackLocationType != event.quackLocationType) ||
                 (state.lockedQuackLocationType != null &&
-                    state.lockedQuackLocationType != event.quackLocationType));
+                    state.lockedQuackLocationType != event.quackLocationType)));
       }
       // Set LockedQuackLocationType
       newState.lockedQuackLocationType = event.quackLocationType;
@@ -432,7 +432,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       positionHelper.dispose();
       await _disconnectFromSpotifyRemote();
       // ignore: empty_catches
-    } on Exception {}
+    } catch (_) {}
     return super.close();
   }
 
@@ -492,24 +492,39 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
         if (state.lockedQuackLocationType == null &&
             state.playlist != null &&
             state.quackLocationType != quackLocationType) {
-          // Set QuackLocationType
-          add(MainPageValueChanged(quackLocationType: quackLocationType));
-          // Get playlist from Quack API
-          QuackServiceResponse<GetPlaylistResponse> response =
-              await _getPlaylist(showLoadingBefore: true);
-          // Check for success
-          if (!response.isSuccess) {
-            return;
+          if (quackLocationType == QuackLocationType.unknown) {
+            // Remove playlist
+            add(const PlaylistReceived(playList: null));
+            // Remove current track and set QuackLocationType
+            add(const MainPageValueChanged(
+                currentTrack: null,
+                quackLocationType: QuackLocationType.unknown));
+            // Stop playing the current track
+            if (state.playerState != null && !state.playerState!.isPaused) {
+              await _resumePausePlayer();
+            }
+          } else {
+            // Set QuackLocationType
+            add(MainPageValueChanged(quackLocationType: quackLocationType));
+            // Get playlist from Quack API
+            QuackServiceResponse<GetPlaylistResponse> response =
+                await _getPlaylist(showLoadingBefore: true);
+            // Check for success
+            if (!response.isSuccess) {
+              // Remove loading animation
+              add(const MainPageValueChanged(isLoading: false));
+              return;
+            }
+
+            // Save playlist to history
+            AppValuesHelper.getInstance()
+                .savePlaylist(response.quackResponse!.result!);
+
+            // Show playlist
+            add(PlaylistReceived(playList: response.quackResponse!.result!));
+            // Remove loading animation
+            add(const MainPageValueChanged(isLoading: false));
           }
-
-          // Save playlist to history
-          AppValuesHelper.getInstance()
-              .savePlaylist(response.quackResponse!.result!);
-
-          // Show playlist
-          add(PlaylistReceived(playList: response.quackResponse!.result!));
-          // Remove loading animation
-          add(const MainPageValueChanged(isLoading: false));
         } else {
           // Set QuackLocationType
           add(MainPageValueChanged(quackLocationType: quackLocationType));
@@ -529,7 +544,10 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
     Stream<ConnectionStatus>? connectionStatusStream =
         subscribeConnectionStatus.resultType;
-    connectionStatusStream!.listen((connectionStatus) async {
+    if (connectionStatusStream == null) {
+      return;
+    }
+    connectionStatusStream.listen((connectionStatus) async {
       if (kDebugMode) {
         print("Spotify connected: " + connectionStatus.connected.toString());
       }

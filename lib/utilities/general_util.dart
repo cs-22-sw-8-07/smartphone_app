@@ -90,6 +90,7 @@ class GeneralUtil {
   /// Show a toast to the user
   /// [message] is the string shown to the user
   static showToast(String? message) {
+    if (Platform.environment.containsKey('FLUTTER_TEST')) return;
     if (message != null) {
       Fluttertoast.showToast(msg: message, toastLength: Toast.LENGTH_LONG);
     }
@@ -99,6 +100,7 @@ class GeneralUtil {
   /// [message] is the string shown to the user
   static showSnackBar(
       {required BuildContext context, required String message}) {
+    if (Platform.environment.containsKey('FLUTTER_TEST')) return;
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         backgroundColor: Colors.white,

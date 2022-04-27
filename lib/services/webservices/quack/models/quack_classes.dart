@@ -167,7 +167,13 @@ class QuackPlaylist extends Equatable {
       }
     }
 
-    return QuackPlaylist(id: id, locationType: locationType, tracks: newList);
+    return QuackPlaylist(
+        id: id,
+        locationType: locationType,
+        tracks: newList,
+        offset: offset,
+        allOffsets: allOffsets,
+        saveDate: saveDate);
   }
 
   @override

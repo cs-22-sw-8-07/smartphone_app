@@ -53,3 +53,20 @@ class MockQuackService implements IQuackFunctions {
 
 //endregion
 }
+
+class MockQuackServiceError implements IQuackFunctions {
+
+  ///
+  /// OVERRIDE METHODS
+  ///
+//region Override methods
+
+  @override
+  Future<QuackServiceResponse<GetPlaylistResponse>> getPlaylist(
+      {required QuackLocationType qlt,
+        required List<QuackPlaylist> playlists}) async {
+    return QuackServiceResponse.error("");
+  }
+
+//endregion
+}
