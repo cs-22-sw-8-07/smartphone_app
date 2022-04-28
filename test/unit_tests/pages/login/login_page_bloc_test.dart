@@ -14,7 +14,7 @@ import '../../../mocks/build_context.dart';
 import '../../../mocks/permissions_helper.dart';
 import '../../../mocks/spotify_service.dart';
 
-class MockSpotifyServiceLogin extends MockSpotifyServiceError {
+class MockSpotifyServiceErrorModified extends MockSpotifyServiceError {
   @override
   Future<SpotifySdkResponseWithResult<String>> getAuthenticationToken() async {
     return SpotifySdkResponseWithResult.success("1234");
@@ -50,7 +50,7 @@ Future<void> main() async {
 
       blocTest<LoginPageBloc, LoginPageState>(
           "ButtonPressed -> Continue with Spotify -> getAuthenticationToken gives success",
-          setUp: () => SpotifyService.init(MockSpotifyServiceLogin()),
+          setUp: () => SpotifyService.init(MockSpotifyServiceErrorModified()),
           build: () => bloc,
           act: (bloc) => bloc.add(const ButtonPressed(
               buttonEvent: LoginButtonEvent.continueWithSpotify)),
