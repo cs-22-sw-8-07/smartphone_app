@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
 import 'package:smartphone_app/pages/login/login_page_events_states.dart';
@@ -47,7 +46,7 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
           SpotifySdkResponseWithResult<String> response =
               await SpotifyService.getInstance().getAuthenticationToken();
           if (!response.isSuccess) {
-            Fluttertoast.showToast(msg: response.exception!);
+            GeneralUtil.showToast(response.errorMessage);
             return;
           }
           String token = response.resultType!;
@@ -56,7 +55,7 @@ class LoginPageBloc extends Bloc<LoginPageEvent, LoginPageState> {
               await SpotifyService.getInstance()
                   .getCurrentUsersProfile(token: token);
           if (!getCurrentUsersProfileResponse.isSuccess) {
-            Fluttertoast.showToast(msg: response.exception!);
+            GeneralUtil.showToast(response.errorMessage);
             return;
           }
 

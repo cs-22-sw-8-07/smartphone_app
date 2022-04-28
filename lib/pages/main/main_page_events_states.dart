@@ -109,12 +109,17 @@ class MainPageValueChanged extends MainPageEvent {
   final QuackTrack? currentTrack;
   final bool? isLoading;
   final QuackLocationType? quackLocationType;
+  final bool? hasPerformedAction;
 
   const MainPageValueChanged(
-      {this.currentTrack, this.quackLocationType, this.isLoading});
+      {this.currentTrack,
+      this.quackLocationType,
+      this.isLoading,
+      this.hasPerformedAction});
 
   @override
-  List<Object?> get props => [currentTrack, isLoading, quackLocationType];
+  List<Object?> get props =>
+      [currentTrack, isLoading, quackLocationType, hasPerformedAction];
 }
 
 /// Event for selecting a location manually
@@ -127,15 +132,6 @@ class LocationSelected extends MainPageEvent {
 
   @override
   List<Object?> get props => [quackLocationType];
-}
-
-/// Event fired whenever a Spotify player action has been executed by the Quack
-/// app
-class HasPerformedSpotifyPlayerAction extends MainPageEvent {
-  const HasPerformedSpotifyPlayerAction();
-
-  @override
-  List<Object?> get props => [];
 }
 
 //endregion
@@ -153,7 +149,7 @@ class HasPerformedSpotifyPlayerAction extends MainPageEvent {
 /// Spotify player.
 /// [playlist] has the content of playlist currently being played in the
 /// Quack app.
-/// [hasJustPerformedAction] is used to identify whether it was the Quack app or
+/// [hasPerformedAction] is used to identify whether it was the Quack app or
 /// Spotify who has changed the current track received in the [playerState].
 /// [quackLocationType] is the type received from the QuackLocationService
 /// based on the position provided.
@@ -171,7 +167,7 @@ class MainPageState extends Equatable {
   bool? isPlaylistShown;
   PlayerState? playerState;
   QuackPlaylist? playlist;
-  bool? hasJustPerformedAction;
+  bool? hasPerformedAction;
   QuackLocationType? quackLocationType;
   QuackLocationType? lockedQuackLocationType;
   bool? isLoading;
@@ -189,7 +185,7 @@ class MainPageState extends Equatable {
       this.updatedItemHashCode,
       this.lockedQuackLocationType,
       this.quackLocationType,
-      this.hasJustPerformedAction,
+      this.hasPerformedAction,
       this.playerState});
 
   MainPageState copyWith(
@@ -200,7 +196,7 @@ class MainPageState extends Equatable {
       int? updatedItemHashCode,
       QuackLocationType? lockedQuackLocationType,
       QuackLocationType? quackLocationType,
-      bool? hasJustPerformedAction,
+      bool? hasPerformedAction,
       bool? isLoading,
       PlayerState? playerState}) {
     return MainPageState(
@@ -210,8 +206,7 @@ class MainPageState extends Equatable {
       isLocationListShown: isLocationListShown ?? this.isLocationListShown,
       lockedQuackLocationType:
           lockedQuackLocationType ?? this.lockedQuackLocationType,
-      hasJustPerformedAction:
-          hasJustPerformedAction ?? this.hasJustPerformedAction,
+      hasPerformedAction: hasPerformedAction ?? this.hasPerformedAction,
       updatedItemHashCode: updatedItemHashCode ?? this.updatedItemHashCode,
       quackLocationType: quackLocationType ?? this.quackLocationType,
       isPlaylistShown: isPlaylistShown ?? this.isPlaylistShown,
@@ -228,7 +223,7 @@ class MainPageState extends Equatable {
         isLoading,
         playlist,
         playerState,
-        hasJustPerformedAction,
+        hasPerformedAction,
         quackLocationType,
         updatedItemHashCode
       ];

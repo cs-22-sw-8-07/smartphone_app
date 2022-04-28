@@ -46,8 +46,10 @@ void main() {
       test("Events are not equal", () {
         expect(
           SpotifyPlayerStateChanged(
-              playerState: MockSpotifyService.getMockPlayerState()),
-          isNot(const TouchEvent(touchEvent: MainTouchEvent.goToPreviousTrack)),
+              playerState: MockSpotifyService.getMockPlayerState(trackId: "1")),
+          isNot(SpotifyPlayerStateChanged(
+              playerState:
+                  MockSpotifyService.getMockPlayerState(trackId: "2"))),
         );
       });
     });
@@ -137,21 +139,6 @@ void main() {
         expect(
           TrackSelected(quackTrack: QuackTrack(id: "1")),
           isNot(TrackSelected(quackTrack: QuackTrack(id: "2"))),
-        );
-      });
-    });
-
-    group("HasPerformedSpotifyPlayerAction", () {
-      test("Events are equal", () {
-        expect(
-          const HasPerformedSpotifyPlayerAction(),
-          const HasPerformedSpotifyPlayerAction(),
-        );
-      });
-      test("Events are not equal", () {
-        expect(
-          const HasPerformedSpotifyPlayerAction(),
-          isNot(const MainPageValueChanged(currentTrack: null)),
         );
       });
     });

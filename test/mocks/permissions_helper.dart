@@ -13,6 +13,11 @@ class MockGrantedPermissionHelper extends Mock implements PermissionHelper {
       List<PermissionWithService> permissions) async {
     return {Permission.unknown: PermissionStatus.granted};
   }
+
+  @override
+  Future<bool> openAppSettings() async {
+    return true;
+  }
 }
 
 class MockDeniedPermissionHelper extends Mock implements PermissionHelper {
@@ -25,5 +30,10 @@ class MockDeniedPermissionHelper extends Mock implements PermissionHelper {
   Future<Map<Permission, PermissionStatus>> requestPermissions(
       List<PermissionWithService> permissions) async {
     return {Permission.unknown: PermissionStatus.denied};
+  }
+
+  @override
+  Future<bool> openAppSettings() async {
+    return true;
   }
 }

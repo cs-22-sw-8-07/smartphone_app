@@ -13,7 +13,6 @@ import 'package:smartphone_app/widgets/question_dialog.dart';
 import 'package:spotify_sdk/models/connection_status.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:uuid/uuid.dart';
 
 // ignore: unnecessary_import, implementation_imports
 
@@ -55,7 +54,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
   MainPageBloc({required this.context, required this.positionHelper})
       : super(MainPageState(
-            hasJustPerformedAction: false,
+            hasPerformedAction: false,
             isPlaylistShown: false,
             isLocationListShown: false,
             isLoading: false,
@@ -117,7 +116,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
           String message = "";
           bool getNewPlaylist = false;
 
-          // QuackLocationType is equal to 'Unknown'
+          // LockedQuackLocationType is null and QuackLocationType is 'Unknown'
           if (state.lockedQuackLocationType == null &&
               state.quackLocationType == QuackLocationType.unknown) {
             // Show message to the user
@@ -126,14 +125,6 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
                 message: AppLocalizations.of(context)!
                     .you_cannot_lock_the_location_type_unknown);
             return;
-          }
-          // QuackLocationType is not locked and the user has not selected a
-          // QuackLocationType
-          else if (state.lockedQuackLocationType == null) {
-            // Set LockedQuackLocationType to QuackLocationType
-            emit(state.copyWith(
-                lockedQuackLocationType: state.quackLocationType));
-            message = AppLocalizations.of(context)!.locked_location;
           }
           // LockedQuackLocationType is not null and QuackLocationType is 'Unknown'
           else if (state.lockedQuackLocationType != null &&
@@ -147,9 +138,16 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
             // Stop playing the current track
             if (state.playerState != null && !state.playerState!.isPaused) {
-              await _resumePausePlayer();
+              await _pausePlayer();
             }
             return;
+          }
+          // LockedQuackLocationType is null
+          else if (state.lockedQuackLocationType == null) {
+            // Set LockedQuackLocationType to QuackLocationType
+            emit(state.copyWith(
+                lockedQuackLocationType: state.quackLocationType));
+            message = AppLocalizations.of(context)!.locked_location;
           } else {
             // Check if the QuackLocationType will change when unlocked.
             // If it changes a new playlist will be loaded
@@ -236,14 +234,14 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       // The current track in the state is not null and the track in the event
       // player state is not null and current track in the state is equal to the
       // track in the event player state
-      if (state.hasJustPerformedAction! ||
+      if (state.hasPerformedAction! ||
           trackFromNewPlayerState == trackFromCurrentPlayerState ||
           (state.currentTrack != null &&
               trackFromNewPlayerState != null &&
               trackFromNewPlayerState.id == state.currentTrack!.id)) {
         // Update to event player state and remove HasJustPerformedAction flag
         emit(state.copyWith(
-            playerState: event.playerState, hasJustPerformedAction: false));
+            playerState: event.playerState, hasPerformedAction: false));
       } else {
         // Playlist is null or
         // Track from the current player state is null
@@ -370,7 +368,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
         newState.currentTrack = null;
         // Stop playing the current track
         if (state.playerState != null && !state.playerState!.isPaused) {
-          await _resumePausePlayer();
+          await _pausePlayer();
         }
       } else {
         // Set flag if:
@@ -413,17 +411,12 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
       // Update the values in the state to the ones from the event
       var newState = state.copyWith(
+          hasPerformedAction: event.hasPerformedAction,
           quackLocationType: event.quackLocationType ?? state.quackLocationType,
           isLoading: event.isLoading ?? state.isLoading);
       // The current track is set here to allow null values
       newState.currentTrack = event.currentTrack ?? state.currentTrack;
       emit(newState);
-    });
-
-    /// HasJustPerformedSpotifyPlayerAction
-    on<HasPerformedSpotifyPlayerAction>((event, emit) {
-      // Set the flag HasJustPerformedAction to true
-      emit(state.copyWith(hasJustPerformedAction: true));
     });
 
     // The Spotify player connection status
@@ -515,7 +508,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
                 quackLocationType: QuackLocationType.unknown));
             // Stop playing the current track
             if (state.playerState != null && !state.playerState!.isPaused) {
-              await _resumePausePlayer();
+              await _pausePlayer();
             }
           } else {
             // Set QuackLocationType
@@ -623,13 +616,12 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
   /// [hasPerformedAction] indicates that when the PlayerState changes we know
   /// it is us who have caused it
   Future<SpotifySdkResponse> _playTrack(QuackTrack track,
-      {bool hasPerformedAction = true}) async {
-    if (hasPerformedAction) {
-      add(const HasPerformedSpotifyPlayerAction());
-    }
-    add(MainPageValueChanged(currentTrack: track));
+      {bool addEvent = true}) async {
     SpotifySdkResponse response =
         await SpotifyService.getInstance().playTrack(track.id!);
+    if (response.isSuccess && addEvent) {
+      add(MainPageValueChanged(hasPerformedAction: true, currentTrack: track));
+    }
     return response;
   }
 
@@ -640,10 +632,31 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     }
 
     if (state.playerState!.isPaused) {
-      SpotifySdkResponse response = await SpotifyService.getInstance().resume();
-      if (!response.isSuccess) {
-        GeneralUtil.showToast(response.errorMessage);
+      QuackTrack? playerStateQuackTrack =
+          QuackTrack.trackToQuackTrack(state.playerState!.track);
+      if (playerStateQuackTrack == null && state.currentTrack != null) {
+        var response = await _playTrack(state.currentTrack!);
+        if (!response.isSuccess) {
+          GeneralUtil.showToast(response.errorMessage);
+          return;
+        }
         return;
+      } else if (playerStateQuackTrack != null &&
+          state.currentTrack != null &&
+          playerStateQuackTrack != state.currentTrack) {
+        var response = await _playTrack(state.currentTrack!);
+        if (!response.isSuccess) {
+          GeneralUtil.showToast(response.errorMessage);
+          return;
+        }
+        return;
+      } else {
+        SpotifySdkResponse response =
+            await SpotifyService.getInstance().resume();
+        if (!response.isSuccess) {
+          GeneralUtil.showToast(response.errorMessage);
+          return;
+        }
       }
     } else {
       SpotifySdkResponse response = await SpotifyService.getInstance().pause();
@@ -652,7 +665,20 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
         return;
       }
     }
-    add(const HasPerformedSpotifyPlayerAction());
+    add(const MainPageValueChanged(hasPerformedAction: true));
+  }
+
+  /// Pause the player
+  Future<void> _pausePlayer() async {
+    if (state.playerState == null) {
+      return;
+    }
+    SpotifySdkResponse response = await SpotifyService.getInstance().pause();
+    if (!response.isSuccess) {
+      GeneralUtil.showToast(response.errorMessage);
+      return;
+    }
+    add(const MainPageValueChanged(hasPerformedAction: true));
   }
 
   /// Connect to the Spotify remote
@@ -779,12 +805,20 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     AppValuesHelper.getInstance()
         .savePlaylist(getPlaylistResponse.quackResponse!.result!);
 
-    // Play the first track
-    await _playTrack(getPlaylistResponse.quackResponse!.result!.tracks!.first);
     // Show playlist
     add(PlaylistReceived(playList: getPlaylistResponse.quackResponse!.result!));
     // Remove loading animation
-    add(const MainPageValueChanged(isLoading: false));
+    add(MainPageValueChanged(
+        isLoading: false,
+        currentTrack: getPlaylistResponse.quackResponse!.result!.tracks!.first,
+        hasPerformedAction: !state.playerState!.isPaused));
+
+    // The player is not paused
+    if (!state.playerState!.isPaused) {
+      // Play the first track
+      await _playTrack(getPlaylistResponse.quackResponse!.result!.tracks!.first,
+          addEvent: false);
+    }
   }
 
   //endregion
