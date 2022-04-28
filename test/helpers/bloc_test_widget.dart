@@ -82,7 +82,7 @@ Future<void> blocTestWidget<W extends Widget, B extends BlocBase<State>, State>(
       // Make an action for the bloc
       act(bloc);
       // Wait for UI
-      await tester.pump(const Duration(milliseconds: 300));
+      await tester.pump(const Duration(milliseconds: 1000));
       // Get expected state changes
       final dynamic expected = await expect(bloc);
       // Check for shadow equality

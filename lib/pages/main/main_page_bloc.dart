@@ -108,10 +108,6 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
         /// Resume/pause player
         case MainButtonEvent.resumePausePlayer:
-          // The current player state is null, do nothing
-          if (state.playerState == null) {
-            return;
-          }
           // Do resume/pause actions
           await _resumePausePlayer();
           break;
@@ -629,11 +625,13 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       SpotifySdkResponse response = await SpotifyService.getInstance().resume();
       if (!response.isSuccess) {
         GeneralUtil.showToast(response.errorMessage);
+        return;
       }
     } else {
       SpotifySdkResponse response = await SpotifyService.getInstance().pause();
       if (!response.isSuccess) {
         GeneralUtil.showToast(response.errorMessage);
+        return;
       }
     }
     add(const HasPerformedSpotifyPlayerAction());
