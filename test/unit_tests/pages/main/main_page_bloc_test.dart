@@ -166,7 +166,8 @@ Future<void> main() async {
               ]);
 
       blocTestWidget<MainPage, MainPageBloc, MainPageState>(
-          "PositionReceived method -> Position is not null and received QuackLocationType is 'Unknown'",
+          "PositionReceived method -> Position is not null and received "
+              "QuackLocationType is 'Unknown'",
           buildWidget: () => mainPage,
           setUp: () {
             var service = MockQuackLocationService();
@@ -309,7 +310,8 @@ Future<void> main() async {
           });
 
       blocTest<MainPageBloc, MainPageState>(
-          "LocationSelected -> QuackLocationType in the event is null and QuackLocationType is 'Unknown'",
+          "LocationSelected -> QuackLocationType in the event is null and "
+              "QuackLocationType is 'Unknown'",
           build: () => bloc,
           setUp: () async {
             bloc.state.playerState = MockSpotifyService.getMockPlayerState();

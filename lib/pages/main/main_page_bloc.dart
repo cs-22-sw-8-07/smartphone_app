@@ -118,7 +118,8 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
           bool getNewPlaylist = false;
 
           // QuackLocationType is equal to 'Unknown'
-          if (state.quackLocationType == QuackLocationType.unknown) {
+          if (state.lockedQuackLocationType == null &&
+              state.quackLocationType == QuackLocationType.unknown) {
             // Show message to the user
             GeneralUtil.showSnackBar(
                 context: context,
@@ -133,6 +134,22 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
             emit(state.copyWith(
                 lockedQuackLocationType: state.quackLocationType));
             message = AppLocalizations.of(context)!.locked_location;
+          }
+          // LockedQuackLocationType is not null and QuackLocationType is 'Unknown'
+          else if (state.lockedQuackLocationType != null &&
+              state.quackLocationType == QuackLocationType.unknown) {
+            // Set LockedQuackLocationType to null
+            var newState = state.copyWith();
+            newState.lockedQuackLocationType = null;
+            newState.playlist = null;
+            newState.currentTrack = null;
+            emit(newState);
+
+            // Stop playing the current track
+            if (state.playerState != null && !state.playerState!.isPaused) {
+              await _resumePausePlayer();
+            }
+            return;
           } else {
             // Check if the QuackLocationType will change when unlocked.
             // If it changes a new playlist will be loaded
@@ -372,8 +389,9 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
             (event.quackLocationType != null &&
                 ((state.lockedQuackLocationType == null &&
                         state.quackLocationType != event.quackLocationType) ||
-                (state.lockedQuackLocationType != null &&
-                    state.lockedQuackLocationType != event.quackLocationType)));
+                    (state.lockedQuackLocationType != null &&
+                        state.lockedQuackLocationType !=
+                            event.quackLocationType)));
       }
       // Set LockedQuackLocationType
       newState.lockedQuackLocationType = event.quackLocationType;
