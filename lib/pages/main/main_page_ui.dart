@@ -146,9 +146,11 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         child: FutureBuilder<bool>(
             future: bloc.getValues(),
             builder: (context, snapshot) {
+              Widget? widget;
+
               // Show a progress indicator while getting values for page
               if (snapshot.connectionState != ConnectionState.done) {
-                return Container(
+                widget = Container(
                     color: Colors.white,
                     child: const Center(
                         child: SizedBox(
@@ -157,17 +159,20 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       height: 60,
                       width: 60,
                     )));
+              } else {
+                widget = BlocProvider(
+                    create: (_) => bloc,
+                    child: Container(
+                        color: custom_colors.appSafeAreaColor,
+                        child: SafeArea(
+                            child: Scaffold(
+                                key: _scaffoldKey,
+                                drawer: _getDrawer(bloc),
+                                body: _getContent(bloc)))));
               }
 
-              return BlocProvider(
-                  create: (_) => bloc,
-                  child: Container(
-                      color: custom_colors.appSafeAreaColor,
-                      child: SafeArea(
-                          child: Scaffold(
-                              key: _scaffoldKey,
-                              drawer: _getDrawer(bloc),
-                              body: _getContent(bloc)))));
+              return AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 1000), child: widget);
             }));
   }
 

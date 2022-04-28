@@ -441,6 +441,26 @@ Future<void> main() async {
           });
 
       blocTest<MainPageBloc, MainPageState>(
+          "TouchEvent -> Go to next track -> Current track not in playlist",
+          build: () => bloc,
+          setUp: () {
+            bloc.state.currentTrack = QuackTrack(id: "4");
+            bloc.state.playlist = QuackPlaylist(
+                id: "test",
+                locationType: 1,
+                tracks: [
+                  QuackTrack(id: "1"),
+                  QuackTrack(id: "2"),
+                  QuackTrack(id: "3")
+                ]);
+          },
+          act: (bloc) => bloc
+              .add(const TouchEvent(touchEvent: MainTouchEvent.goToNextTrack)),
+          expect: () {
+            return [];
+          });
+
+      blocTest<MainPageBloc, MainPageState>(
           "TouchEvent -> Go to next track -> Current track is the last track in the playlist",
           build: () => bloc,
           setUp: () {
