@@ -25,10 +25,8 @@ void main() {
 
     group("Resumed", () {
       test("Events are equal", () {
-        expect(
-          const Resumed(),
-          const Resumed(),
-        );
+        // ignore: prefer_const_constructors
+        expect(Resumed(), Resumed());
       });
       test("Events are not equal", () {
         expect(

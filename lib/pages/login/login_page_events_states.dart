@@ -7,10 +7,7 @@ import '../../utilities/general_util.dart';
 ///
 //region Enums
 
-enum LoginButtonEvent {
-  continueWithSpotify,
-  goToSettings
-}
+enum LoginButtonEvent { continueWithSpotify, goToSettings }
 
 //endregion
 
@@ -41,7 +38,8 @@ class Resumed extends LoginPageEvent {
   const Resumed();
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props =>
+      [0]; // 0 is used in order to enforce an equals check
 }
 
 /// Event for when the [permissionState] changes
@@ -72,7 +70,8 @@ class LoginPageState extends Equatable {
   LoginPageState({this.permissionState});
 
   LoginPageState copyWith({PermissionState? permissionState}) {
-    return LoginPageState(permissionState: permissionState ?? this.permissionState);
+    return LoginPageState(
+        permissionState: permissionState ?? this.permissionState);
   }
 
   @override

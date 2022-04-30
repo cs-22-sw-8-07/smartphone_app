@@ -67,8 +67,7 @@ class PositionHelper {
 
   static Future<PositionHelper> getInstance(
       AppLocalizations appLocalizations) async {
-    return _getPositionHelper(
-        (await LocalAppLocalizations.getAppLocalizations()));
+    return _getPositionHelper(appLocalizations);
   }
 
   static void setInstance(PositionHelper positionHelper) {

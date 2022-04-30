@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
 import 'package:smartphone_app/helpers/position_helper/mock_position_helper.dart';
 import 'package:smartphone_app/helpers/position_helper/position_helper.dart';
+import 'package:smartphone_app/localization/local_app_localizations.dart';
 import 'package:smartphone_app/pages/main/main_page_bloc.dart';
 import 'package:smartphone_app/pages/main/main_page_events_states.dart';
 import 'package:smartphone_app/pages/main/main_page_ui.dart';
@@ -15,9 +16,11 @@ import 'package:smartphone_app/services/webservices/quack/models/quack_classes.d
 import 'package:smartphone_app/services/webservices/quack/services/quack_service.dart';
 import 'package:smartphone_app/services/webservices/spotify/services/spotify_service.dart';
 import 'package:smartphone_app/widgets/question_dialog.dart';
+import 'package:spotify_sdk/models/connection_status.dart';
 
 import '../../../helpers/bloc_test_widget.dart';
 import '../../../mocks/build_context.dart';
+import '../../../mocks/position_helper.dart';
 import '../../../mocks/quack_location_service.dart';
 import '../../../mocks/quack_service.dart';
 import '../../../mocks/question_dialog.dart';
@@ -146,12 +149,15 @@ Future<void> main() async {
     });
 
     group("QuackService -> Return success", () {
-      setUp(() {
+      setUp(() async {
         quackFunctions ??= MockQuackService();
         QuackService.init(quackFunctions!);
         SpotifyService.init(MockSpotifyService());
         bloc = MainPageBloc(
-            context: MockBuildContext(), positionHelper: MockPositionHelper());
+            context: MockBuildContext(),
+            positionHelper: await PositionHelper.getInstance(
+                await LocalAppLocalizations.getAppLocalizations(
+                    languageCode: "en")));
       });
 
       test("Initial state is correct", () {
@@ -164,6 +170,88 @@ Future<void> main() async {
                 isLoading: false,
                 quackLocationType: QuackLocationType.unknown));
       });
+
+      MockSpotifyService? mockSpotifyService;
+      blocTest<MainPageBloc, MainPageState>(
+          "ConnectionStatus stream -> Connected is true",
+          build: () => bloc,
+          act: (bloc) async {
+            // Get service
+            mockSpotifyService =
+                SpotifyService.getInstance() as MockSpotifyService;
+            // Listen to ConnectionStatus stream
+            mockSpotifyService!.connectionStatusStreamController.stream
+                .listen((event) async {
+              await expectLater(event.connected, true);
+            });
+            // Send ConnectionStatus to stream listeners
+            mockSpotifyService!.connectionStatusStreamController
+                .add(ConnectionStatus("test", "0", "test", connected: true));
+            // Wait 100 ms
+            await Future.delayed(const Duration(milliseconds: 100));
+            // Listen to player state stream
+            mockSpotifyService!.playerStateStreamController.stream
+                .listen((event) async {
+              await expectLater(
+                  QuackPlayerState(spotifyPlayerState: event),
+                  MockSpotifyService.getMockPlayerState(
+                      isPaused: true, trackId: "2"));
+            });
+            // Send player state to stream listeners
+            mockSpotifyService!.playerStateStreamController.add(
+                MockSpotifyService.getMockPlayerState(
+                        isPaused: true, trackId: "2")
+                    .spotifyPlayerState!);
+          },
+          expect: () {
+            return [
+              bloc.state.copyWith(
+                  playerState: MockSpotifyService.getMockPlayerState(
+                      isPaused: true, trackId: "2"))
+            ];
+          });
+
+      blocTest<MainPageBloc, MainPageState>(
+          "ConnectionStatus stream -> Connected is false",
+          build: () => bloc,
+          act: (bloc) async {
+            // Get service
+            mockSpotifyService =
+                SpotifyService.getInstance() as MockSpotifyService;
+            // Listen to ConnectionStatus stream
+            mockSpotifyService!.connectionStatusStreamController.stream
+                .listen((event) async {
+              await expectLater(event.connected, false);
+            });
+            // Send ConnectionStatus to stream listeners
+            mockSpotifyService!.connectionStatusStreamController
+                .add(ConnectionStatus("test", "0", "test", connected: false));
+          },
+          expect: () {
+            return [];
+          });
+
+      blocTest<MainPageBloc, MainPageState>(
+          "Position stream -> Position is null",
+          build: () => bloc,
+          act: (bloc) async {
+            // Get helper
+            var mockPositionHelper = await PositionHelper.getInstance(
+                await LocalAppLocalizations.getAppLocalizations(
+                    languageCode: "en")) as MockPositionHelper;
+            // Listen to Position stream
+            mockPositionHelper.positionStreamController.stream
+                .listen((event) async {
+              await expectLater(event, null);
+            });
+            // Send Position to stream listeners
+            mockPositionHelper.setMockPosition(null);
+            // Wait 100 ms
+            await Future.delayed(const Duration(milliseconds: 100));
+          },
+          expect: () {
+            return [];
+          });
 
       blocTestWidget<MainPage, MainPageBloc, MainPageState>(
           "ButtonPressed -> See history",

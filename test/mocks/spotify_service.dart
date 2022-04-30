@@ -273,3 +273,165 @@ class MockSpotifyServiceError implements ISpotifyFunctions {
 //endregion
 
 }
+
+class MockSpotifyServiceStream implements ISpotifyFunctions {
+
+  ///
+  /// VARIABLES
+  ///
+  //region Variables
+
+  StreamController<ConnectionStatus> connectionStatusStreamController =
+  StreamController.broadcast();
+  StreamController<PlayerState> playerStateStreamController =
+  StreamController.broadcast();
+
+  //endregion
+
+  ///
+  /// METHODS
+  ///
+  //region Methods
+
+  dispose() {
+    try {
+      connectionStatusStreamController.close();
+      // ignore: empty_catches
+    } on Exception {}
+  }
+
+  static Track getMockTrack({String? id}) {
+    id ??= "1K0LoLME6kJXWbOL2E5llC";
+    var album = Album("test", "http://test");
+    var artist = Artist("test", "http://test");
+    return Track(
+        album,
+        artist,
+        [],
+        100,
+        ImageUri("spotify:image:ab67616d00001e02dbc48db84d5cde3ba6b13c07"),
+        "the test track",
+        "spotify:track:" + id,
+        null,
+        isEpisode: false,
+        isPodcast: false);
+  }
+
+  static QuackPlayerState getMockPlayerState(
+      {bool isPaused = false, String? trackId, bool useTrack = true}) {
+    var playerState = PlayerState(
+        useTrack ? getMockTrack(id: trackId) : null,
+        0,
+        0,
+        PlayerOptions(RepeatMode.off, isShuffling: false),
+        PlayerRestrictions(
+            canSkipNext: true,
+            canRepeatContext: true,
+            canRepeatTrack: true,
+            canSeek: true,
+            canSkipPrevious: true,
+            canToggleShuffle: true),
+        isPaused: isPaused);
+    return QuackPlayerState(spotifyPlayerState: playerState);
+  }
+
+  //endregion
+
+  ///
+  /// OVERRIDE METHODS
+  ///
+  //region Override methods
+
+  @override
+  Future<SpotifySdkResponseWithResult<bool>> connectToSpotifyRemote() async {
+    return SpotifySdkResponseWithResult.success(true);
+  }
+
+  @override
+  Future<SpotifySdkResponseWithResult<bool>> disconnect() async {
+    return SpotifySdkResponseWithResult.success(true);
+  }
+
+  @override
+  Future<SpotifySdkResponseWithResult<String>> getAuthenticationToken() async {
+    return SpotifySdkResponseWithResult.success("1234");
+  }
+
+  @override
+  Future<SpotifyServiceResponse<GetCurrentUsersProfileResponse>>
+  getCurrentUsersProfile({required String token}) async {
+    var response = GetCurrentUsersProfileResponse(
+        id: "test",
+        email: "test@test.com",
+        displayName: "John Doe",
+        images: [SpotifyImage(url: "https://test.com")]);
+    return SpotifyServiceResponse.success(response);
+  }
+
+  @override
+  Future<SpotifySdkResponseWithResult<PlayerState>> getPlayerState() async {
+    return SpotifySdkResponseWithResult.success(
+        getMockPlayerState().spotifyPlayerState);
+  }
+
+  @override
+  Future<SpotifySdkResponseWithResult<bool>> isSpotifyAppActive() async {
+    return SpotifySdkResponseWithResult.success(true);
+  }
+
+  @override
+  Future<SpotifySdkResponse> pause() async {
+    return SpotifySdkResponse.success();
+  }
+
+  @override
+  Future<SpotifySdkResponse> play({required String spotifyUri}) async {
+    return SpotifySdkResponse.success();
+  }
+
+  @override
+  Future<SpotifySdkResponse> playTrack(String trackId) async {
+    return SpotifySdkResponse.success();
+  }
+
+  @override
+  Future<SpotifySdkResponse> queue({required String spotifyUri}) async {
+    return SpotifySdkResponse.success();
+  }
+
+  @override
+  Future<SpotifySdkResponse> queueTrack(String trackId) async {
+    return SpotifySdkResponse.success();
+  }
+
+  @override
+  Future<SpotifySdkResponse> resume() async {
+    return SpotifySdkResponse.success();
+  }
+
+  @override
+  Future<SpotifySdkResponse> skipNext() async {
+    return SpotifySdkResponse.success();
+  }
+
+  @override
+  Future<SpotifySdkResponse> skipPrevious() async {
+    return SpotifySdkResponse.success();
+  }
+
+  @override
+  SpotifySdkResponseWithResult<Stream<ConnectionStatus>>
+  subscribeConnectionStatus() {
+    return SpotifySdkResponseWithResult.success(
+        connectionStatusStreamController.stream);
+  }
+
+  @override
+  SpotifySdkResponseWithResult<Stream<PlayerState>> subscribePlayerState() {
+    return SpotifySdkResponseWithResult.success(
+        playerStateStreamController.stream);
+  }
+
+//endregion
+
+}

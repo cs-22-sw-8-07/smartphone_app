@@ -42,9 +42,6 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
   /// The current [positionHelper] set for the BLoC
   PositionHelper positionHelper;
 
-  /// Stream subscription to the [positionHelper] in order to receive positions
-  late StreamSubscription<Position?> positionStreamSubscription;
-
   //endregion
 
   ///
@@ -442,7 +439,6 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
   @override
   Future<void> close() async {
     try {
-      positionStreamSubscription.cancel();
       positionHelper.dispose();
       await _disconnectFromSpotifyRemote();
       // ignore: empty_catches
@@ -461,9 +457,8 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
   /// Subscribe to a stream providing GPS positions
   /// Called once in the constructor of the Bloc
-  void _subscribeToPosition() async {
-    positionStreamSubscription =
-        positionHelper.getPositionStream().listen((position) async {
+  void _subscribeToPosition() {
+    positionHelper.getPositionStream().listen((position) async {
       await positionReceived(position);
     });
   }
