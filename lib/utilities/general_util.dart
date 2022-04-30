@@ -69,7 +69,6 @@ class GeneralUtil {
 
   /// Show a given [page] as a dialog which comes from the bottom
   static showPageAsDialog<T>(BuildContext context, Widget page) async {
-    if (Platform.environment.containsKey('FLUTTER_TEST')) return;
     return await showGeneralDialog<T>(
         context: context,
         barrierDismissible: false,

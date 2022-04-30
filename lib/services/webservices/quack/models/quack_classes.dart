@@ -1,6 +1,12 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:spotify_sdk/models/album.dart';
+import 'package:spotify_sdk/models/artist.dart';
+import 'package:spotify_sdk/models/image_uri.dart';
+import 'package:spotify_sdk/models/player_options.dart';
+import 'package:spotify_sdk/models/player_restrictions.dart';
+import 'package:spotify_sdk/models/player_state.dart';
 import 'package:spotify_sdk/models/track.dart';
 
 import '../../../../localization/localization_helper.dart';
@@ -38,6 +44,75 @@ int getQuackLocationTypeInt(QuackLocationType qlt) {
     case QuackLocationType.nightLife:
       return 7;
   }
+}
+
+/// Update the track in the given [playerState]. The information comes from the
+/// [track].
+/// If the [playerState] is null a new one will be generated where isPaused is
+/// true
+///
+/// Returns: A new [PlayerState]
+PlayerState setQuackTrackInPlayerState(
+    {required PlayerState? playerState, required QuackTrack track}) {
+  // Convert QuackTrack to Spotify Track
+  var spotifyTrack = Track(
+      Album("manually", "http://manually.com"),
+      Artist(track.artist, "http://manually.com"),
+      [],
+      0,
+      ImageUri(
+          "spotify:image:${track.imageUrl!.replaceAll("https://i.scdn.co/image/", "")}"),
+      track.name!,
+      "spotify:track:${track.id!}",
+      null,
+      isEpisode: false,
+      isPodcast: false);
+
+  // Player state is null so return a placebo where isPaused is true
+  if (playerState == null) {
+    return PlayerState(
+        spotifyTrack,
+        0,
+        0,
+        PlayerOptions(RepeatMode.off, isShuffling: false),
+        PlayerRestrictions(
+            canSkipNext: true,
+            canRepeatContext: true,
+            canRepeatTrack: true,
+            canSeek: true,
+            canSkipPrevious: true,
+            canToggleShuffle: true),
+        isPaused: true);
+  }
+  // Player state is not null so just override the track
+  else {
+    return PlayerState(
+        spotifyTrack,
+        playerState.playbackSpeed,
+        playerState.playbackPosition,
+        playerState.playbackOptions,
+        playerState.playbackRestrictions,
+        isPaused: playerState.isPaused);
+  }
+}
+
+// ignore: must_be_immutable
+class QuackPlayerState extends Equatable {
+  final PlayerState? spotifyPlayerState;
+  QuackTrack? track;
+
+  bool get isPaused =>
+      spotifyPlayerState == null ? true : spotifyPlayerState!.isPaused;
+
+  QuackPlayerState({this.spotifyPlayerState}) {
+    if (spotifyPlayerState != null) {
+      track = QuackTrack.trackToQuackTrack(spotifyPlayerState!.track);
+    }
+  }
+
+  @override
+  List<Object?> get props =>
+      spotifyPlayerState == null ? [] : [isPaused, track];
 }
 
 @JsonSerializable()

@@ -7,7 +7,7 @@ import '../../../services/webservices/quack/models/quack_classes.dart';
 ///
 //region Enums
 
-enum HistoryPlaylistButtonEvent { back }
+enum HistoryPlaylistButtonEvent { openWithSpotify, back }
 
 //endregion
 

@@ -5,11 +5,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
 import 'package:smartphone_app/pages/login/login_page_bloc.dart';
 import 'package:smartphone_app/pages/login/login_page_events_states.dart';
-import 'package:smartphone_app/services/webservices/spotify/models/spotify_classes.dart';
 import 'package:smartphone_app/services/webservices/spotify/services/spotify_service.dart';
 import 'package:smartphone_app/utilities/general_util.dart';
 
-import '../../../mocks/app_values_helper.dart';
 import '../../../mocks/build_context.dart';
 import '../../../mocks/permissions_helper.dart';
 import '../../../mocks/spotify_service.dart';

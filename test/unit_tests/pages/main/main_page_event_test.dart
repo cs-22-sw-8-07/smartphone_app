@@ -46,10 +46,11 @@ void main() {
       test("Events are not equal", () {
         expect(
           SpotifyPlayerStateChanged(
-              playerState: MockSpotifyService.getMockPlayerState(trackId: "1")),
+              playerState: MockSpotifyService.getMockPlayerState(trackId: "1")
+                  .spotifyPlayerState),
           isNot(SpotifyPlayerStateChanged(
-              playerState:
-                  MockSpotifyService.getMockPlayerState(trackId: "2"))),
+              playerState: MockSpotifyService.getMockPlayerState(trackId: "2")
+                  .spotifyPlayerState)),
         );
       });
     });

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
 import 'package:smartphone_app/pages/history/history_page_events_states.dart';
-import '../../helpers/permission_helper.dart';
 import '../history_playlist/history_playlist_page_ui.dart';
 
 class HistoryPageBloc extends Bloc<HistoryPageEvent, HistoryPageState> {
@@ -37,7 +35,6 @@ class HistoryPageBloc extends Bloc<HistoryPageEvent, HistoryPageState> {
 
         /// Open with Spotify
         case HistoryButtonEvent.openWithSpotify:
-          // TODO: Handle this case.
           break;
       }
     });

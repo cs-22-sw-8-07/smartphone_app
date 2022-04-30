@@ -165,6 +165,22 @@ Future<void> main() async {
                 quackLocationType: QuackLocationType.unknown));
       });
 
+      blocTestWidget<MainPage, MainPageBloc, MainPageState>(
+          "ButtonPressed -> See history",
+          buildWidget: () => MainPage(),
+          build: (w) => w.bloc,
+          act: (bloc) => bloc.add(
+              const ButtonPressed(buttonEvent: MainButtonEvent.seeHistory)),
+          expect: (bloc) => []);
+
+      blocTestWidget<MainPage, MainPageBloc, MainPageState>(
+          "ButtonPressed -> Go to settings",
+          buildWidget: () => MainPage(),
+          build: (w) => w.bloc,
+          act: (bloc) => bloc.add(
+              const ButtonPressed(buttonEvent: MainButtonEvent.goToSettings)),
+          expect: (bloc) => []);
+
       blocTest<MainPageBloc, MainPageState>(
           "Subscribe to position -> Position is null",
           build: () => bloc,
@@ -414,8 +430,8 @@ Future<void> main() async {
             bloc.state.isLocationListShown = true;
             bloc.state.quackLocationType = QuackLocationType.church;
             bloc.state.currentTrack = QuackTrack(id: "2");
-            bloc.state.playerState =
-                MockSpotifyService.getMockPlayerState(isPaused: false);
+            bloc.state.playerState = MockSpotifyService.getMockPlayerState(
+                trackId: "2", isPaused: false);
           },
           act: (bloc) => bloc.add(const LocationSelected(
               quackLocationType: QuackLocationType.cemetery)),
@@ -427,6 +443,8 @@ Future<void> main() async {
                 isLoading: false);
             newState.updatedItemHashCode = null;
             newState.playlist = null;
+            newState.playerState = MockSpotifyService.getMockPlayerState(
+                trackId: "2", isPaused: false);
 
             return [
               newState.copyWith(currentTrack: QuackTrack(id: "2")),
@@ -443,6 +461,14 @@ Future<void> main() async {
                   isLoading: false,
                   updatedItemHashCode: playlistFromQuackService.hashCode,
                   playlist: playlistFromQuackService),
+              newState.copyWith(
+                  hasPerformedAction: false,
+                  isLoading: false,
+                  playerState: MockSpotifyService.getMockPlayerState(
+                      trackId: playlistFromQuackService!.tracks!.first.id,
+                      isPaused: false),
+                  updatedItemHashCode: playlistFromQuackService.hashCode,
+                  playlist: playlistFromQuackService)
             ];
           });
 
@@ -460,8 +486,8 @@ Future<void> main() async {
             bloc.state.quackLocationType = QuackLocationType.forest;
             bloc.state.lockedQuackLocationType = QuackLocationType.education;
             bloc.state.currentTrack = QuackTrack(id: "2");
-            bloc.state.playerState =
-                MockSpotifyService.getMockPlayerState(isPaused: false);
+            bloc.state.playerState = MockSpotifyService.getMockPlayerState(
+                isPaused: false, trackId: "2");
           },
           act: (bloc) => bloc.add(const LocationSelected(
               quackLocationType: QuackLocationType.cemetery)),
@@ -473,6 +499,8 @@ Future<void> main() async {
                 isLoading: false);
             newState.updatedItemHashCode = null;
             newState.playlist = null;
+            newState.playerState = MockSpotifyService.getMockPlayerState(
+                isPaused: false, trackId: "2");
 
             return [
               newState.copyWith(currentTrack: QuackTrack(id: "2")),
@@ -489,6 +517,14 @@ Future<void> main() async {
                   isLoading: false,
                   updatedItemHashCode: playlistFromQuackService.hashCode,
                   playlist: playlistFromQuackService),
+              newState.copyWith(
+                  hasPerformedAction: false,
+                  isLoading: false,
+                  playerState: MockSpotifyService.getMockPlayerState(
+                      trackId: playlistFromQuackService!.tracks!.first.id,
+                      isPaused: false),
+                  updatedItemHashCode: playlistFromQuackService.hashCode,
+                  playlist: playlistFromQuackService)
             ];
           });
 
@@ -505,8 +541,8 @@ Future<void> main() async {
             bloc.state.lockedQuackLocationType = QuackLocationType.church;
             bloc.state.quackLocationType = QuackLocationType.cemetery;
             bloc.state.currentTrack = QuackTrack(id: "2");
-            bloc.state.playerState =
-                MockSpotifyService.getMockPlayerState(isPaused: true);
+            bloc.state.playerState = MockSpotifyService.getMockPlayerState(
+                isPaused: true, trackId: "2");
           },
           act: (bloc) =>
               bloc.add(const LocationSelected(quackLocationType: null)),
@@ -519,6 +555,8 @@ Future<void> main() async {
             newState.lockedQuackLocationType = null;
             newState.updatedItemHashCode = null;
             newState.playlist = null;
+            newState.playerState = MockSpotifyService.getMockPlayerState(
+                isPaused: true, trackId: "2");
 
             return [
               newState.copyWith(currentTrack: QuackTrack(id: "2")),
@@ -535,6 +573,14 @@ Future<void> main() async {
                   isLoading: false,
                   updatedItemHashCode: playlistFromQuackService.hashCode,
                   playlist: playlistFromQuackService),
+              newState.copyWith(
+                  hasPerformedAction: false,
+                  isLoading: false,
+                  playerState: MockSpotifyService.getMockPlayerState(
+                      isPaused: true,
+                      trackId: playlistFromQuackService!.tracks!.first.id),
+                  updatedItemHashCode: playlistFromQuackService.hashCode,
+                  playlist: playlistFromQuackService)
             ];
           });
 
@@ -730,8 +776,8 @@ Future<void> main() async {
       var playerState = MockSpotifyService.getMockPlayerState();
       blocTest<MainPageBloc, MainPageState>("SpotifyPlayerStateChanged",
           build: () => bloc,
-          act: (bloc) =>
-              bloc.add(SpotifyPlayerStateChanged(playerState: playerState)),
+          act: (bloc) => bloc.add(SpotifyPlayerStateChanged(
+              playerState: playerState.spotifyPlayerState)),
           expect: () {
             return [bloc.state.copyWith(playerState: playerState)];
           });
@@ -819,8 +865,8 @@ Future<void> main() async {
           },
           buildWidget: () => mainPage,
           build: (w) async {
-            w.bloc.state.playerState =
-                MockSpotifyService.getMockPlayerState(isPaused: false);
+            w.bloc.state.playerState = MockSpotifyService.getMockPlayerState(
+                isPaused: false, trackId: "2");
             w.bloc.state.quackLocationType = QuackLocationType.beach;
             return w.bloc;
           },
@@ -831,6 +877,8 @@ Future<void> main() async {
             newState.currentTrack = null;
             newState.playlist = null;
             newState.updatedItemHashCode = null;
+            newState.playerState = MockSpotifyService.getMockPlayerState(
+                isPaused: false, trackId: "2");
 
             return [
               newState.copyWith(isLoading: true),
@@ -844,6 +892,15 @@ Future<void> main() async {
                   isLoading: false,
                   updatedItemHashCode: playlistFromQuackService.hashCode,
                   hasPerformedAction: true,
+                  currentTrack: playlistFromQuackService!.tracks!.first),
+              newState.copyWith(
+                  playlist: playlistFromQuackService,
+                  isLoading: false,
+                  updatedItemHashCode: playlistFromQuackService.hashCode,
+                  hasPerformedAction: false,
+                  playerState: MockSpotifyService.getMockPlayerState(
+                      isPaused: false,
+                      trackId: playlistFromQuackService!.tracks!.first.id),
                   currentTrack: playlistFromQuackService!.tracks!.first)
             ];
           });
@@ -859,8 +916,9 @@ Future<void> main() async {
           },
           buildWidget: () => mainPage,
           build: (w) async {
-            w.bloc.state.playerState =
-                MockSpotifyService.getMockPlayerState(isPaused: true);
+            w.bloc.state.playerState = MockSpotifyService.getMockPlayerState(
+                isPaused: true, trackId: "2");
+            w.bloc.state.currentTrack = QuackTrack(id: "2");
             w.bloc.state.quackLocationType = QuackLocationType.beach;
             return w.bloc;
           },
@@ -868,9 +926,11 @@ Future<void> main() async {
               buttonEvent: MainButtonEvent.refreshPlaylist)),
           expect: (bloc) async {
             var newState = bloc.state.copyWith(hasPerformedAction: false);
-            newState.currentTrack = null;
+            newState.currentTrack = QuackTrack(id: "2");
             newState.playlist = null;
             newState.updatedItemHashCode = null;
+            newState.playerState = MockSpotifyService.getMockPlayerState(
+                isPaused: true, trackId: "2");
 
             return [
               newState.copyWith(isLoading: true),
@@ -881,6 +941,14 @@ Future<void> main() async {
               newState.copyWith(
                   playlist: playlistFromQuackService,
                   isLoading: false,
+                  updatedItemHashCode: playlistFromQuackService.hashCode,
+                  currentTrack: playlistFromQuackService!.tracks!.first),
+              newState.copyWith(
+                  playlist: playlistFromQuackService,
+                  isLoading: false,
+                  playerState: MockSpotifyService.getMockPlayerState(
+                      isPaused: true,
+                      trackId: playlistFromQuackService!.tracks!.first.id),
                   updatedItemHashCode: playlistFromQuackService.hashCode,
                   currentTrack: playlistFromQuackService!.tracks!.first)
             ];
@@ -952,7 +1020,8 @@ Future<void> main() async {
                 .quackResponse!
                 .result;
             bloc.state.quackLocationType = QuackLocationType.beach;
-            bloc.state.playerState = MockSpotifyService.getMockPlayerState();
+            bloc.state.playerState = MockSpotifyService.getMockPlayerState(
+                useTrack: false, isPaused: false);
           },
           build: () => bloc,
           act: (bloc) => bloc.add(const ButtonPressed(
@@ -963,6 +1032,8 @@ Future<void> main() async {
             newState.currentTrack = null;
             newState.playlist = null;
             newState.updatedItemHashCode = null;
+            newState.playerState = MockSpotifyService.getMockPlayerState(
+                useTrack: false, isPaused: false);
 
             return [
               newState,
@@ -975,6 +1046,15 @@ Future<void> main() async {
                   currentTrack: bloc.state.playlist!.tracks!.first,
                   updatedItemHashCode: playlistFromQuackService.hashCode,
                   playlist: playlistFromQuackService),
+              newState.copyWith(
+                  isLoading: false,
+                  hasPerformedAction: false,
+                  currentTrack: bloc.state.playlist!.tracks!.first,
+                  updatedItemHashCode: playlistFromQuackService.hashCode,
+                  playerState: MockSpotifyService.getMockPlayerState(
+                      trackId: bloc.state.playlist!.tracks!.first.id,
+                      isPaused: false),
+                  playlist: playlistFromQuackService)
             ];
           });
 
@@ -1091,7 +1171,8 @@ Future<void> main() async {
 
             w.bloc.state.quackLocationType = QuackLocationType.beach;
             w.bloc.state.lockedQuackLocationType = QuackLocationType.cemetery;
-            w.bloc.state.playerState = MockSpotifyService.getMockPlayerState();
+            w.bloc.state.playerState = MockSpotifyService.getMockPlayerState(
+                trackId: "2", isPaused: true);
             return w.bloc;
           },
           act: (bloc) => bloc.add(const ButtonPressed(
@@ -1103,6 +1184,8 @@ Future<void> main() async {
             newState.playlist = null;
             newState.updatedItemHashCode = null;
             newState.lockedQuackLocationType = null;
+            newState.playerState = MockSpotifyService.getMockPlayerState(
+                trackId: "2", isPaused: true);
             return [
               newState,
               newState.copyWith(isLoading: true),
@@ -1112,8 +1195,17 @@ Future<void> main() async {
                   updatedItemHashCode: playlistFromQuackService.hashCode),
               newState.copyWith(
                   isLoading: false,
-                  hasPerformedAction: true,
+                  hasPerformedAction: false,
                   playlist: playlistFromQuackService,
+                  updatedItemHashCode: playlistFromQuackService.hashCode,
+                  currentTrack: playlistFromQuackService!.tracks!.first),
+              newState.copyWith(
+                  isLoading: false,
+                  hasPerformedAction: false,
+                  playlist: playlistFromQuackService,
+                  playerState: MockSpotifyService.getMockPlayerState(
+                      trackId: playlistFromQuackService!.tracks!.first.id,
+                      isPaused: true),
                   updatedItemHashCode: playlistFromQuackService.hashCode,
                   currentTrack: playlistFromQuackService!.tracks!.first)
             ];
@@ -1131,7 +1223,8 @@ Future<void> main() async {
 
             w.bloc.state.quackLocationType = QuackLocationType.unknown;
             w.bloc.state.lockedQuackLocationType = QuackLocationType.cemetery;
-            w.bloc.state.playerState = MockSpotifyService.getMockPlayerState();
+            w.bloc.state.playerState = MockSpotifyService.getMockPlayerState(
+                trackId: "2", isPaused: false);
             return w.bloc;
           },
           act: (bloc) => bloc.add(const ButtonPressed(
@@ -1141,6 +1234,8 @@ Future<void> main() async {
             newState.currentTrack = null;
             newState.playlist = null;
             newState.lockedQuackLocationType = null;
+            newState.playerState = MockSpotifyService.getMockPlayerState(
+                trackId: "2", isPaused: false);
             return [newState, newState.copyWith(hasPerformedAction: true)];
           });
 
@@ -1154,8 +1249,8 @@ Future<void> main() async {
             bloc.state.hasPerformedAction = true;
           },
           build: () => bloc,
-          act: (bloc) =>
-              bloc.add(SpotifyPlayerStateChanged(playerState: playerState1)),
+          act: (bloc) => bloc.add(SpotifyPlayerStateChanged(
+              playerState: playerState1.spotifyPlayerState)),
           expect: () {
             return [
               bloc.state.copyWith(
@@ -1180,8 +1275,8 @@ Future<void> main() async {
       blocTest<MainPageBloc, MainPageState>(
           "SpotifyPlayerStateChanged ->  Current player state is null",
           build: () => bloc,
-          act: (bloc) =>
-              bloc.add(SpotifyPlayerStateChanged(playerState: playerState1)),
+          act: (bloc) => bloc.add(SpotifyPlayerStateChanged(
+              playerState: playerState1.spotifyPlayerState)),
           expect: () {
             return [bloc.state.copyWith(playerState: playerState1)];
           });
@@ -1190,8 +1285,8 @@ Future<void> main() async {
           "SpotifyPlayerStateChanged ->  Same track in current player state and event player state",
           setUp: () => bloc.state.playerState = playerState1,
           build: () => bloc,
-          act: (bloc) =>
-              bloc.add(SpotifyPlayerStateChanged(playerState: playerState1)),
+          act: (bloc) => bloc.add(SpotifyPlayerStateChanged(
+              playerState: playerState1.spotifyPlayerState)),
           expect: () {
             return [
               bloc.state.copyWith(
@@ -1206,8 +1301,8 @@ Future<void> main() async {
             bloc.state.currentTrack = QuackTrack(id: "1");
           },
           build: () => bloc,
-          act: (bloc) =>
-              bloc.add(SpotifyPlayerStateChanged(playerState: playerState1)),
+          act: (bloc) => bloc.add(SpotifyPlayerStateChanged(
+              playerState: playerState1.spotifyPlayerState)),
           expect: () {
             return [
               bloc.state.copyWith(
@@ -1222,8 +1317,8 @@ Future<void> main() async {
             bloc.state.currentTrack = QuackTrack(id: "1");
           },
           build: () => bloc,
-          act: (bloc) =>
-              bloc.add(SpotifyPlayerStateChanged(playerState: playerState2)),
+          act: (bloc) => bloc.add(SpotifyPlayerStateChanged(
+              playerState: playerState2.spotifyPlayerState)),
           expect: () {
             return [bloc.state.copyWith(playerState: playerState2)];
           });
@@ -1234,8 +1329,8 @@ Future<void> main() async {
             bloc.state.playerState = playerState3;
           },
           build: () => bloc,
-          act: (bloc) =>
-              bloc.add(SpotifyPlayerStateChanged(playerState: playerState2)),
+          act: (bloc) => bloc.add(SpotifyPlayerStateChanged(
+              playerState: playerState2.spotifyPlayerState)),
           expect: () {
             return [bloc.state.copyWith(playerState: playerState2)];
           });
@@ -1251,8 +1346,8 @@ Future<void> main() async {
             bloc.state.playerState = playerState1;
           },
           build: () => bloc,
-          act: (bloc) =>
-              bloc.add(SpotifyPlayerStateChanged(playerState: playerState2)),
+          act: (bloc) => bloc.add(SpotifyPlayerStateChanged(
+              playerState: playerState2.spotifyPlayerState)),
           expect: () {
             return [bloc.state.copyWith(playerState: playerState2)];
           });
@@ -1269,8 +1364,8 @@ Future<void> main() async {
             bloc.state.playerState = playerState1;
           },
           build: () => bloc,
-          act: (bloc) =>
-              bloc.add(SpotifyPlayerStateChanged(playerState: playerState2)),
+          act: (bloc) => bloc.add(SpotifyPlayerStateChanged(
+              playerState: playerState2.spotifyPlayerState)),
           expect: () {
             return [
               bloc.state.copyWith(
@@ -1295,8 +1390,8 @@ Future<void> main() async {
             bloc.state.playerState = playerState1;
           },
           build: () => bloc,
-          act: (bloc) =>
-              bloc.add(SpotifyPlayerStateChanged(playerState: playerState2)),
+          act: (bloc) => bloc.add(SpotifyPlayerStateChanged(
+              playerState: playerState2.spotifyPlayerState)),
           expect: () {
             var expandedPlaylist = QuackPlaylist(
                 id: "1", tracks: [QuackTrack(id: "1"), QuackTrack(id: "2")]);
@@ -1340,8 +1435,8 @@ Future<void> main() async {
             bloc.state.playerState = playerState1;
           },
           build: () => bloc,
-          act: (bloc) =>
-              bloc.add(SpotifyPlayerStateChanged(playerState: playerState2)),
+          act: (bloc) => bloc.add(SpotifyPlayerStateChanged(
+              playerState: playerState2.spotifyPlayerState)),
           expect: () {
             return [
               bloc.state.copyWith(

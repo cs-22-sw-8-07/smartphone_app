@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:smartphone_app/services/webservices/quack/models/quack_classes.dart';
 
-import '../../../helpers/permission_helper.dart';
 import 'history_playlist_page_events_states.dart';
 
 class HistoryPlaylistPageBloc
@@ -36,6 +34,8 @@ class HistoryPlaylistPageBloc
         /// Back
         case HistoryPlaylistButtonEvent.back:
           Navigator.of(context).pop(null);
+          break;
+        default:
           break;
       }
     });

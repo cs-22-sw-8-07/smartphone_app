@@ -10,6 +10,13 @@ void main() {
           const ButtonPressed(buttonEvent: HistoryPlaylistButtonEvent.back),
         );
       });
+      test("Events are not equal", () {
+        expect(
+          const ButtonPressed(buttonEvent: HistoryPlaylistButtonEvent.back),
+          isNot(const ButtonPressed(
+              buttonEvent: HistoryPlaylistButtonEvent.openWithSpotify)),
+        );
+      });
     });
   });
 }

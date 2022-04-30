@@ -165,7 +165,7 @@ class LocationSelected extends MainPageEvent {
 // ignore: must_be_immutable
 class MainPageState extends Equatable {
   bool? isPlaylistShown;
-  PlayerState? playerState;
+  QuackPlayerState? playerState;
   QuackPlaylist? playlist;
   bool? hasPerformedAction;
   QuackLocationType? quackLocationType;
@@ -198,7 +198,7 @@ class MainPageState extends Equatable {
       QuackLocationType? quackLocationType,
       bool? hasPerformedAction,
       bool? isLoading,
-      PlayerState? playerState}) {
+      QuackPlayerState? playerState}) {
     return MainPageState(
       playlist: playlist ?? this.playlist,
       isLoading: isLoading ?? this.isLoading,

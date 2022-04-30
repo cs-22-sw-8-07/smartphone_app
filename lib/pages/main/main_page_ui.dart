@@ -727,8 +727,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     }
 
     // Get track currently being played as a QuackTrack
-    QuackTrack quackTrack =
-        QuackTrack.trackToQuackTrack(state.playerState!.track)!;
+    QuackTrack quackTrack = state.playerState!.track!;
 
     return Container(
       decoration: BoxDecoration(

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:smartphone_app/services/webservices/quack/models/quack_classes.dart';
 import 'package:smartphone_app/services/webservices/spotify/interfaces/spotify_functions.dart';
 import 'package:smartphone_app/services/webservices/spotify/models/spotify_classes.dart';
 import 'package:smartphone_app/services/webservices/spotify/services/spotify_service.dart';
@@ -11,6 +12,14 @@ import 'package:spotify_sdk/models/player_options.dart';
 import 'package:spotify_sdk/models/player_restrictions.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 import 'package:spotify_sdk/models/track.dart';
+
+extension TrackExtension on Track {
+
+  QuackTrack toQuackTrack() {
+    return QuackTrack.trackToQuackTrack(this)!;
+  }
+
+}
 
 class MockSpotifyService implements ISpotifyFunctions {
   ///
@@ -54,7 +63,7 @@ class MockSpotifyService implements ISpotifyFunctions {
         isPodcast: false);
   }
 
-  static PlayerState getMockPlayerState(
+  static QuackPlayerState getMockPlayerState(
       {bool isPaused = false, String? trackId, bool useTrack = true}) {
     var playerState = PlayerState(
         useTrack ? getMockTrack(id: trackId) : null,
@@ -69,7 +78,7 @@ class MockSpotifyService implements ISpotifyFunctions {
             canSkipPrevious: true,
             canToggleShuffle: true),
         isPaused: isPaused);
-    return playerState;
+    return QuackPlayerState(spotifyPlayerState: playerState);
   }
 
   //endregion
@@ -107,7 +116,8 @@ class MockSpotifyService implements ISpotifyFunctions {
 
   @override
   Future<SpotifySdkResponseWithResult<PlayerState>> getPlayerState() async {
-    return SpotifySdkResponseWithResult.success(getMockPlayerState());
+    return SpotifySdkResponseWithResult.success(
+        getMockPlayerState().spotifyPlayerState);
   }
 
   @override
@@ -173,7 +183,6 @@ class MockSpotifyService implements ISpotifyFunctions {
 }
 
 class MockSpotifyServiceError implements ISpotifyFunctions {
-
   ///
   /// OVERRIDE METHODS
   ///
@@ -196,7 +205,7 @@ class MockSpotifyServiceError implements ISpotifyFunctions {
 
   @override
   Future<SpotifyServiceResponse<GetCurrentUsersProfileResponse>>
-  getCurrentUsersProfile({required String token}) async {
+      getCurrentUsersProfile({required String token}) async {
     return SpotifyServiceResponse.error("");
   }
 
@@ -252,7 +261,7 @@ class MockSpotifyServiceError implements ISpotifyFunctions {
 
   @override
   SpotifySdkResponseWithResult<Stream<ConnectionStatus>>
-  subscribeConnectionStatus() {
+      subscribeConnectionStatus() {
     return SpotifySdkResponseWithResult.error("");
   }
 
@@ -264,4 +273,3 @@ class MockSpotifyServiceError implements ISpotifyFunctions {
 //endregion
 
 }
-

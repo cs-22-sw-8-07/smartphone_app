@@ -216,14 +216,15 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       if (state.playerState == null || event.playerState == null) {
         // Update to event player state
         var newState = state.copyWith();
-        newState.playerState = event.playerState;
+        newState.playerState = event.playerState == null
+            ? null
+            : QuackPlayerState(spotifyPlayerState: event.playerState);
         emit(newState);
         return;
       }
 
       // Get track from current player state
-      QuackTrack? trackFromCurrentPlayerState =
-          QuackTrack.trackToQuackTrack(state.playerState!.track);
+      QuackTrack? trackFromCurrentPlayerState = state.playerState!.track;
       // Get track from event player state
       QuackTrack? trackFromNewPlayerState =
           QuackTrack.trackToQuackTrack(event.playerState!.track);
@@ -241,13 +242,17 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
               trackFromNewPlayerState.id == state.currentTrack!.id)) {
         // Update to event player state and remove HasJustPerformedAction flag
         emit(state.copyWith(
-            playerState: event.playerState, hasPerformedAction: false));
+            playerState:
+                QuackPlayerState(spotifyPlayerState: event.playerState),
+            hasPerformedAction: false));
       } else {
         // Playlist is null or
         // Track from the current player state is null
         if (state.playlist == null || trackFromCurrentPlayerState == null) {
           // Update to event player state
-          emit(state.copyWith(playerState: event.playerState));
+          emit(state.copyWith(
+              playerState:
+                  QuackPlayerState(spotifyPlayerState: event.playerState)));
           return;
         }
 
@@ -279,7 +284,9 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
         // Current track in the state is null
         else {
           // Update to event player state
-          emit(state.copyWith(playerState: event.playerState));
+          emit(state.copyWith(
+              playerState:
+                  QuackPlayerState(spotifyPlayerState: event.playerState)));
         }
       }
     }));
@@ -632,8 +639,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     }
 
     if (state.playerState!.isPaused) {
-      QuackTrack? playerStateQuackTrack =
-          QuackTrack.trackToQuackTrack(state.playerState!.track);
+      QuackTrack? playerStateQuackTrack = state.playerState!.track;
       if (playerStateQuackTrack == null && state.currentTrack != null) {
         var response = await _playTrack(state.currentTrack!);
         if (!response.isSuccess) {
@@ -812,6 +818,11 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
         isLoading: false,
         currentTrack: getPlaylistResponse.quackResponse!.result!.tracks!.first,
         hasPerformedAction: !state.playerState!.isPaused));
+    // Update player state
+    add(SpotifyPlayerStateChanged(
+        playerState: setQuackTrackInPlayerState(
+            playerState: state.playerState!.spotifyPlayerState,
+            track: getPlaylistResponse.quackResponse!.result!.tracks!.first)));
 
     // The player is not paused
     if (!state.playerState!.isPaused) {
