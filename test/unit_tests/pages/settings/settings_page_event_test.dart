@@ -12,7 +12,7 @@ void main() {
       });
       test("Events are not equal", () {
         expect(
-          const ButtonPressed(buttonEvent: SettingsButtonEvent.save),
+          const ButtonPressed(buttonEvent: SettingsButtonEvent.deleteAccount),
           isNot(const ButtonPressed(buttonEvent: SettingsButtonEvent.back)),
         );
       });

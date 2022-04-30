@@ -4,7 +4,8 @@ import 'package:smartphone_app/pages/settings/settings_page_events_states.dart';
 void main() {
   group("SettingsPageState", () {
     test("States are equal", () {
-      expect(const SettingsState().copyWith(), const SettingsState());
+      // ignore: prefer_const_constructors
+      expect(SettingsState().copyWith(), SettingsState());
     });
   });
 }

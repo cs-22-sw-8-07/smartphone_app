@@ -50,5 +50,14 @@ Future<void> main() async {
             const ButtonPressed(
                 buttonEvent: SettingsButtonEvent.deleteAccount)),
         expect: (bloc) => []);
+
+    blocTestWidget<SettingsPage, SettingsBloc, SettingsState>(
+        "ButtonPressed -> Back",
+        buildWidget: () => SettingsPage(),
+        build: (w) => w.bloc,
+        act: (bloc) => bloc.add(
+            const ButtonPressed(
+                buttonEvent: SettingsButtonEvent.back)),
+        expect: (bloc) => []);
   });
 }

@@ -13,5 +13,9 @@ void main() {
       expect(LoginPageState().copyWith(permissionState: PermissionState.denied),
           isNot(LoginPageState(permissionState: PermissionState.granted)));
     });
+    test("States are equal -> permissionState", () {
+      expect(LoginPageState().copyWith(permissionState: null),
+          LoginPageState(permissionState: null));
+    });
   });
 }

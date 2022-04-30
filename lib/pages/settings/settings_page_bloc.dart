@@ -35,11 +35,6 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
           Navigator.of(context).pop(null);
           break;
 
-        /// Save
-        case SettingsButtonEvent.save:
-          await _saveChanges();
-          break;
-
         /// Delete account
         case SettingsButtonEvent.deleteAccount:
           await _deleteAccount();
@@ -54,10 +49,6 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   /// METHODS
   ///
   //region Methods
-
-  Future<void> _saveChanges() async {
-    //TODO: Give functionality
-  }
 
   Future<void> _deleteAccount() async {
     DialogQuestionResponse questionResponse = await QuestionDialog.getInstance()
