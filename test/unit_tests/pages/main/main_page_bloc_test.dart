@@ -18,6 +18,7 @@ import 'package:smartphone_app/services/webservices/spotify/services/spotify_ser
 import 'package:smartphone_app/widgets/question_dialog.dart';
 import 'package:spotify_sdk/models/connection_status.dart';
 
+import '../../../helpers/asset_helper.dart';
 import '../../../helpers/bloc_test_widget.dart';
 import '../../../mocks/build_context.dart';
 import '../../../mocks/position_helper.dart';
@@ -30,6 +31,7 @@ Future<void> main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
 
+  AssetHelper assetHelper = AssetHelper();
   SpotifyService.init(MockSpotifyService());
 
   group("MainPage", () {
@@ -37,7 +39,6 @@ Future<void> main() async {
     late MainPage mainPage;
     PositionHelper? positionHelper;
     QuackPlaylist? playlistFromQuackService;
-    IQuackFunctions? quackFunctions;
 
     setUp(() {
       GoogleFonts.config.allowRuntimeFetching = false;
@@ -46,12 +47,11 @@ Future<void> main() async {
       PositionHelper.setInstance(positionHelper!);
       SharedPreferences.setMockInitialValues({});
       AppValuesHelper.getInstance().setup();
+      QuackService.init(MockQuackService(assetHelper: assetHelper));
     });
 
     group("SpotifyService -> Return error", () {
       setUp(() {
-        quackFunctions ??= MockQuackService();
-        QuackService.init(quackFunctions!);
         SpotifyService.init(MockSpotifyServiceError());
         bloc = MainPageBloc(
             context: MockBuildContext(), positionHelper: MockPositionHelper());
@@ -150,14 +150,10 @@ Future<void> main() async {
 
     group("QuackService -> Return success", () {
       setUp(() async {
-        quackFunctions ??= MockQuackService();
-        QuackService.init(quackFunctions!);
         SpotifyService.init(MockSpotifyService());
         bloc = MainPageBloc(
             context: MockBuildContext(),
-            positionHelper: await PositionHelper.getInstance(
-                await LocalAppLocalizations.getAppLocalizations(
-                    languageCode: "en")));
+            positionHelper: await PositionHelper.getInstance());
       });
 
       test("Initial state is correct", () {
@@ -432,7 +428,7 @@ Future<void> main() async {
               buttonEvent: MainButtonEvent.selectManualLocation)),
           expect: () => [bloc.state.copyWith(isLocationListShown: true)]);
 
-      blocTest<MainPageBloc, MainPageState>("ButtonPressed -> Resize playlist",
+      blocTest<MainPageBloc, MainPageState>("ButtonPressed -> View playlist",
           build: () => bloc,
           act: (bloc) => bloc.add(
               const ButtonPressed(buttonEvent: MainButtonEvent.viewPlaylist)),

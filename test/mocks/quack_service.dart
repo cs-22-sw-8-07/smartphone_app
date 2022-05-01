@@ -5,14 +5,26 @@ import 'package:smartphone_app/services/webservices/quack/interfaces/quack_funct
 import 'package:smartphone_app/services/webservices/quack/models/quack_classes.dart';
 import 'package:smartphone_app/services/webservices/quack/services/quack_service.dart';
 
+import '../helpers/asset_helper.dart';
+
 class MockQuackService implements IQuackFunctions {
   ///
   /// VARIABLES
   ///
   //region Variables
 
-  dynamic jsonData1;
-  dynamic jsonData2;
+  AssetHelper? assetHelper;
+
+  //endregion
+
+  ///
+  /// CONSTRUCTOR
+  ///
+  //region Constructor
+
+  MockQuackService({this.assetHelper}) {
+    assetHelper ??= AssetHelper();
+  }
 
   //endregion
 
@@ -39,15 +51,13 @@ class MockQuackService implements IQuackFunctions {
       {required QuackLocationType qlt,
       required List<QuackPlaylist> playlists}) async {
     if (qlt == QuackLocationType.beach) {
-      jsonData1 ??= await getJsonData("get_playlist_response.json");
-
-      return QuackServiceResponse.success(
-          GetPlaylistResponse.fromJson(jsonData1));
+      return QuackServiceResponse.success(GetPlaylistResponse.fromJson(
+          await assetHelper!
+              .getAssetAsJson("assets/mock_data/get_playlist_response.json")));
     } else {
-      jsonData2 ??= await getJsonData("get_playlist_response2.json");
-
       return QuackServiceResponse.success(
-          GetPlaylistResponse.fromJson(jsonData2));
+          GetPlaylistResponse.fromJson(await assetHelper!
+              .getAssetAsJson("assets/mock_data/get_playlist_response2.json")));
     }
   }
 
@@ -55,7 +65,6 @@ class MockQuackService implements IQuackFunctions {
 }
 
 class MockQuackServiceError implements IQuackFunctions {
-
   ///
   /// OVERRIDE METHODS
   ///
@@ -64,7 +73,7 @@ class MockQuackServiceError implements IQuackFunctions {
   @override
   Future<QuackServiceResponse<GetPlaylistResponse>> getPlaylist(
       {required QuackLocationType qlt,
-        required List<QuackPlaylist> playlists}) async {
+      required List<QuackPlaylist> playlists}) async {
     return QuackServiceResponse.error("");
   }
 

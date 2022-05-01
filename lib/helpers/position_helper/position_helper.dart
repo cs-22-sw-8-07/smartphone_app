@@ -21,8 +21,8 @@ class PositionHelper {
 
   static PositionHelper? _positionHelper;
 
-  static PositionHelper _getPositionHelper(AppLocalizations appLocalizations) {
-    if (_positionHelper != null) {
+  static PositionHelper _getPositionHelper([AppLocalizations? appLocalizations]) {
+    if (_positionHelper != null || appLocalizations == null) {
       return _positionHelper!;
     }
 
@@ -66,7 +66,7 @@ class PositionHelper {
   }
 
   static Future<PositionHelper> getInstance(
-      AppLocalizations appLocalizations) async {
+      [AppLocalizations? appLocalizations]) async {
     return _getPositionHelper(appLocalizations);
   }
 

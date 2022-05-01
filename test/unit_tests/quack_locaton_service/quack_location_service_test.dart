@@ -67,7 +67,7 @@ void main() async {
     });
 
     test(
-        "Check location after moving near Place with category correlating to QuackLocationType.beach",
+        "Check location after moving near Place with category correlating to 'Beach'",
         () async {
       QuackLocationType? newLoc =
           await mockLocation(57.731045604172294, 10.613407743501238);

@@ -84,10 +84,12 @@ void main() {
           const MainPageValueChanged(
               isLoading: false,
               quackLocationType: QuackLocationType.beach,
+              hasPerformedAction: false,
               currentTrack: null),
           const MainPageValueChanged(
               isLoading: false,
               quackLocationType: QuackLocationType.beach,
+              hasPerformedAction: false,
               currentTrack: null),
         );
       });
@@ -109,6 +111,12 @@ void main() {
         expect(
           const MainPageValueChanged(currentTrack: null),
           isNot(MainPageValueChanged(currentTrack: QuackTrack(id: "1"))),
+        );
+      });
+      test("Events are not equal -> hasPerformedAction", () {
+        expect(
+          const MainPageValueChanged(hasPerformedAction: false),
+          isNot(const MainPageValueChanged(hasPerformedAction: true)),
         );
       });
     });
