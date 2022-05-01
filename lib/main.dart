@@ -21,15 +21,16 @@ void main() async {
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await AppValuesHelper.getInstance().setup();
   SpotifyService.init(SpotifyService());
-
   String whichQuackApi = dotenv.env['WHICH_QUACK_API'].toString();
-  if (whichQuackApi == "prod") {
-    QuackService.init(
-        QuackService(url: dotenv.env['QUACK_API_URL'].toString()));
-  } else {
-    QuackService.init(MockQuackService());
+  switch (whichQuackApi) {
+    case "prod":
+      QuackService.init(
+          QuackService(url: dotenv.env['QUACK_API_URL'].toString()));
+      break;
+    case "mock":
+      QuackService.init(MockQuackService());
+      break;
   }
-
   FoursquareService.init(FoursquareService());
   QuackLocationService.init(QuackLocationService());
 
