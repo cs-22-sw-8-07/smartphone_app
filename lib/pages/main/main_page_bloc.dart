@@ -198,6 +198,8 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
         case MainButtonEvent.back:
           if (state.isPlaylistShown!) {
             emit(state.copyWith(isPlaylistShown: false));
+          } else if (state.isLocationListShown!) {
+            emit(state.copyWith(isLocationListShown: false));
           }
           break;
       }

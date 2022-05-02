@@ -146,13 +146,17 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
     return WillPopScope(
         onWillPop: () async {
-          if (!bloc.state.isPlaylistShown!) {
-            return true;
-          } else {
+          if (bloc.state.isLocationListShown!) {
+            bloc.add(const ButtonPressed(buttonEvent: MainButtonEvent.back));
+            locationListAnimationController.reverse();
+            return false;
+          }
+          else if (bloc.state.isPlaylistShown!) {
             bloc.add(const ButtonPressed(buttonEvent: MainButtonEvent.back));
             playlistAnimationController.reverse();
             return false;
           }
+          return true;
         },
         child: FutureBuilder<bool>(
             future: bloc.getValues(),
