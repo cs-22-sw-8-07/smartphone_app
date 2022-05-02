@@ -41,9 +41,10 @@ class GetNearbyPlacesResponse extends FoursquareResponse {
 }
 
 @JsonSerializable()
+// ignore: must_be_immutable
 class FoursquarePlace extends Equatable {
   @JsonKey(name: "fsq_id")
-  String id;
+  final String id;
   List<FoursquareCategory>? categories;
   int? distance;
   Map<String, FoursquareLatLng>? geocodes;

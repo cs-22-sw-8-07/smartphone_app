@@ -115,6 +115,44 @@ class QuackLocationService implements IQuackLocationFunctions {
     return QuackLocationType.unknown;
   }
 
+  /// Checks whether the given [position] is within one of the
+  /// [FurthestDistancePerimeter] in [_furthestDistancePerimeters]
+  bool _isWithinUpdatePlacesPerimeters(Position position) {
+    for (var perimeter in _furthestDistancePerimeters) {
+      var distanceBetween = Geolocator.distanceBetween(
+          perimeter.center.latitude,
+          perimeter.center.longitude,
+          position.latitude,
+          position.longitude);
+
+      // Distance less than radius minus location type update perimeter radius
+      if (distanceBetween <
+          (perimeter.radius - _locationTypeUpdatePerimeterRadius)) {
+        if (kDebugMode) {
+          print("Is within perimeter: true");
+        }
+        return true;
+      }
+    }
+    if (kDebugMode) {
+      print("Is within perimeter: false");
+    }
+    return false;
+  }
+
+  /// Get [QuackLocationType] based on the content of the list [_allPlaces] and
+  /// the given [position]
+  QuackLocationType getQuackLocationTypeFromAllPlaces(Position position) {
+    // Update distance for all places
+    _updateDistanceForAllPlaces(position);
+    // Sort places after distance
+    _sortPlacesAfterDistance(_allPlaces);
+
+    // Go through all places to get a QuackLocationType
+    _locationType = _getQuackLocationTypeFromPlaces(_allPlaces);
+    return _locationType;
+  }
+
   //endregion
 
   ///
@@ -183,39 +221,6 @@ class QuackLocationService implements IQuackLocationFunctions {
     }
 
     return null;
-  }
-
-  bool _isWithinUpdatePlacesPerimeters(Position position) {
-    for (var perimeter in _furthestDistancePerimeters) {
-      var distanceBetween = Geolocator.distanceBetween(
-          perimeter.center.latitude,
-          perimeter.center.longitude,
-          position.latitude,
-          position.longitude);
-
-      if (distanceBetween <
-          (perimeter.radius - _locationTypeUpdatePerimeterRadius)) {
-        if (kDebugMode) {
-          print("Is within perimeter: true");
-        }
-        return true;
-      }
-    }
-    if (kDebugMode) {
-      print("Is within perimeter: false");
-    }
-    return false;
-  }
-
-  QuackLocationType getQuackLocationTypeFromAllPlaces(Position position) {
-    // Update distance for all places
-    _updateDistanceForAllPlaces(position);
-    // Sort places after distance
-    _sortPlacesAfterDistance(_allPlaces);
-
-    // Go through all places to get a QuackLocationType
-    _locationType = _getQuackLocationTypeFromPlaces(_allPlaces);
-    return _locationType;
   }
 
 //endregion

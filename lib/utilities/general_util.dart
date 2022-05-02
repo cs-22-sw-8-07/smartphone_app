@@ -10,31 +10,11 @@ enum PermissionState { granted, denied }
 
 extension DateTimeExtension on DateTime {
   String nowNoSecondsAsString() {
-    return intl.DateFormat('dd-MM-yyyy kk:mm').format(DateTime.now());
-  }   
+    return intl.DateFormat('dd-MM-yyyy kk:mm').format(this);
+  }
 }
 
 class GeneralUtil {
-  /// Set editing controller text
-  /// Set [text] for a given [textEditingController]
-  static setTextEditingControllerText(
-      TextEditingController textEditingController, String? text) {
-    text = text ?? "";
-    if (textEditingController.value.text == text) return;
-    textEditingController.value = TextEditingValue(
-      text: text,
-      selection: TextSelection.fromPosition(
-        TextPosition(offset: text.length),
-      ),
-    );
-  }
-
-  /// Hide keyboard
-  static hideKeyboard() {
-    if (Platform.environment.containsKey('FLUTTER_TEST')) return;
-    FocusManager.instance.primaryFocus!.unfocus();
-  }
-
   /// Go to next page and close the previous
   /// [context] is the context doing the navigation
   /// [page] is the page being navigated to
@@ -87,8 +67,8 @@ class GeneralUtil {
     );
   }
 
+  /// Show a given [page] as a dialog which comes from the bottom
   static showPageAsDialog<T>(BuildContext context, Widget page) async {
-    if (Platform.environment.containsKey('FLUTTER_TEST')) return;
     return await showGeneralDialog<T>(
         context: context,
         barrierDismissible: false,
@@ -109,6 +89,7 @@ class GeneralUtil {
   /// Show a toast to the user
   /// [message] is the string shown to the user
   static showToast(String? message) {
+    if (Platform.environment.containsKey('FLUTTER_TEST')) return;
     if (message != null) {
       Fluttertoast.showToast(msg: message, toastLength: Toast.LENGTH_LONG);
     }
@@ -118,6 +99,7 @@ class GeneralUtil {
   /// [message] is the string shown to the user
   static showSnackBar(
       {required BuildContext context, required String message}) {
+    if (Platform.environment.containsKey('FLUTTER_TEST')) return;
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         backgroundColor: Colors.white,
@@ -129,18 +111,5 @@ class GeneralUtil {
                   fontWeight: FontWeight.w700,
                   fontSize: 16)),
         )));
-  }
-
-  /// Check for a internet connection
-  static Future<bool> hasInternetConnection() async {
-    try {
-      final response = await InternetAddress.lookup('www.google.com');
-      if (response.isNotEmpty) {
-        return true;
-      }
-    } on SocketException catch (_) {
-      return false;
-    }
-    return false;
   }
 }

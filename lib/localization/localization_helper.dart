@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:smartphone_app/localization/local_app_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:smartphone_app/services/webservices/quack/models/quack_classes.dart';
-import 'package:smartphone_app/values/values.dart';
 import 'package:smartphone_app/values/values.dart' as values;
 
 class LocalizationHelper {

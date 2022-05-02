@@ -13,6 +13,8 @@ class QuackLocationTypeCategories {
 class QuackLocationHelper {
   static List<QuackLocationTypeCategories>? _allQuackLocationTypeCategoriesList;
 
+  /// Get a list where each item specifies a [QuackLocationType] and its
+  /// related Foursquare category ids
   static List<QuackLocationTypeCategories> getAllCategoriesAsList() {
     if (_allQuackLocationTypeCategoriesList != null) {
       return _allQuackLocationTypeCategoriesList!;
@@ -89,6 +91,8 @@ class QuackLocationHelper {
     return _allQuackLocationTypeCategoriesList!;
   }
 
+  /// Get a list which specifies a range of integers from [start] to [end] with
+  /// [end] included
   static List<int> _getIntRange(int start, int end) {
     return [for (var i = start; i <= end; i++) i];
   }
@@ -97,6 +101,7 @@ class QuackLocationHelper {
   /// Convert a supplied [FoursquarePlace]'s category into a [QuackLocationType]
   ///
   static QuackLocationType getQuackLocationType(FoursquarePlace place) {
+    // If a place has no categories return the QuackLocationType 'Unknown'
     if (place.categories == null || place.categories!.isEmpty) {
       return QuackLocationType.unknown;
     }

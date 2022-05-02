@@ -25,13 +25,13 @@ class QuestionDialog extends StatelessWidget {
     }
     return QuestionDialog._();
   }
-  
+
   Future<DialogQuestionResponse> show(
       {required BuildContext context,
       required String question,
       Color? textColor}) async {
-        this.question = question;
-        color = textColor;
+    this.question = question;
+    color = textColor;
     return await Future.delayed(Duration.zero, () async {
       // Show dialog
       return await showDialog(
@@ -45,7 +45,7 @@ class QuestionDialog extends StatelessWidget {
   /// VARIABLES
   ///
   //region Variables
-  
+
   String? _question;
   Color? _color;
 
@@ -60,13 +60,13 @@ class QuestionDialog extends StatelessWidget {
     _question = question;
   }
 
-  String? get question => _question;
+  String? get question => _question; // ignore: unnecessary_getters_setters
 
   set color(Color? color) {
     _color = color;
   }
 
-  Color? get color => _color;
+  Color? get color => _color; // ignore: unnecessary_getters_setters
 
   //endregion
 
@@ -76,8 +76,7 @@ class QuestionDialog extends StatelessWidget {
   //region Constructor
 
   // ignore: prefer_const_constructors_in_immutables
-  QuestionDialog._({Key? key})
-      : super(key: key);
+  QuestionDialog._({Key? key}) : super(key: key);
 
   //endregion
 

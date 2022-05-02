@@ -46,6 +46,13 @@ QuackPlaylist _$QuackPlaylistFromJson(Map<String, dynamic> json) =>
       tracks: (json['tracks'] as List<dynamic>?)
           ?.map((e) => QuackTrack.fromJson(e as Map<String, dynamic>))
           .toList(),
+      offset: json['offset'] as int?,
+      allOffsets: (json['all_offsets'] as List<dynamic>?)
+          ?.map((e) => e as int)
+          .toList(),
+      saveDate: json['save_date'] == null
+          ? null
+          : DateTime.parse(json['save_date'] as String),
     );
 
 Map<String, dynamic> _$QuackPlaylistToJson(QuackPlaylist instance) =>
@@ -53,6 +60,9 @@ Map<String, dynamic> _$QuackPlaylistToJson(QuackPlaylist instance) =>
       'id': instance.id,
       'location_type': instance.locationType,
       'tracks': instance.tracks,
+      'offset': instance.offset,
+      'all_offsets': instance.allOffsets,
+      'save_date': instance.saveDate?.toIso8601String(),
     };
 
 QuackTrack _$QuackTrackFromJson(Map<String, dynamic> json) => QuackTrack(

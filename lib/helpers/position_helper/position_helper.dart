@@ -6,8 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:smartphone_app/helpers/position_helper/models/position_helper_classes.dart';
-import 'package:geolocator_android/src/types/foreground_settings.dart';
-import 'package:smartphone_app/localization/local_app_localizations.dart';
+import 'package:geolocator_android/src/types/foreground_settings.dart'; // ignore: implementation_imports
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'mock_position_helper.dart';
@@ -21,8 +20,8 @@ class PositionHelper {
 
   static PositionHelper? _positionHelper;
 
-  static PositionHelper _getPositionHelper(AppLocalizations appLocalizations) {
-    if (_positionHelper != null) {
+  static PositionHelper _getPositionHelper([AppLocalizations? appLocalizations]) {
+    if (_positionHelper != null || appLocalizations == null) {
       return _positionHelper!;
     }
 
@@ -66,9 +65,8 @@ class PositionHelper {
   }
 
   static Future<PositionHelper> getInstance(
-      AppLocalizations appLocalizations) async {
-    return _getPositionHelper(
-        (await LocalAppLocalizations.getAppLocalizations()));
+      [AppLocalizations? appLocalizations]) async {
+    return _getPositionHelper(appLocalizations);
   }
 
   static void setInstance(PositionHelper positionHelper) {

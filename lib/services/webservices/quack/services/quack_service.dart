@@ -1,5 +1,7 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 import 'package:smartphone_app/helpers/app_values_helper.dart';
-import 'package:smartphone_app/services/quack_location_service/service/quack_location_service.dart';
 
 import '../../../../helpers/rest_helper.dart';
 import '../interfaces/quack_functions.dart';
@@ -27,6 +29,22 @@ class QuackServiceResponse<Response extends QuackResponse> {
     if (quackResponse != null) return quackResponse!.getErrorMessage();
     return null;
   }
+}
+
+List<int> getPreviousOffsets(
+    {required List<QuackPlaylist> playlists,
+    required QuackLocationType quackLocationType}) {
+  List<int> currentOffsets = [];
+
+  // Only take the offsets from playlists with a matching QuackLocationType
+  for (var playlist in playlists) {
+    if (playlist.quackLocationType == quackLocationType) {
+      currentOffsets.addAll(playlist.allOffsets!);
+    }
+  }
+  // Sort the list
+  currentOffsets.sort((a, b) => a.compareTo(b));
+  return currentOffsets;
 }
 
 class QuackService implements IQuackFunctions {
@@ -77,18 +95,25 @@ class QuackService implements IQuackFunctions {
 
   @override
   Future<QuackServiceResponse<GetPlaylistResponse>> getPlaylist(
-      QuackLocationType qlt) async {
+      {required QuackLocationType qlt,
+      required List<QuackPlaylist> playlists}) async {
     try {
+      List<int> previousOffsets =
+          getPreviousOffsets(playlists: playlists, quackLocationType: qlt);
       String accessToken =
           AppValuesHelper.getInstance().getString(AppValuesKey.accessToken)!;
 
+      if (kDebugMode) {
+        print("Previous offsets : ${json.encode(previousOffsets)}");
+      }
+
       // Send GET request
-      RestResponse restResponse = await restHelper.sendGetRequest(
+      RestResponse restResponse = await restHelper.sendPostRequest(
           recommenderControllerPath + "GetPlaylist",
+          body: json.encode(previousOffsets),
           parameters: {
             "accessToken": accessToken,
-            "location":
-                getQuackLocationTypeInt(qlt).toString()
+            "location": getQuackLocationTypeInt(qlt).toString()
           });
       // Check for errors
       if (!restResponse.isSuccess) {

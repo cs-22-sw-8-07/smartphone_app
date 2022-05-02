@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:smartphone_app/values/colors.dart' as custom_colors;
 
+// ignore: must_be_immutable
 class PlayButton extends StatefulWidget {
   final bool isPlaying;
   final Widget foreground;
