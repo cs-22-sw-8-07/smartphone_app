@@ -49,6 +49,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   late double playlistHeight;
   Image? userImage;
   Widget? userImageWidget;
+  Image? locationShadowImage;
 
   late double availableHeight;
   late double availableWidth;
@@ -85,6 +86,11 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       userImageWidget = userImage;
     }
 
+    locationShadowImage = Image.asset(
+      values.locationShadowImage,
+      fit: BoxFit.fitWidth,
+    );
+
     // Setup animation controllers
     playlistAnimationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 200));
@@ -98,6 +104,11 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
     // Precache user image
     if (userImage != null) precacheImage(userImage!.image, context);
+
+    // Precache location shadow image
+    if (locationShadowImage != null) {
+      precacheImage(locationShadowImage!.image, context);
+    }
   }
 
   @override
@@ -273,9 +284,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                             fontWeight: FontWeight.w700,
                             title: AppValuesHelper.getInstance()
                                 .getString(AppValuesKey.displayName))),
-                    const Image(
-                        fit: BoxFit.fitWidth,
-                        image: AssetImage(values.locationShadowImage))
+                    locationShadowImage!
                   ],
                 ),
               ),
