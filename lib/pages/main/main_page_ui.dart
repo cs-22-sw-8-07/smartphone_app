@@ -748,7 +748,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         : custom_colors.darkBlue;
     // If the player state is null or no track is currently being played show a
     // placeholder container
-    if (state.playerState == null || state.playerState!.track == null) {
+    if (state.playerState == null ||
+        state.playerState!.track == null ||
+        (state.quackLocationType == QuackLocationType.unknown &&
+            state.lockedQuackLocationType == null)) {
       return Container(
         decoration: BoxDecoration(
             color: backgroundColor,
