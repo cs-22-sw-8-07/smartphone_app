@@ -300,7 +300,13 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
               var nextTrack = getNextTrack(state.currentTrack!);
               // The current track is the last in the playlist and there is no
               // next track, so do nothing
-              if (nextTrack == null) {
+              if (state.playlist!.tracks!.contains(state.currentTrack) &&
+                  nextTrack == null) {
+                return;
+              }
+              // The current track is not in playlist
+              else if (nextTrack == null) {
+                await _playTrack(state.playlist!.tracks!.first);
                 return;
               }
               // Play the next track

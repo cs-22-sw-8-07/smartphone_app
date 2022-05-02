@@ -707,7 +707,10 @@ Future<void> main() async {
           act: (bloc) => bloc
               .add(const TouchEvent(touchEvent: MainTouchEvent.goToNextTrack)),
           expect: () {
-            return [];
+            return [
+              bloc.state.copyWith(
+                  hasPerformedAction: true, currentTrack: QuackTrack(id: "1"))
+            ];
           });
 
       blocTest<MainPageBloc, MainPageState>(
