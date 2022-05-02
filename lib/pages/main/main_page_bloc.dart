@@ -98,10 +98,10 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
         /// View playlist
         case MainButtonEvent.viewPlaylist:
-          if (!state.isLocationListShown!) {
-            // Set the isPlaylistShown flag negated
-            emit(state.copyWith(isPlaylistShown: !state.isPlaylistShown!));
-          }
+          // Set the isPlaylistShown flag negated
+          emit(state.copyWith(
+              isPlaylistShown: !state.isPlaylistShown!,
+              isLocationListShown: false));
           break;
 
         /// Resume/pause player
@@ -170,11 +170,10 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
         /// Select manual location
         case MainButtonEvent.selectManualLocation:
-          if (!state.isPlaylistShown!) {
-            // Set the IsLocationListShown flag negated
-            emit(state.copyWith(
-                isLocationListShown: !state.isLocationListShown!));
-          }
+          // Set the IsLocationListShown flag negated
+          emit(state.copyWith(
+              isLocationListShown: !state.isLocationListShown!,
+              isPlaylistShown: false));
           break;
 
         /// Refresh playlist

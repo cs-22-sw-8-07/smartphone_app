@@ -50,6 +50,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   Image? userImage;
   Widget? userImageWidget;
   Image? locationShadowImage;
+  ScrollController locationListScrollController =
+      ScrollController(initialScrollOffset: 0);
+  ScrollController playlistScrollController =
+      ScrollController(initialScrollOffset: 0);
 
   late double availableHeight;
   late double availableWidth;
@@ -64,6 +68,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      //code will run when widget rendering complete
+    });
 
     // Get url to the user's profile image on Spotify
     var url =
@@ -116,6 +124,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     // Remember to dispose controllers
     playlistAnimationController.dispose();
     locationListAnimationController.dispose();
+    playlistScrollController.dispose();
+    locationListScrollController.dispose();
     super.dispose();
   }
 
@@ -365,7 +375,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         size: 30,
                       ),
                       onPressed: () {
-                        if (bloc.state.isLocationListShown!) {
+                        if (bloc.state.isLocationListShown! ||
+                            locationListAnimationController.isAnimating) {
                           return;
                         }
                         bloc.add(const ButtonPressed(
@@ -374,6 +385,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         bloc.state.isPlaylistShown!
                             ? playlistAnimationController.reverse()
                             : playlistAnimationController.forward();
+                        locationListAnimationController.reverse();
                       },
                       borderRadius: const BorderRadius.all(
                         Radius.circular(0),
@@ -477,15 +489,13 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       size: 30,
                     ),
                     onPressed: () {
-                      if (bloc.state.isPlaylistShown!) {
-                        return;
-                      }
                       bloc.add(const ButtonPressed(
                           buttonEvent: MainButtonEvent.selectManualLocation));
 
                       bloc.state.isLocationListShown!
                           ? locationListAnimationController.reverse()
                           : locationListAnimationController.forward();
+                      playlistAnimationController.reverse();
                     },
                     borderRadius: const BorderRadius.all(
                       Radius.circular(0),
@@ -578,9 +588,11 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                 bloc.add(const ButtonPressed(
                                     buttonEvent:
                                         MainButtonEvent.selectManualLocation));
+
                                 bloc.state.isLocationListShown!
                                     ? locationListAnimationController.reverse()
                                     : locationListAnimationController.forward();
+                                playlistAnimationController.reverse();
                               },
                               child: Container(
                                 constraints: BoxConstraints(
@@ -1007,11 +1019,18 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         children: [
           Expanded(
               child: RawScrollbar(
+                  key: UniqueKey(),
                   isAlwaysShown: true,
+                  controller: playlistScrollController,
                   thickness: 4,
                   thumbColor: Colors.white,
                   child: ListView(
-                      padding: const EdgeInsets.all(0), children: children))),
+                      primary: false,
+                      controller: playlistScrollController,
+                      physics: const ScrollPhysics(),
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.all(0),
+                      children: children))),
           _getCurrentlyPlayingTrack(state)
         ],
       );
@@ -1103,12 +1122,17 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     // The list is shown with a scrollbar that is always visible
     return Expanded(
         child: RawScrollbar(
+            key: UniqueKey(),
+            controller: locationListScrollController,
             isAlwaysShown:
                 locationListSizeAnimation!.isCompleted ? true : false,
             thickness: 4,
             thumbColor: Colors.white,
             child: ListView(
+              controller: locationListScrollController,
+              primary: false,
               children: children,
+              physics: const ScrollPhysics(),
               shrinkWrap: true,
             )));
   }
