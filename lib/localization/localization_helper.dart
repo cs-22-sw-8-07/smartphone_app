@@ -39,18 +39,10 @@ class LocalizationHelper {
         return appLocalizations.quack_api_response_error_5;
       case 50:
         return appLocalizations.quack_api_response_error_50;
-      case 101:
-        return appLocalizations.quack_api_response_error_101;
-      case 102:
-        return appLocalizations.quack_api_response_error_102;
-      case 103:
-        return appLocalizations.quack_api_response_error_103;
-      case 104:
-        return appLocalizations.quack_api_response_error_104;
       case 105:
         return appLocalizations.quack_api_response_error_105;
-      case 106:
-        return appLocalizations.quack_api_response_error_106;
+      case 109:
+        return appLocalizations.quack_api_response_error_109;
       case 110:
         return appLocalizations.quack_api_response_error_110;
       case 111:
@@ -59,6 +51,46 @@ class LocalizationHelper {
         return appLocalizations.quack_api_response_error_112;
       case 113:
         return appLocalizations.quack_api_response_error_113;
+      case 114:
+        return appLocalizations.quack_api_response_error_114;
+      case 115:
+        return appLocalizations.quack_api_response_error_115;
+      case 116:
+        return appLocalizations.quack_api_response_error_116;
+      case 117:
+        return appLocalizations.quack_api_response_error_117;
+      case 118:
+        return appLocalizations.quack_api_response_error_118;
+      case 119:
+        return appLocalizations.quack_api_response_error_119;
+      case 120:
+        return appLocalizations.quack_api_response_error_120;
+      case 121:
+        return appLocalizations.quack_api_response_error_121;
+      case 122:
+        return appLocalizations.quack_api_response_error_122;
+      case 123:
+        return appLocalizations.quack_api_response_error_123;
+      case 124:
+        return appLocalizations.quack_api_response_error_124;
+      case 125:
+        return appLocalizations.quack_api_response_error_125;
+      case 126:
+        return appLocalizations.quack_api_response_error_126;
+      case 127:
+        return appLocalizations.quack_api_response_error_127;
+      case 201:
+        return appLocalizations.quack_api_response_error_201;
+      case 202:
+        return appLocalizations.quack_api_response_error_202;
+      case 203:
+        return appLocalizations.quack_api_response_error_203;
+      case 204:
+        return appLocalizations.quack_api_response_error_204;
+      case 205:
+        return appLocalizations.quack_api_response_error_205;
+      case 206:
+        return appLocalizations.quack_api_response_error_206;
       default:
         return null;
     }
