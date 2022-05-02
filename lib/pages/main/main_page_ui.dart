@@ -150,8 +150,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             bloc.add(const ButtonPressed(buttonEvent: MainButtonEvent.back));
             locationListAnimationController.reverse();
             return false;
-          }
-          else if (bloc.state.isPlaylistShown!) {
+          } else if (bloc.state.isPlaylistShown!) {
             bloc.add(const ButtonPressed(buttonEvent: MainButtonEvent.back));
             playlistAnimationController.reverse();
             return false;
@@ -366,8 +365,12 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         size: 30,
                       ),
                       onPressed: () {
+                        if (bloc.state.isLocationListShown!) {
+                          return;
+                        }
                         bloc.add(const ButtonPressed(
                             buttonEvent: MainButtonEvent.viewPlaylist));
+
                         bloc.state.isPlaylistShown!
                             ? playlistAnimationController.reverse()
                             : playlistAnimationController.forward();
@@ -473,14 +476,17 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       color: Colors.white,
                       size: 30,
                     ),
-                    onPressed: () => {
-                          bloc.add(const ButtonPressed(
-                              buttonEvent:
-                                  MainButtonEvent.selectManualLocation)),
-                          bloc.state.isLocationListShown!
-                              ? locationListAnimationController.reverse()
-                              : locationListAnimationController.forward(),
-                        },
+                    onPressed: () {
+                      if (bloc.state.isPlaylistShown!) {
+                        return;
+                      }
+                      bloc.add(const ButtonPressed(
+                          buttonEvent: MainButtonEvent.selectManualLocation));
+
+                      bloc.state.isLocationListShown!
+                          ? locationListAnimationController.reverse()
+                          : locationListAnimationController.forward();
+                    },
                     borderRadius: const BorderRadius.all(
                       Radius.circular(0),
                     ),
