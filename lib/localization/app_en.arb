@@ -143,44 +143,108 @@
   "@quack_api_response_error_50": {
     "description": "Error message"
   },
-  "quack_api_response_error_101": "Something went wrong in the recommender",
-  "@quack_api_response_error_101": {
-    "description": "Error message"
-  },
-  "quack_api_response_error_102": "Path is null",
-  "@quack_api_response_error_102": {
-    "description": "Error message"
-  },
-  "quack_api_response_error_103": "Path not found",
-  "@quack_api_response_error_103": {
-    "description": "Error message"
-  },
-  "quack_api_response_error_104": "Process could not start",
-  "@quack_api_response_error_104": {
-    "description": "Error message"
-  },
-  "quack_api_response_error_105": "Path to Recommender is wrong",
+  "quack_api_response_error_105": "No config file",
   "@quack_api_response_error_105": {
     "description": "Error message"
   },
-  "quack_api_response_error_106": "The result from the command line is empty",
-  "@quack_api_response_error_106": {
+  "quack_api_response_error_109": "Could initialize the recommender",
+  "@quack_api_response_error_109": {
     "description": "Error message"
   },
-  "quack_api_response_error_110": "Could not initialize Spotipy",
+  "quack_api_response_error_110": "Could not initialize the recommender",
   "@quack_api_response_error_110": {
     "description": "Error message"
   },
-  "quack_api_response_error_111": "Could not find the playlists",
+  "quack_api_response_error_111": "Could not initialize the vector space",
   "@quack_api_response_error_111": {
     "description": "Error message"
   },
-  "quack_api_response_error_112": "Could not find songs from the playlist",
+  "quack_api_response_error_112": "Could not find the closest tracks",
   "@quack_api_response_error_112": {
     "description": "Error message"
   },
-  "quack_api_response_error_113": "Could not format song list to JSON",
+  "quack_api_response_error_113": "Could not find songs from the playlist",
   "@quack_api_response_error_113": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_114": "Could not format song list to JSON",
+  "@quack_api_response_error_114": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_115": "Quack location type argument is not a number",
+  "@quack_api_response_error_115": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_116": "Could not find tracks from the range recommender",
+  "@quack_api_response_error_116": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_117": "Could not initialize the vector space model",
+  "@quack_api_response_error_117": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_118": "Could not initialize the range model",
+  "@quack_api_response_error_118": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_119": "Could not load the dataset",
+  "@quack_api_response_error_119": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_120": "Could not initialize the vector space model",
+  "@quack_api_response_error_120": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_121": "Argument 3 not given",
+  "@quack_api_response_error_121": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_122": "Argument 3 is not a recommender",
+  "@quack_api_response_error_122": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_123": "Could not load the track data",
+  "@quack_api_response_error_123": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_124": "Could not read the precalculated dataset",
+  "@quack_api_response_error_124": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_125": "Could not transform CSV into correct format",
+  "@quack_api_response_error_125": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_126": "Argument 4 is in an incorrect format",
+  "@quack_api_response_error_126": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_127": "Argument 5 is not a number",
+  "@quack_api_response_error_127": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_201": "Something went wrong in the recommender",
+  "@quack_api_response_error_201": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_202": "Path is null",
+  "@quack_api_response_error_202": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_203": "Path is not found",
+  "@quack_api_response_error_203": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_204": "Process could not start",
+  "@quack_api_response_error_204": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_205": "Path to recommender is wrong",
+  "@quack_api_response_error_205": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_206": "Result from command line is empty",
+  "@quack_api_response_error_206": {
     "description": "Error message"
   },
   "automatic": "Automatic",
