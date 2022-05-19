@@ -547,16 +547,14 @@ Future<void> main() async {
                   updatedItemHashCode: playlistFromQuackService.hashCode,
                   playlist: playlistFromQuackService),
               newState.copyWith(
-                  hasPerformedAction: true,
+                  hasPerformedAction: false,
+                  currentTrack: QuackTrack(id: "2"),
                   isLoading: false,
                   updatedItemHashCode: playlistFromQuackService.hashCode,
                   playlist: playlistFromQuackService),
               newState.copyWith(
-                  hasPerformedAction: false,
+                  hasPerformedAction: true,
                   isLoading: false,
-                  playerState: MockSpotifyService.getMockPlayerState(
-                      trackId: playlistFromQuackService!.tracks!.first.id,
-                      isPaused: false),
                   updatedItemHashCode: playlistFromQuackService.hashCode,
                   playlist: playlistFromQuackService)
             ];
@@ -603,16 +601,14 @@ Future<void> main() async {
                   updatedItemHashCode: playlistFromQuackService.hashCode,
                   playlist: playlistFromQuackService),
               newState.copyWith(
-                  hasPerformedAction: true,
+                  hasPerformedAction: false,
+                  currentTrack: QuackTrack(id: "2"),
                   isLoading: false,
                   updatedItemHashCode: playlistFromQuackService.hashCode,
                   playlist: playlistFromQuackService),
               newState.copyWith(
-                  hasPerformedAction: false,
+                  hasPerformedAction: true,
                   isLoading: false,
-                  playerState: MockSpotifyService.getMockPlayerState(
-                      trackId: playlistFromQuackService!.tracks!.first.id,
-                      isPaused: false),
                   updatedItemHashCode: playlistFromQuackService.hashCode,
                   playlist: playlistFromQuackService)
             ];

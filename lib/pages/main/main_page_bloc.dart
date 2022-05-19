@@ -819,11 +819,18 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
 
     // Show playlist
     add(PlaylistReceived(playList: getPlaylistResponse.quackResponse!.result!));
-    // Remove loading animation
-    add(MainPageValueChanged(
-        isLoading: false,
-        currentTrack: getPlaylistResponse.quackResponse!.result!.tracks!.first,
-        hasPerformedAction: !state.playerState!.isPaused));
+    // The player is not paused
+    if (!state.playerState!.isPaused) {
+      // Remove loading animation
+      add(const MainPageValueChanged(isLoading: false));
+    } else {
+      // Remove loading animation
+      add(MainPageValueChanged(
+          isLoading: false,
+          currentTrack:
+              getPlaylistResponse.quackResponse!.result!.tracks!.first,
+          hasPerformedAction: !state.playerState!.isPaused));
+    }
     // Update player state
     add(SpotifyPlayerStateChanged(
         playerState: setQuackTrackInPlayerState(
@@ -833,8 +840,8 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
     // The player is not paused
     if (!state.playerState!.isPaused) {
       // Play the first track
-      await _playTrack(getPlaylistResponse.quackResponse!.result!.tracks!.first,
-          addEvent: false);
+      await _playTrack(
+          getPlaylistResponse.quackResponse!.result!.tracks!.first);
     }
   }
 

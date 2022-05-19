@@ -157,12 +157,10 @@ class HistoryPlaylistPage extends StatelessWidget {
 
   /// Creates the list of tracks from a given [playlist]
   /// Shows an empty container if the [playlist] has no tracks
-  Widget _createPlaylistContent(
-      QuackPlaylist playlist, BuildContext context, HistoryPlaylistPageBloc bloc) {
-    return Stack(children: [
-      SizedBox(
-          height: MediaQuery.of(context).size.height - 190,
-          width: double.infinity,
+  Widget _createPlaylistContent(QuackPlaylist playlist, BuildContext context,
+      HistoryPlaylistPageBloc bloc) {
+    return Column(children: [
+      Expanded(
           child: RawScrollbar(
               isAlwaysShown: true,
               thickness: 4,
@@ -176,24 +174,22 @@ class HistoryPlaylistPage extends StatelessWidget {
                             margin: const EdgeInsets.all(0),
                             child: _getTrack(playlist.tracks![index]));
                       }))),
-      Align(
-          alignment: AlignmentDirectional.bottomCenter,
-          child: CustomButton(
-            onPressed: () => bloc.add(const ButtonPressed(
-                buttonEvent: HistoryPlaylistButtonEvent.back)),
-            text: AppLocalizations.of(context)!.close,
-            fontWeight: FontWeight.bold,
-            borderRadius: const BorderRadius.all(
-                Radius.circular(values.buttonHeight / 2)),
-            fontSize: 20,
-            textColor: Colors.black,
-            defaultBackground: custom_colors.whiteGradient,
-            pressedBackground: custom_colors.greyGradient,
-            margin: const EdgeInsets.only(
-                left: values.padding,
-                right: values.padding,
-                bottom: values.padding),
-          ))
+      CustomButton(
+        onPressed: () => bloc.add(
+            const ButtonPressed(buttonEvent: HistoryPlaylistButtonEvent.back)),
+        text: AppLocalizations.of(context)!.close,
+        fontWeight: FontWeight.bold,
+        borderRadius:
+            const BorderRadius.all(Radius.circular(values.buttonHeight / 2)),
+        fontSize: 20,
+        textColor: Colors.black,
+        defaultBackground: custom_colors.whiteGradient,
+        pressedBackground: custom_colors.greyGradient,
+        margin: const EdgeInsets.only(
+            left: values.padding,
+            right: values.padding,
+            bottom: values.padding),
+      )
     ]);
   }
 
