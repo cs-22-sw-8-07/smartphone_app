@@ -1,0 +1,254 @@
+{
+  "app_name": "Quack",
+  "@app_name": {
+    "description": "The name of the app"
+  },
+  "yes": "Yes",
+  "@yes": {
+    "description": "Button text"
+  },
+  "no": "No",
+  "@no": {
+    "description": "Button text"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Button text"
+  },
+  "close": "Close",
+  "@close": {
+    "description": "Button text"
+  },
+  "please_go_to_settings_and_give_the_app_all_the_necessary_permissions": "Please go to settings and give Quack all the necessary permissions",
+  "@please_go_to_settings_and_give_the_app_all_the_necessary_permissions": {
+    "description": "Dialog text"
+  },
+  "are_you_sure_you_want_to_refresh_the_playlist": "Are you sure you want to refresh the playlist?",
+  "@are_you_sure_you_want_to_refresh_the_playlist": {
+    "description": "Dialog text"
+  },
+  "could_not_get_a_playlist": "Could not get a playlist",
+  "@could_not_get_a_playlist": {
+    "description": "Error message"
+  },
+  "go_to_settings": "Go to settings",
+  "@go_to_settings": {
+    "description": "Button text"
+  },
+  "cannot_get_playlist_for_location_type_unknown": "Cannot get playlist for location type 'Unknown'",
+  "@cannot_get_playlist_for_location_type_unknown": {
+    "description": "Error message"
+  },
+  "do_you_want_to_save_changes": "You have unsaved changes\nDo you want to save the current changes?",
+  "@do_you_want_to_save_changes": {
+    "description": "Dialog text"
+  },
+  "you_cannot_lock_the_location_type_unknown": "You cannot lock the location type 'Unknown'",
+  "@you_cannot_lock_the_location_type_unknown": {
+    "description": "Error message"
+  },
+  "continue_with_spotify": "Continue with Spotify",
+  "@continue_with_spotify": {
+    "description": "Button text"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Button text"
+  },
+  "delete_account": "Delete your account",
+  "@delete_account": {
+    "description": "Button text"
+  },
+  "delete_account_confirmation": "Are you sure you want to delete your account?\nThis cannot be undone.",
+  "@delete_account_confirmation": {
+    "description": "Dialog text"
+  },
+    "history": "History",
+  "@history": {
+    "description": "Button text"
+  },
+  "songs": "songs",
+  "@songs": {
+    "description": "Tile Text"
+  },
+  "log_off": "Log off",
+  "@log_off": {
+    "description": "Button text"
+  },
+  "getting_location_in_background": "Getting location in background",
+  "@getting_location_in_background": {
+    "description": "Notification text"
+  },
+  "unknown": "Unknown",
+  "@unknown": {
+    "description": "Quack location type"
+  },
+  "forest": "Forest",
+  "@forest": {
+    "description": "Quack location type"
+  },
+  "beach": "Beach",
+  "@beach": {
+    "description": "Quack location type"
+  },
+  "night_life": "Night Life",
+  "@night_life": {
+    "description": "Quack location type"
+  },
+  "urban": "Urban",
+  "@urban": {
+    "description": "Quack location type"
+  },
+  "cemetery": "Cemetery",
+  "@cemetery": {
+    "description": "Quack location type"
+  },
+  "education": "Education",
+  "@education": {
+    "description": "Quack location type"
+  },
+  "church": "Church",
+  "@church": {
+    "description": "Quack location type"
+  },
+  "preference_profile": "Preference profile",
+  "@preference_profile": {
+    "description": "Button text"
+  },
+  "locked_location": "Locked location",
+  "@locked_location": {
+    "description": "Snackbar text"
+  },
+  "unlocked_location": "Unlocked location",
+  "@unlocked_location": {
+    "description": "Snackbar text"
+  },
+  "retrieve": "Retrieve",
+  "@retrieve": {
+    "description": "Button text"
+  },
+  "quack_api_response_error_1": "An exception occurred in a controller",
+  "@quack_api_response_error_1": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_2": "An exception occurred in the service access layer",
+  "@quack_api_response_error_2": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_5": "Changes could not be applied to the dataabase",
+  "@quack_api_response_error_5": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_50": "Quack update list has a bad format",
+  "@quack_api_response_error_50": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_105": "No config file",
+  "@quack_api_response_error_105": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_109": "Could initialize the recommender",
+  "@quack_api_response_error_109": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_110": "Could not initialize the recommender",
+  "@quack_api_response_error_110": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_111": "Could not initialize the vector space",
+  "@quack_api_response_error_111": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_112": "Could not find the closest tracks",
+  "@quack_api_response_error_112": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_113": "Could not find songs from the playlist",
+  "@quack_api_response_error_113": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_114": "Could not format song list to JSON",
+  "@quack_api_response_error_114": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_115": "Quack location type argument is not a number",
+  "@quack_api_response_error_115": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_116": "Could not find tracks from the range recommender",
+  "@quack_api_response_error_116": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_117": "Could not initialize the vector space model",
+  "@quack_api_response_error_117": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_118": "Could not initialize the range model",
+  "@quack_api_response_error_118": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_119": "Could not load the dataset",
+  "@quack_api_response_error_119": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_120": "Could not initialize the vector space model",
+  "@quack_api_response_error_120": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_121": "Argument 3 not given",
+  "@quack_api_response_error_121": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_122": "Argument 3 is not a recommender",
+  "@quack_api_response_error_122": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_123": "Could not load the track data",
+  "@quack_api_response_error_123": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_124": "Could not read the precalculated dataset",
+  "@quack_api_response_error_124": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_125": "Could not transform CSV into correct format",
+  "@quack_api_response_error_125": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_126": "Argument 4 is in an incorrect format",
+  "@quack_api_response_error_126": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_127": "Argument 5 is not a number",
+  "@quack_api_response_error_127": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_201": "Something went wrong in the recommender",
+  "@quack_api_response_error_201": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_202": "Path is null",
+  "@quack_api_response_error_202": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_203": "Path is not found",
+  "@quack_api_response_error_203": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_204": "Process could not start",
+  "@quack_api_response_error_204": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_205": "Path to recommender is wrong",
+  "@quack_api_response_error_205": {
+    "description": "Error message"
+  },
+  "quack_api_response_error_206": "Result from command line is empty",
+  "@quack_api_response_error_206": {
+    "description": "Error message"
+  },
+  "automatic": "Automatic",
+  "@automatic": {
+    "description": "Button text"
+  }
+}

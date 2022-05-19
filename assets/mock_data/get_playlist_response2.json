@@ -1,0 +1,72 @@
+{
+  "result": {
+    "id": "2",
+    "location_type": 2,
+    "offset": 1,
+    "tracks": [
+      {
+        "id": "1OwBJitJZ9XDId0cFBDrLx",
+        "name": "Brand New World (Lo-Fi Remix)",
+        "artist": "GlitchxCity",
+        "image": "https://i.scdn.co/image/ab67616d00004851764e6f7077af95bc7abf0b8f"
+      },
+      {
+        "id": "1K0LoLME6kJXWbOL2E5llC",
+        "name": "National Park (Lo-Fi Remix)",
+        "artist": "GlitchxCity",
+        "image": "https://i.scdn.co/image/ab67616d00004851dbc48db84d5cde3ba6b13c07"
+      },
+      {
+        "id": "1okbTzNQRpjtNg3nKknOkU",
+        "name": "Eterna Forest (Lo-Fi Remix)",
+        "artist": "GlitchxCity",
+        "image": "https://i.scdn.co/image/ab67616d0000485162be4c9cae1af45607acad6d"
+      },
+      {
+        "id": "3R6btJo8ErW62axnvEGysf",
+        "name": "Twinleaf Town Lo-Fi Remix (From \"Pokémon Diamond and Pearl\")",
+        "artist": "GlitchxCity",
+        "image": "https://i.scdn.co/image/ab67616d000048513badd260b4ce6e8b82b6dbca"
+      },
+      {
+        "id": "3Sksq7o6HcImr02h7DcJRO",
+        "name": "Pokémon League Lo-Fi Remix (From \"Pokémon Diamond and Pearl\")",
+        "artist": "GlitchxCity",
+        "image": "https://i.scdn.co/image/ab67616d000048517ae1fe75dac2a5c297f34bc2"
+      },
+      {
+        "id": "2yNoa9CZn6G3Bqaukqko5o",
+        "name": "Snowpoint City (Chill Remix)",
+        "artist": "GlitchxCity",
+        "image": "https://i.scdn.co/image/ab67616d00004851a88a60eb3ba956c21e865c1e"
+      },
+      {
+        "id": "0hS94AAae5OhYM2lTUPwD3",
+        "name": "Route 228 (Lo-Fi Remix)",
+        "artist": "GlitchxCity",
+        "image": "https://i.scdn.co/image/ab67616d00004851316069ce02b04bc957b00d9e"
+      },
+      {
+        "id": "6b4VOKXrW68JanekaHU6vr",
+        "name": "Lillie's Theme (GlitchxCity Lo-Fi Remix)",
+        "artist": "GlitchxCity",
+        "image": "https://i.scdn.co/image/ab67616d0000485175e0e27e3c6dbda9051262f2"
+      },
+      {
+        "id": "565IoIuSM389HhAp8U69qf",
+        "name": "Song of Storms (Lo-Fi Remix)",
+        "artist": "GlitchxCity",
+        "image": "https://i.scdn.co/image/ab67616d000048517319496c4e1dc265318d9176"
+      },
+
+      {
+        "id": "2RIhmygUdvt2Vxpj5Z27Ym",
+        "name": "Route 209 (GlitchxCity Lo-Fi Remix)",
+        "artist": "GlitchxCity",
+        "image": "https://i.scdn.co/image/ab67616d0000485113ffb4e1fba9341dd4ae09a0"
+      }
+    ]
+  },
+  "is_successful": true,
+  "error_no": 0
+}
