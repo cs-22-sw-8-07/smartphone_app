@@ -59,4 +59,4 @@ Execute android/Tasks/android/signingReport gradle thingie (not a traditional fi
 
 ## Demo
 
-https://github.com/cs-22-sw-8-07/smartphone_app/blob/update_response_errors/demo.mp4
+[![See the demonstration](https://i.ytimg.com/vi/GqphjZ-0HqE/maxresdefault.jpg)](https://youtu.be/GqphjZ-0HqE)
