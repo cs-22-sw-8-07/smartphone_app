@@ -56,3 +56,7 @@ The value __WHICH_QUACK_API__ should be 'mock' or 'prod'
 - The SHA1 must be added to the developer dashboard by Jakob
 
 Execute android/Tasks/android/signingReport gradle thingie (not a traditional file) to get the SHA1
+
+## Demo
+
+[![See the demonstration](https://i.ytimg.com/vi/GqphjZ-0HqE/maxresdefault.jpg)](https://youtu.be/GqphjZ-0HqE)
