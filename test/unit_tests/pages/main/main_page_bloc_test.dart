@@ -51,6 +51,7 @@ Future<void> main() async {
     group("SpotifyService -> Return error", () {
       setUp(() {
         SpotifyService.init(MockSpotifyServiceError());
+        QuackLocationService.init(QuackLocationService());
         bloc = MainPageBloc(
             context: MockBuildContext(), positionHelper: MockPositionHelper());
       });
@@ -149,6 +150,7 @@ Future<void> main() async {
     group("QuackService -> Return success", () {
       setUp(() async {
         SpotifyService.init(MockSpotifyService());
+        QuackLocationService.init(QuackLocationService());
         bloc = MainPageBloc(
             context: MockBuildContext(),
             positionHelper: await PositionHelper.getInstance());
@@ -974,22 +976,26 @@ Future<void> main() async {
               newState.copyWith(
                   playlist: playlistFromQuackService,
                   isLoading: true,
-                  hasPerformedAction: false,
                   updatedItemHashCode: playlistFromQuackService.hashCode),
               newState.copyWith(
                   playlist: playlistFromQuackService,
                   isLoading: false,
-                  updatedItemHashCode: playlistFromQuackService.hashCode,
-                  hasPerformedAction: true,
-                  currentTrack: playlistFromQuackService!.tracks!.first),
+                  updatedItemHashCode: playlistFromQuackService.hashCode),
               newState.copyWith(
                   playlist: playlistFromQuackService,
                   isLoading: false,
-                  updatedItemHashCode: playlistFromQuackService.hashCode,
-                  hasPerformedAction: false,
                   playerState: MockSpotifyService.getMockPlayerState(
                       isPaused: false,
                       trackId: playlistFromQuackService!.tracks!.first.id),
+                  updatedItemHashCode: playlistFromQuackService.hashCode),
+              newState.copyWith(
+                  playlist: playlistFromQuackService,
+                  isLoading: false,
+                  hasPerformedAction: true,
+                  playerState: MockSpotifyService.getMockPlayerState(
+                      isPaused: false,
+                      trackId: playlistFromQuackService!.tracks!.first.id),
+                  updatedItemHashCode: playlistFromQuackService.hashCode,
                   currentTrack: playlistFromQuackService!.tracks!.first)
             ];
           });
@@ -1125,25 +1131,31 @@ Future<void> main() async {
                 useTrack: false, isPaused: false);
 
             return [
-              newState,
+              newState.copyWith(isLoading: true),
               newState.copyWith(
-                  updatedItemHashCode: playlistFromQuackService.hashCode,
-                  playlist: playlistFromQuackService),
+                  playlist: playlistFromQuackService,
+                  isLoading: true,
+                  updatedItemHashCode: playlistFromQuackService.hashCode),
               newState.copyWith(
+                  playlist: playlistFromQuackService,
+                  isLoading: false,
+                  updatedItemHashCode: playlistFromQuackService.hashCode),
+              newState.copyWith(
+                  playlist: playlistFromQuackService,
+                  isLoading: false,
+                  playerState: MockSpotifyService.getMockPlayerState(
+                      isPaused: false,
+                      trackId: playlistFromQuackService!.tracks!.first.id),
+                  updatedItemHashCode: playlistFromQuackService.hashCode),
+              newState.copyWith(
+                  playlist: playlistFromQuackService,
                   isLoading: false,
                   hasPerformedAction: true,
-                  currentTrack: bloc.state.playlist!.tracks!.first,
-                  updatedItemHashCode: playlistFromQuackService.hashCode,
-                  playlist: playlistFromQuackService),
-              newState.copyWith(
-                  isLoading: false,
-                  hasPerformedAction: false,
-                  currentTrack: bloc.state.playlist!.tracks!.first,
-                  updatedItemHashCode: playlistFromQuackService.hashCode,
                   playerState: MockSpotifyService.getMockPlayerState(
-                      trackId: bloc.state.playlist!.tracks!.first.id,
-                      isPaused: false),
-                  playlist: playlistFromQuackService)
+                      isPaused: false,
+                      trackId: playlistFromQuackService!.tracks!.first.id),
+                  updatedItemHashCode: playlistFromQuackService.hashCode,
+                  currentTrack: playlistFromQuackService!.tracks!.first)
             ];
           });
 
@@ -1537,6 +1549,7 @@ Future<void> main() async {
     group("QuackService -> Return error", () {
       setUp(() {
         QuackService.init(MockQuackServiceError());
+        QuackLocationService.init(QuackLocationService());
         bloc = MainPageBloc(
             context: MockBuildContext(), positionHelper: MockPositionHelper());
       });

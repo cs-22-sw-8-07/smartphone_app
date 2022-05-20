@@ -55,7 +55,8 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
             isPlaylistShown: false,
             isLocationListShown: false,
             isLoading: false,
-            quackLocationType: QuackLocationType.unknown)) {
+            quackLocationType:
+                QuackLocationService.getInstance().locationType)) {
     LocalizationHelper.init(context: context);
 
     /// ButtonPressed
@@ -470,7 +471,9 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
   /// Called once in the constructor of the Bloc
   void _subscribeToPosition() {
     positionHelper.getPositionStream().listen((position) async {
-      await positionReceived(position);
+      if (!isClosed) {
+        await positionReceived(position);
+      }
     });
   }
 
@@ -580,7 +583,9 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
         }
 
         subscribePlayerState.resultType!.listen((playerState) {
-          add(SpotifyPlayerStateChanged(playerState: playerState));
+          if (!isClosed) {
+            add(SpotifyPlayerStateChanged(playerState: playerState));
+          }
         });
       } else {
         await _connectToSpotifyRemote();
@@ -829,7 +834,7 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
           isLoading: false,
           currentTrack:
               getPlaylistResponse.quackResponse!.result!.tracks!.first,
-          hasPerformedAction: !state.playerState!.isPaused));
+          hasPerformedAction: false));
     }
     // Update player state
     add(SpotifyPlayerStateChanged(
