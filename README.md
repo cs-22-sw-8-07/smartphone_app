@@ -59,4 +59,4 @@ Execute android/Tasks/android/signingReport gradle thingie (not a traditional fi
 
 ## Demo
 
-[![See the demonstration](https://i.ytimg.com/vi/GqphjZ-0HqE/maxresdefault.jpg)](https://youtu.be/GqphjZ-0HqE)
+[![See the demonstration](https://i.ytimg.com/vi/GqphjZ-0HqE/maxresdefault.jpg)](https://youtu.be/eMi1KI9bX08)
